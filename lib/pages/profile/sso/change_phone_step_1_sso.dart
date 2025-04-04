@@ -74,12 +74,10 @@ class _ChangePhoneStep1SSOPageState extends State<ChangePhoneStep1SSOPage> {
     final storage = FlutterSecureStorage();
     String? value = await storage.read(key: 'dataUserLoginSSOSSO');
     if (value != null && value != '') {
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => HomePage(),
-      //   ),
-      // );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
     }
   }
 
@@ -206,13 +204,9 @@ class _ChangePhoneStep1SSOPageState extends State<ChangePhoneStep1SSOPage> {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    10.0,
-                                  ),
+                                  borderRadius: BorderRadius.circular(10.0),
                                 ),
-                                backgroundColor: Color(
-                                  0xFFFFC324,
-                                ), // สีปุ่ม
+                                backgroundColor: Color(0xFFFFC324), // สีปุ่ม
                                 padding: EdgeInsets.all(10.0),
                               ),
                               onPressed: () {
@@ -223,11 +217,10 @@ class _ChangePhoneStep1SSOPageState extends State<ChangePhoneStep1SSOPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder:
-                                          (context) =>
-                                              ChangePhoneStep2SSOPage(
-                                                phone: txtPhone.text,
-                                                idcard: txtIdCard.text,
-                                              ),
+                                          (context) => ChangePhoneStep2SSOPage(
+                                            phone: txtPhone.text,
+                                            idcard: txtIdCard.text,
+                                          ),
                                     ),
                                   );
                                 }
@@ -250,13 +243,9 @@ class _ChangePhoneStep1SSOPageState extends State<ChangePhoneStep1SSOPage> {
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      10.0,
-                                    ),
+                                    borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  backgroundColor: Color(
-                                    0xFF707070,
-                                  ), // สีปุ่ม
+                                  backgroundColor: Color(0xFF707070), // สีปุ่ม
                                   padding: EdgeInsets.all(10.0),
                                 ),
                                 onPressed: () {
@@ -265,9 +254,7 @@ class _ChangePhoneStep1SSOPageState extends State<ChangePhoneStep1SSOPage> {
                                     MaterialPageRoute(
                                       builder:
                                           (context) =>
-                                              LoginConnectionSSOPage(
-                                                step: 1,
-                                              ),
+                                              LoginConnectionSSOPage(step: 1),
                                     ),
                                   );
                                 },

@@ -1,23 +1,23 @@
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:flutter/material.dart';
 // import 'package:flutter_html/flutter_html.dart';
 
 import 'package:sso/component/gallery_view.dart';
-import 'package:sso/component/link_url_in.dart';
 import 'package:sso/component/link_url_out.dart';
 import 'package:sso/shared/api_provider.dart';
 import 'package:sso/shared/extension.dart';
 
 // ignore: must_be_immutable
 class ContentNotification extends StatefulWidget {
-  ContentNotification({
-    Key? key,
+  const ContentNotification({
+    super.key,
     required this.code,
     required this.url,
     this.model,
     required this.urlGallery,
     required this.pathShare,
-  }) : super(key: key);
+  });
 
   final String code;
   final String url;
@@ -32,7 +32,6 @@ class ContentNotification extends StatefulWidget {
 class _ContentNotification extends State<ContentNotification> {
   late Future<dynamic> _futureModel;
 
-  String _urlShared = '';
   List urlImage = [];
   List<ImageProvider> urlImageProvider = [];
 
@@ -78,7 +77,6 @@ class _ContentNotification extends State<ContentNotification> {
         if (result['status'] == 'S')
           {
             setState(() {
-              _urlShared = result['objectData']['description'];
             }),
           },
       },
@@ -140,7 +138,7 @@ class _ContentNotification extends State<ContentNotification> {
               padding: const EdgeInsets.only(right: 10, left: 10),
               child: Row(
                 children: [
-                  Container(
+                  SizedBox(
                     width: MediaQuery.of(context).size.width * 0.1,
                     child:
                         model['userList'] != null &&

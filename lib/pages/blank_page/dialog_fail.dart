@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sso/screen/splash.dart';
 
 dialogFail(
   BuildContext context, {
@@ -17,7 +16,7 @@ dialogFail(
       width: double.infinity,
       color: background,
       child: CupertinoAlertDialog(
-        title: new Text(
+        title: Text(
           title,
           style: TextStyle(
             fontSize: 16,
@@ -30,7 +29,7 @@ dialogFail(
         actions: [
           CupertinoDialogAction(
             isDefaultAction: true,
-            child: new Text(
+            child: Text(
               "ตกลง",
               style: TextStyle(
                 fontSize: 13,

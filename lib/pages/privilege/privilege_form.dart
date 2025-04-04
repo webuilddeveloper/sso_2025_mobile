@@ -1,18 +1,17 @@
-import 'dart:ui';
+// ignore_for_file: no_logic_in_create_state, prefer_interpolation_to_compose_strings
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sso/component/link_url_in.dart';
 import 'dart:async';
-import 'package:sso/component/link_url_out.dart';
 import 'package:sso/shared/api_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:sso/shared/extension.dart';
 
 class PrivilegeForm extends StatefulWidget {
-  PrivilegeForm({Key? key, required this.code, this.model}) : super(key: key);
+  const PrivilegeForm({super.key, required this.code, this.model});
   final String code;
   final dynamic model;
 
@@ -120,7 +119,7 @@ class _PrivilegeDetailPageState extends State<PrivilegeForm> {
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: new BorderRadius.only(
+                                    borderRadius: BorderRadius.only(
                                       bottomLeft: const Radius.circular(40.0),
                                       bottomRight: const Radius.circular(40.0),
                                     ),
@@ -174,7 +173,7 @@ class _PrivilegeDetailPageState extends State<PrivilegeForm> {
                                                 height: 35.0,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                      new BorderRadius.circular(
+                                                      BorderRadius.circular(
                                                         17.5,
                                                       ),
                                                   color: Color(0xFF3880B3),
@@ -317,8 +316,8 @@ class _PrivilegeDetailPageState extends State<PrivilegeForm> {
                           context: context,
                           builder:
                               (BuildContext context) =>
-                                  new CupertinoAlertDialog(
-                                    title: new Text(
+                                  CupertinoAlertDialog(
+                                    title: Text(
                                       'test',
                                       style: TextStyle(
                                         // fontWeight: FontWeight.normal,
@@ -331,7 +330,7 @@ class _PrivilegeDetailPageState extends State<PrivilegeForm> {
                                     actions: [
                                       CupertinoDialogAction(
                                         isDefaultAction: true,
-                                        child: new Text(
+                                        child: Text(
                                           "ยกเลิก",
                                           style: TextStyle(
                                             // fontWeight: FontWeight.normal,
@@ -346,7 +345,7 @@ class _PrivilegeDetailPageState extends State<PrivilegeForm> {
                                       ),
                                       CupertinoDialogAction(
                                         isDefaultAction: true,
-                                        child: new Text(
+                                        child: Text(
                                           "โทร",
                                           style: TextStyle(
                                             // fontWeight: FontWeight.normal,
@@ -438,7 +437,7 @@ class _PrivilegeDetailPageState extends State<PrivilegeForm> {
 
                       Container(
                         decoration: BoxDecoration(
-                          borderRadius: new BorderRadius.only(
+                          borderRadius: BorderRadius.only(
                             bottomLeft: const Radius.circular(40.0),
                             bottomRight: const Radius.circular(40.0),
                           ),
@@ -486,7 +485,7 @@ class _PrivilegeDetailPageState extends State<PrivilegeForm> {
                                       width: 35.0,
                                       height: 35.0,
                                       decoration: BoxDecoration(
-                                        borderRadius: new BorderRadius.circular(
+                                        borderRadius: BorderRadius.circular(
                                           17.5,
                                         ),
                                         color: Color(0xFF3880B3),
@@ -559,10 +558,7 @@ class _PrivilegeDetailPageState extends State<PrivilegeForm> {
                                                 ),
                                                 child: Text(
                                                   model['view'] != null
-                                                      ? '| เข้าชม ' +
-                                                          model['view']
-                                                              .toString() +
-                                                          ' ครั้ง'
+                                                      ? '| เข้าชม ${model['view']} ครั้ง'
                                                       : '| เข้าชม 0 ครั้ง',
                                                   style: TextStyle(
                                                     fontFamily: 'Kanit',
@@ -599,8 +595,7 @@ class _PrivilegeDetailPageState extends State<PrivilegeForm> {
                                           context.findRenderObject()
                                               as RenderBox;
                                       Share.share(
-                                        _urlShared +
-                                            'content/privilege/' +
+                                        '${_urlShared}content/privilege/' +
                                             model['code'] +
                                             model['title'],
                                         subject: model['title'],
@@ -669,8 +664,8 @@ class _PrivilegeDetailPageState extends State<PrivilegeForm> {
         showDialog(
           context: context,
           builder:
-              (BuildContext context) => new CupertinoAlertDialog(
-                title: new Text(
+              (BuildContext context) => CupertinoAlertDialog(
+                title: Text(
                   'ยืนยัน',
                   style: TextStyle(
                     // fontWeight: FontWeight.normal,
@@ -683,7 +678,7 @@ class _PrivilegeDetailPageState extends State<PrivilegeForm> {
                 actions: [
                   CupertinoDialogAction(
                     isDefaultAction: true,
-                    child: new Text(
+                    child: Text(
                       "ยกเลิก",
                       style: TextStyle(
                         // fontWeight: FontWeight.normal,
@@ -698,7 +693,7 @@ class _PrivilegeDetailPageState extends State<PrivilegeForm> {
                   ),
                   CupertinoDialogAction(
                     isDefaultAction: true,
-                    child: new Text(
+                    child: Text(
                       "ยืนยัน",
                       style: TextStyle(
                         // fontWeight: FontWeight.normal,

@@ -90,10 +90,10 @@ class _ChangePhoneFormOTPPageState extends State<ChangePhoneFormOTPPage> {
                   ),
                 ),
                 onPressed: () {
-                  // Navigator.pushReplacement(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => HomePage()),
-                  // );
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
                 },
               ),
             ],
@@ -155,12 +155,10 @@ class _ChangePhoneFormOTPPageState extends State<ChangePhoneFormOTPPage> {
 
     if (len == 6) {
       submitChangePhoneFormOTP();
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => new HomePage(),
-      //   ),
-      // );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => new HomePage()),
+      );
     } else {}
   }
 

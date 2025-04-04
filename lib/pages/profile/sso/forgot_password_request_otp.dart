@@ -83,10 +83,10 @@ class _ForgotPasswordRequestOTPPageState
     final storage = new FlutterSecureStorage();
     String? value = await storage.read(key: 'dataUserLoginSSO');
     if (value != null && value != '') {
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => HomePage()),
-      // );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
     }
   }
 

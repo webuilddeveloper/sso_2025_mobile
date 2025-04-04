@@ -20,7 +20,7 @@ class RegisterConnectFormOTPPage extends StatefulWidget {
 
 class _RegisterConnectFormOTPPageState
     extends State<RegisterConnectFormOTPPage> {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -37,7 +37,7 @@ class _RegisterConnectFormOTPPageState
 
   late Future<dynamic> futureModel;
 
-  ScrollController scrollController = new ScrollController();
+  ScrollController scrollController = ScrollController();
 
   @override
   void dispose() {
@@ -67,8 +67,8 @@ class _RegisterConnectFormOTPPageState
       barrierDismissible: false,
       context: context,
       builder:
-          (BuildContext context) => new CupertinoAlertDialog(
-            title: new Text(
+          (BuildContext context) => CupertinoAlertDialog(
+            title: Text(
               'ลงทะเบียนเรียบร้อยแล้ว กำลังนำท่านกลับเข้าสู่ระบบผู้ประกันตน',
               style: TextStyle(
                 fontSize: 15,
@@ -81,7 +81,7 @@ class _RegisterConnectFormOTPPageState
             actions: [
               CupertinoDialogAction(
                 isDefaultAction: true,
-                child: new Text(
+                child: Text(
                   "ยืนยัน",
                   style: TextStyle(
                     // fontWeight: FontWeight.normal,
@@ -91,10 +91,10 @@ class _RegisterConnectFormOTPPageState
                   ),
                 ),
                 onPressed: () {
-                  // Navigator.pushReplacement(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => HomePage()),
-                  // );
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
                 },
               ),
             ],
@@ -156,12 +156,10 @@ class _RegisterConnectFormOTPPageState
 
     if (len == 6) {
       submitRegisterConnectFormOTP();
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => new HomePage(),
-      //   ),
-      // );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
     } else {}
   }
 

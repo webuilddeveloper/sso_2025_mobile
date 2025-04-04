@@ -1,24 +1,22 @@
-import 'dart:ui';
+// ignore_for_file: no_logic_in_create_state
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:sso/component/link_url_in.dart';
-import 'package:sso/component/link_url_out.dart';
 import 'dart:async';
 
 // import 'package:sso/component/downloadFile.dart';
-import 'package:sso/component/pdf_viewer_page.dart';
 import 'package:sso/shared/api_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:sso/shared/extension.dart';
 
 class KnowledgeForm extends StatefulWidget {
-  KnowledgeForm({
-    Key? key,
+  const KnowledgeForm({
+    super.key,
     required this.code,
     this.model,
     required this.urlComment,
-  }) : super(key: key);
+  });
   final String code;
   final dynamic model;
   final String urlComment;
@@ -55,8 +53,8 @@ class _KnowledgeDetailPageState extends State<KnowledgeForm> {
       floatingActionButton: FloatingActionButton(
         mini: true,
         onPressed: () => {Navigator.pop(context)},
-        child: Icon(Icons.close),
         backgroundColor: Color(0xFF3880B3),
+        child: Icon(Icons.close),
       ),
       body: FutureBuilder<dynamic>(
         future: _futureModel,
@@ -77,7 +75,7 @@ class _KnowledgeDetailPageState extends State<KnowledgeForm> {
                       children: [
                         Stack(
                           children: [
-                            Container(height: 540, width: double.infinity),
+                            SizedBox(height: 540, width: double.infinity),
                             Container(
                               height: 540,
                               color: Colors.black.withOpacity(0.5),
@@ -176,7 +174,7 @@ class _KnowledgeDetailPageState extends State<KnowledgeForm> {
             children: [
               Stack(
                 children: [
-                  Container(
+                  SizedBox(
                     height: 540,
                     width: double.infinity,
                     child: Image.network(model['imageUrl'], fit: BoxFit.cover),
@@ -361,7 +359,7 @@ class _KnowledgeDetailPageState extends State<KnowledgeForm> {
 }
 
 class TextDetail extends StatelessWidget {
-  TextDetail({
+  const TextDetail({
     Key? key,
     required this.title,
     required this.value,

@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:sso/pages/home.dart';
 // import 'package:sso/pages/home.dart';
 import 'package:sso/screen/login.dart';
 import 'package:sso/shared/api_provider.dart';
@@ -80,24 +81,24 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   _callTimer(time) async {
-    var _duration = Duration(seconds: time);
+    var _duration = Duration(seconds: time.toInt());
     return Timer(_duration, _callNavigatorPage);
   }
 
   _callNavigatorPage() async {
     final storage = FlutterSecureStorage();
     String? value = await storage.read(key: 'profileCode1');
+
+    if (!mounted) return; // 🔹 ป้องกันการใช้ context หลัง dispose
+
     if (value != null && value != '') {
-      // Navigator.of(context).pushAndRemoveUntil(
-      //   MaterialPageRoute(builder: (context) => HomePage()),
-      //   (Route<dynamic> route) => false,
-      // );
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => HomePage()),
+        (Route<dynamic> route) => false,
+      );
     } else {
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => LoginPage(title: ''),
-          // builder: (context) => HomePage(),
-        ),
+        MaterialPageRoute(builder: (context) => LoginPage(title: '')),
         (Route<dynamic> route) => false,
       );
     }

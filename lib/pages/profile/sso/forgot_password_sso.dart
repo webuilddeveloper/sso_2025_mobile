@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sso/component/header.dart';
 import 'package:sso/models/user.dart';
+import 'package:sso/pages/home.dart';
 import 'package:sso/pages/profile/sso/forgot_password_request_otp.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -76,12 +77,10 @@ class _ForgotPasswordSSOPageState extends State<ForgotPasswordSSOPage> {
     final storage = new FlutterSecureStorage();
     String? value = await storage.read(key: 'dataUserLoginSSO');
     if (value != null && value != '') {
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => HomePage(),
-      //   ),
-      // );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
     }
   }
 

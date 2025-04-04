@@ -62,7 +62,7 @@ const reporterCategoryApi = server + 'm/reporter/category/read';
 const splashApi = server + 'm/splash/read';
 
 const profileReadApi = server + 'm/v2/register/read';
-const organizationImageReadApi = server + 'm/v2/organization/image/read';
+// const organizationImageReadApi = server + 'm/v2/organization/image/read';
 const notificationApi = server + 'm/v2/notification/';
 
 Future<dynamic> postCategory(String url, dynamic criteria) async {
@@ -203,7 +203,7 @@ Future<LoginRegister> postLoginRegister(String url, dynamic criteria) async {
   if (response.statusCode == 200) {
     var userMap = jsonDecode(response.body);
 
-    var user = new LoginRegister.fromJson(userMap);
+    var user = LoginRegister.fromJson(userMap);
     return Future.value(user);
   } else {
     return Future.value();
@@ -212,7 +212,7 @@ Future<LoginRegister> postLoginRegister(String url, dynamic criteria) async {
 
 //upload with dio
 Future<String> uploadImage(File file) async {
-  Dio dio = new Dio();
+  Dio dio = Dio();
 
   String fileName = file.path.split('/').last;
   FormData formData = FormData.fromMap({
@@ -230,7 +230,7 @@ Future<String> uploadImage(File file) async {
 }
 
 Future<String> uploadImageList(XFile file) async {
-  Dio dio = new Dio();
+  Dio dio = Dio();
 
   String fileName = file.path.split('/').last;
   FormData formData = FormData.fromMap({
@@ -272,7 +272,7 @@ Future<dynamic> postConfigShare() async {
   );
 
   if (response.statusCode == 200) {
-    var data = json.decode(response!.body);
+    var data = json.decode(response.body);
     return {
       // Future.value(data['objectData']);
       "status": data['status'],
@@ -285,9 +285,10 @@ Future<dynamic> postConfigShare() async {
 }
 
 Future<dynamic> postDio(String url, dynamic criteria) async {
-  // print(url);
-  // print(criteria);
-  final storage = new FlutterSecureStorage();
+  // print('-------------------------->>>>>> ${url}');
+  // print('-------------------------->>>>>> ${criteria}');
+
+  final storage = FlutterSecureStorage();
   // var platform = Platform.operatingSystem.toString();
   final profileCode = await storage.read(key: 'profileCode1');
 
@@ -295,16 +296,18 @@ Future<dynamic> postDio(String url, dynamic criteria) async {
     criteria = {'profileCode': profileCode, ...criteria};
   }
 
-  Dio dio = new Dio();
+  Dio dio = Dio();
   var response = await dio.post(url, data: criteria);
+  // print('---------------------------------------');
   // print(response.data['objectData'].toString());
+  // print('---------------------------------------');
   return Future.value(response.data['objectData']);
 }
 
 Future<dynamic> postDioCategory(String url, dynamic criteria) async {
   print(url);
   print(criteria);
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
   var platform = Platform.operatingSystem.toString();
   final profileCode = await storage.read(key: 'profileCode1');
 
@@ -312,7 +315,7 @@ Future<dynamic> postDioCategory(String url, dynamic criteria) async {
     criteria = {'profileCode': profileCode, ...criteria};
   }
 
-  Dio dio = new Dio();
+  Dio dio = Dio();
   var response = await dio.post(url, data: criteria);
 
   List<dynamic> list = [
@@ -324,12 +327,12 @@ Future<dynamic> postDioCategory(String url, dynamic criteria) async {
 }
 
 Future<dynamic> postDioMessage(String url, dynamic criteria) async {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
   final profileCode = await storage.read(key: 'profileCode1');
   if (profileCode != '' && profileCode != null) {
     criteria = {'profileCode': profileCode, ...criteria};
   }
-  Dio dio = new Dio();
+  Dio dio = Dio();
   print('-----dio criteria-----' + criteria.toString());
   print('-----dio criteria-----' + url);
   var response = await dio.post(url, data: criteria);
@@ -340,7 +343,7 @@ Future<dynamic> postDioMessage(String url, dynamic criteria) async {
 Future<dynamic> postDioFull(String url, dynamic criteria) async {
   print(url);
   print(criteria);
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
   var platform = Platform.operatingSystem.toString();
   final profileCode = await storage.read(key: 'profileCode1');
 
@@ -348,14 +351,14 @@ Future<dynamic> postDioFull(String url, dynamic criteria) async {
     criteria = {'profileCode': profileCode, ...criteria};
   }
 
-  Dio dio = new Dio();
+  Dio dio = Dio();
   var response = await dio.post(url, data: criteria);
   // print(response.data['objectData'].toString());
   return Future.value(response.data);
 }
 
 logout(BuildContext context) async {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
   var profileCategory = await storage.read(key: 'profileCategory');
   storage.deleteAll();
   if (profileCategory != '' && profileCategory != null) {
@@ -385,7 +388,7 @@ logout(BuildContext context) async {
 }
 
 createStorageApp({dynamic model, required String category}) {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
 
   storage.write(key: 'profileCategory', value: category);
 
@@ -407,11 +410,11 @@ createStorageApp({dynamic model, required String category}) {
 Future<File> convertimageTofile(imgUrl) async {
   var response = await http.get(imgUrl);
   Directory documentDirectory = await getApplicationDocumentsDirectory();
-  File file = new File(join(documentDirectory.path, 'imagetest.png'));
+  File file = File(join(documentDirectory.path, 'imagetest.png'));
   file.writeAsBytesSync(response.bodyBytes);
   return file;
 }
 
 String join(String path, String s) {
-  return '$path/$s';
+  return path + s;
 }

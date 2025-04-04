@@ -2,12 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
-const kTranslucentBlackColor = const Color(0x66000000);
+const kTranslucentBlackColor = Color(0x66000000);
 const _kMaxDragSpeed = 400.0;
 
 class GalleryView extends StatefulWidget {
-  GalleryView({Key? key, required this.imageUrl, required this.imageProvider})
-    : super(key: key);
+  const GalleryView({super.key, required this.imageUrl, required this.imageProvider});
 
   final List imageUrl;
   final List<ImageProvider> imageProvider;
@@ -25,7 +24,7 @@ class _GalleryViewState extends State<GalleryView> {
   dataImage(index) {
     return ImageViewer(
       initialIndex: index,
-      imageProviders: widget.imageProvider ?? [],
+      imageProviders: widget.imageProvider,
       // imageProviders: [
       //   NetworkImage(widget.imageUrl[0]),
       //   NetworkImage(widget.imageUrl[1]),
@@ -39,8 +38,7 @@ class _GalleryViewState extends State<GalleryView> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        if (widget.imageUrl == null) Container(),
-        if (widget.imageUrl.length > 0)
+        if (widget.imageUrl.isNotEmpty)
           Material(
             child: InkWell(
               onTap: () {
@@ -51,21 +49,19 @@ class _GalleryViewState extends State<GalleryView> {
                   },
                 );
               },
-              child: Container(
-                child: ClipRRect(
-                  child: Image.network(
-                    widget.imageUrl[0],
-                    width: MediaQuery.of(context).size.width,
-                    height: 360.0,
-                    fit: BoxFit.cover,
-                  ),
+              child: ClipRRect(
+                child: Image.network(
+                  widget.imageUrl[0],
+                  width: MediaQuery.of(context).size.width,
+                  height: 360.0,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
           ),
         SizedBox(height: 5.0),
         if (widget.imageUrl.length > 1)
-          Container(
+          SizedBox(
             width: double.infinity,
             child: Row(
               children: <Widget>[
@@ -80,14 +76,12 @@ class _GalleryViewState extends State<GalleryView> {
                           },
                         );
                       },
-                      child: Container(
-                        child: ClipRRect(
-                          child: Image.network(
-                            widget.imageUrl[1],
-                            width: MediaQuery.of(context).size.width / 3.035,
-                            height: MediaQuery.of(context).size.width / 3.035,
-                            fit: BoxFit.cover,
-                          ),
+                      child: ClipRRect(
+                        child: Image.network(
+                          widget.imageUrl[1],
+                          width: MediaQuery.of(context).size.width / 3.035,
+                          height: MediaQuery.of(context).size.width / 3.035,
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
@@ -130,16 +124,14 @@ class _GalleryViewState extends State<GalleryView> {
                       // child: Expanded(
                       child: Stack(
                         children: [
-                          Container(
-                            child: ClipRRect(
-                              child: Image.network(
-                                widget.imageUrl[3],
-                                width:
-                                    MediaQuery.of(context).size.width / 3.035,
-                                height:
-                                    MediaQuery.of(context).size.width / 3.035,
-                                fit: BoxFit.cover,
-                              ),
+                          ClipRRect(
+                            child: Image.network(
+                              widget.imageUrl[3],
+                              width:
+                                  MediaQuery.of(context).size.width / 3.035,
+                              height:
+                                  MediaQuery.of(context).size.width / 3.035,
+                              fit: BoxFit.cover,
                             ),
                           ),
                           if (widget.imageUrl.length > 4)
@@ -157,9 +149,7 @@ class _GalleryViewState extends State<GalleryView> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
-                                      '+ ' +
-                                          (widget.imageUrl.length - 4)
-                                              .toString(),
+                                      '+ ${widget.imageUrl.length - 4}',
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontFamily: 'Kanit',
@@ -192,7 +182,7 @@ class _GalleryViewState extends State<GalleryView> {
 }
 
 class ImageViewer extends StatefulWidget {
-  ImageViewer({required this.initialIndex, required this.imageProviders});
+  const ImageViewer({required this.initialIndex, required this.imageProviders});
 
   final int initialIndex;
   final List<ImageProvider> imageProviders;
@@ -205,7 +195,7 @@ class _ImageViewerState extends State<ImageViewer>
     with TickerProviderStateMixin {
   late PageController _pageController;
   late int _currentPageIndex;
-  bool _isLocked = false;
+  final bool _isLocked = false;
 
   double? _start;
   late AnimationController _offsetController;
@@ -219,8 +209,8 @@ class _ImageViewerState extends State<ImageViewer>
 
   @override
   void initState() {
-    _pageController = PageController(initialPage: widget.initialIndex ?? 0);
-    _currentPageIndex = widget.initialIndex ?? 0;
+    _pageController = PageController(initialPage: widget.initialIndex);
+    _currentPageIndex = widget.initialIndex;
 
     _offsetController = AnimationController(
       vsync: this,
@@ -249,9 +239,6 @@ class _ImageViewerState extends State<ImageViewer>
     super.dispose();
   }
 
-  void _onScaleStateChanged(PhotoViewScaleState scaleState) {
-    setState(() => _isLocked = scaleState != PhotoViewScaleState.initial);
-  }
 
   void _onPageChanged(int index) {
     setState(
@@ -404,7 +391,7 @@ class _ImageViewerState extends State<ImageViewer>
 }
 
 class ZoomableImage extends StatefulWidget {
-  ZoomableImage({
+  const ZoomableImage({
     required this.imageProvider,
     // this.onScaleStateChanged,
   });
@@ -472,10 +459,10 @@ int mapToRange(int value, int low, int high) {
 
 class OffsetTransition extends AnimatedWidget {
   const OffsetTransition({
-    Key? key,
+    super.key,
     required Animation<Offset> offset,
     required this.child,
-  }) : super(key: key, listenable: offset);
+  }) : super(listenable: offset);
 
   final Widget child;
 

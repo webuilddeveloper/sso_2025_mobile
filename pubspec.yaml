@@ -54,6 +54,14 @@ dependencies:
   pull_to_refresh_flutter3: ^2.0.2
   share_plus: ^10.1.4
   photo_view: ^0.15.0
+  flutter_app_badge: ^2.0.2
+  pull_to_refresh: ^2.0.0
+  google_maps_flutter: ^2.12.1
+  carousel_slider: ^5.0.0
+  modal_bottom_sheet: ^3.0.0
+  geolocator: ^13.0.4
+  qr_flutter: ^4.1.0
+  table_calendar: ^3.2.0
 
 dev_dependencies:
   flutter_test:

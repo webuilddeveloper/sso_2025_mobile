@@ -181,10 +181,10 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
                 padding: EdgeInsets.all(10.0),
               ),
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => HomePage()),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                );
               },
               child: Text(
                 "เชื่อมต่อเรียบร้อย",
@@ -405,17 +405,15 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
 
   void goBack() async {
     if (widget.goHome) {
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => HomePage()),
-      // );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
     } else {
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => UserInformationPage(),
-      //   ),
-      // );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => UserInformationPage()),
+      );
       Navigator.pop(context, false);
     }
   }
