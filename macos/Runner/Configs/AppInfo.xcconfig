@@ -8,7 +8,7 @@
 PRODUCT_NAME = sso
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = td.webuild.sso
+PRODUCT_BUNDLE_IDENTIFIER = td.webuild.ssowb
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.

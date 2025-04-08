@@ -1,4 +1,4 @@
-package td.webuild.sso
+package td.webuild.ssowb
 
 import io.flutter.embedding.android.FlutterActivity
 

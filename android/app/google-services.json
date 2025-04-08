@@ -1,0 +1,95 @@
+{
+  "project_info": {
+    "project_number": "620907200380",
+    "firebase_url": "https://smart-sso.firebaseio.com",
+    "project_id": "smart-sso",
+    "storage_bucket": "smart-sso.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:620907200380:android:bcdd9aca59d83d39192ef9",
+        "android_client_info": {
+          "package_name": "td.webuild.ssowb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "620907200380-70kqa8mbaqd9nfmp002vcob2ek0kh714.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "td.webuild.ssowb",
+            "certificate_hash": "ab9270c45895a87fc8f8bcfd7db98b013f36b80d"
+          }
+        },
+        {
+          "client_id": "620907200380-8iplsuq2k6pbsenraquiavcn55kji29e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "td.webuild.ssowb",
+            "certificate_hash": "622d77966046f8d1248291a80245520e97670491"
+          }
+        },
+        {
+          "client_id": "620907200380-gk4gbjt002ijm0f9gc9ho9fomc8qu69u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "td.webuild.ssowb",
+            "certificate_hash": "8d42da80b57aa15a9c812c79cf35eb82184ba3b0"
+          }
+        },
+        {
+          "client_id": "620907200380-he2a2v26jp9iap6v8662d36cklh3ou95.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "td.webuild.ssowb",
+            "certificate_hash": "922ee16433eb17105e691c027d98efe707caf9a5"
+          }
+        },
+        {
+          "client_id": "620907200380-m8ivdchi1qnj9at1qqqsk7pojovrk3q2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "td.webuild.ssowb",
+            "certificate_hash": "a2f961b3804c039fddf18ac9dc474febbbbf1062"
+          }
+        },
+        {
+          "client_id": "620907200380-uoceko2a26nq9flvkvuqsn45qlj3ripm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "td.webuild.ssowb",
+            "certificate_hash": "9533a9e695f0ff1a2456d3cc0cb27dcdb0430d5c"
+          }
+        },
+        {
+          "client_id": "620907200380-uaqv0cbn3iq4e3335rj7t931cdnnlip4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAR98wCY0JbsORSwOK8PyGF0IK1GQgJS2Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "620907200380-uaqv0cbn3iq4e3335rj7t931cdnnlip4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "620907200380-ijv8qcolf5ldf4upe0idkbvp0bri8j5e.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "host.exp.exponent"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
