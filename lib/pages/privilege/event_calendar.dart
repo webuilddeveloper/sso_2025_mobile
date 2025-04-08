@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field, library_private_types_in_public_api
+
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
@@ -20,7 +22,7 @@ class EventCalendarPage extends StatefulWidget {
 
 class _EventCalendarPageState extends State<EventCalendarPage>
     with TickerProviderStateMixin {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
   late ValueNotifier<List<dynamic>> _selectedEvents;
   late ValueNotifier<List<dynamic>> _monthEvents;
   late Map<DateTime, List> _events;
@@ -36,7 +38,7 @@ class _EventCalendarPageState extends State<EventCalendarPage>
   late LinkedHashMap<DateTime, List<dynamic>> model;
   var markData = [];
   late Map<DateTime, List<dynamic>> itemEvent;
-  final _random = new Random();
+  final _random = Random();
 
   late AnimationController _animationController;
   bool expanded = false;
@@ -183,15 +185,6 @@ class _EventCalendarPageState extends State<EventCalendarPage>
     });
   }
 
-  _onLoading() async {
-    setState(() {
-      _limit = _limit + 10;
-    });
-
-    await Future.delayed(Duration(milliseconds: 1000));
-
-    _refreshController.loadComplete();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -283,7 +276,7 @@ class _EventCalendarPageState extends State<EventCalendarPage>
                         'assets/images/builds_1.png',
                         fit: BoxFit.fitWidth,
                       ),
-                      duration: new Duration(
+                      duration: Duration(
                           milliseconds: heightAnimate == 130 ? 1 : 400),
                     ),
                   if (_calendarFormat == CalendarFormat.week)

@@ -1,16 +1,10 @@
 import 'dart:async';
-import 'dart:ui';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sso/component/header.dart';
-import 'package:sso/component/sub_header.dart';
 
 // ignore: must_be_immutable
 class AboutUsForm extends StatefulWidget {
-  AboutUsForm({Key? key, required this.model, required this.title})
-    : super(key: key);
+  const AboutUsForm({super.key, required this.model, required this.title});
 
   final Future<dynamic> model;
   final String title;
@@ -41,429 +35,210 @@ class _AboutUsForm extends State<AboutUsForm> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container();
         } else {
-          if (snapshot.hasError)
+          if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          else if (snapshot.hasData) {
+          } else if (snapshot.hasData) {
             var lat = double.parse(
-              snapshot.data['latitude'] != '' ? snapshot.data['latitude'] : 0.0,
+              snapshot.data['latitude'] != ''
+                  ? snapshot.data['latitude']
+                  : '0.0',
             );
             var lng = double.parse(
               snapshot.data['longitude'] != ''
                   ? snapshot.data['longitude']
-                  : 0.0,
+                  : '0.0',
             );
-            return Scaffold(
-              appBar: header(context, goBack),
-              body: NotificationListener<OverscrollIndicatorNotification>(
-                onNotification: (OverscrollIndicatorNotification overScroll) {
-                  overScroll.disallowIndicator();
-                  return false;
-                },
-                child: Container(
-                  color: Colors.white,
-                  child: ListView(
-                    physics: ScrollPhysics(),
-                    shrinkWrap: true,
-                    // controller: _controller,
-                    children: [
-                      // Stack(
-                      //   children: [
-                      //     Container(
-                      //       padding: const EdgeInsets.only(top: 50),
-                      //       // color: Colors.orange,
-                      //       child: Image.network(
-                      //         snapshot.data['imageBgUrl'],
-                      //         height: 350.0,
-                      //         width: double.infinity,
-                      //         fit: BoxFit.cover,
-                      //         loadingBuilder: (
-                      //           BuildContext context,
-                      //           Widget child,
-                      //           ImageChunkEvent? loadingProgress,
-                      //         ) {
-                      //           if (loadingProgress == null) return child;
-                      //           return Center(
-                      //             child: CircularProgressIndicator(
-                      //               value:
-                      //                   loadingProgress.expectedTotalBytes !=
-                      //                           null
-                      //                       ? loadingProgress
-                      //                               .cumulativeBytesLoaded /
-                      //                           loadingProgress
-                      //                               .expectedTotalBytes!
-                      //                       : null,
-                      //             ),
-                      //           );
-                      //         },
-                      //       ),
-                      //     ),
-                      //     SubHeader(th: "เกี่ยวกับเรา", en: "About Us"),
-                      //     Container(
-                      //       alignment: Alignment.center,
-                      //       margin: EdgeInsets.only(
-                      //         top: 350.0,
-                      //         left: 15.0,
-                      //         right: 15.0,
-                      //       ),
-                      //       decoration: BoxDecoration(
-                      //         color: Colors.white,
-                      //         borderRadius: BorderRadius.circular(8),
-                      //         boxShadow: [
-                      //           BoxShadow(
-                      //             color: Colors.grey.withOpacity(0.5),
-                      //             spreadRadius: 0,
-                      //             blurRadius: 7,
-                      //             offset: Offset(
-                      //               0,
-                      //               3,
-                      //             ), // changes position of shadow
-                      //           ),
-                      //         ],
-                      //       ),
-                      //       height: 100.0,
-                      //       child: Row(
-                      //         mainAxisAlignment: MainAxisAlignment.center,
-                      //         crossAxisAlignment: CrossAxisAlignment.center,
-                      //         children: [
-                      //           Container(
-                      //             // color: Colors.orange,
-                      //             padding: EdgeInsets.symmetric(vertical: 17.0),
-                      //             child: Image.network(
-                      //               snapshot.data['imageLogoUrl'],
-                      //             ),
-                      //           ),
-                      //           Expanded(
-                      //             child: Container(
-                      //               padding: EdgeInsets.only(
-                      //                 left: 10.0,
-                      //                 right: 5.0,
-                      //               ),
-                      //               child: Text(
-                      //                 snapshot.data['title'],
-                      //                 style: TextStyle(
-                      //                   fontSize: 18,
-                      //                   fontFamily: 'Kanit',
-                      //                 ),
-                      //               ),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
-                      Stack(
-                        children: [
-                          // 🔹 ภาพพื้นหลัง imageBgUrl
-                          Container(
-                            padding: const EdgeInsets.only(top: 50),
-                            child: () {
-                              final imageBgUrl = snapshot.data?['imageBgUrl'];
-                              if (imageBgUrl != null &&
-                                  imageBgUrl.toString().isNotEmpty) {
-                                print('🟢 ใช้รูปจาก imageBgUrl: $imageBgUrl');
-                                return Image.network(
-                                  imageBgUrl,
-                                  height: 350.0,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  loadingBuilder: (
-                                    BuildContext context,
-                                    Widget child,
-                                    ImageChunkEvent? loadingProgress,
-                                  ) {
-                                    if (loadingProgress == null) return child;
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                        value:
-                                            loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
-                                                ? loadingProgress
-                                                        .cumulativeBytesLoaded /
-                                                    loadingProgress
-                                                        .expectedTotalBytes!
-                                                : null,
-                                      ),
-                                    );
-                                  },
-                                );
-                              } else {
-                                print(
-                                  '🟡 ไม่มี imageBgUrl หรือค่าว่าง ใช้รูป default',
-                                );
-                                return Image.network(
-                                  'https://via.placeholder.com/350',
-                                  height: 350.0,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                );
-                              }
-                            }(),
-                          ),
-
-                          // 🔹 หัวข้อ SubHeader
-                          SubHeader(th: "เกี่ยวกับเรา", en: "About Us"),
-
-                          // 🔹 กล่อง logo + title
-                          Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(
-                              top: 350.0,
-                              left: 15.0,
-                              right: 15.0,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 0,
-                                  blurRadius: 7,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            height: 100.0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                // 🔹 โลโก้ imageLogoUrl
-                                Container(
-                                  padding: EdgeInsets.symmetric(vertical: 17.0),
-                                  child: () {
-                                    final imageLogoUrl =
-                                        snapshot.data?['imageLogoUrl'];
-                                    if (imageLogoUrl != null &&
-                                        imageLogoUrl.toString().isNotEmpty) {
-                                      print(
-                                        '🟢 ใช้รูปจาก imageLogoUrl: $imageLogoUrl',
-                                      );
-                                      return Image.network(imageLogoUrl);
-                                    } else {
-                                      print(
-                                        '🟡 ไม่มี imageLogoUrl หรือค่าว่าง ใช้รูป default',
-                                      );
-                                      return Image.network(
-                                        'https://via.placeholder.com/100',
-                                      );
-                                    }
-                                  }(),
-                                ),
-
-                                // 🔹 ข้อความ title
-                                Expanded(
-                                  child: Container(
-                                    padding: EdgeInsets.only(
-                                      left: 10.0,
-                                      right: 5.0,
-                                    ),
-                                    child: () {
-                                      final title = snapshot.data?['title'];
-                                      if (title != null &&
-                                          title.toString().isNotEmpty) {
-                                        print('🟢 ใช้ title: $title');
-                                        return Text(
-                                          title,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontFamily: 'Kanit',
-                                          ),
-                                        );
-                                      } else {
-                                        print(
-                                          '🟡 ไม่มี title หรือค่าว่าง ใช้ข้อความ default',
-                                        );
-                                        return Text(
-                                          'ไม่มีข้อมูล',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontFamily: 'Kanit',
-                                            color: Colors.red,
-                                          ),
-                                        );
-                                      }
-                                    }(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: 20.0),
-                      rowData(
-                        icon: Icon(
-                          Icons.location_on,
-                          color: Colors.white,
-                          size: 20.0,
-                        ),
-                        title: snapshot.data['address'] ?? '',
-                      ),
-                      rowData(
-                        icon: Icon(
-                          Icons.phone,
-                          color: Colors.white,
-                          size: 20.0,
-                        ),
-                        title: snapshot.data['telephone'] ?? '',
-                      ),
-                      rowData(
-                        icon: Icon(
-                          Icons.email,
-                          color: Colors.white,
-                          size: 20.0,
-                        ),
-                        title: snapshot.data['email'] ?? '',
-                      ),
-                      rowData(
-                        icon: Icon(
-                          Icons.language,
-                          color: Colors.white,
-                          size: 20.0,
-                        ),
-                        title: snapshot.data['site'] ?? '',
-                      ),
-                      SizedBox(height: 10.0),
-                      // googleMap(lat, lng),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        width: double.infinity,
-                        child: googleMap(lat, lng),
-                      ),
-                    ],
+            return Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/background/bg_sso.png"),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
+                Scaffold(
+                  backgroundColor: Colors.transparent,
+                  appBar: AppBar(
+                    backgroundColor: Colors.transparent,
+                    leading: IconButton(
+                      icon: Icon(Icons.arrow_back_ios),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    title: Text(widget.title),
+                  ),
+                  // ส่วนที่สำคัญ - ใส่ SingleChildScrollView เพื่อให้สามารถเลื่อนได้
+                  body: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.1,
+                          ),
+                          Container(
+                            height: 105,
+                            width: 105,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage("assets/images/logo-2.png"),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            'SSO Plus',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'Kanit',
+                              color: Color(0xFF005C9E),
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          Container(
+                            width: MediaQuery.of(context).size.width - 30,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: rowData(
+                              icon: Icon(
+                                Icons.location_on_outlined,
+                                color: Colors.black,
+                                size: 20.0,
+                              ),
+                              title:
+                                  snapshot.data != null
+                                      ? snapshot.data['address'] ?? ''
+                                      : '',
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          Container(
+                            width: MediaQuery.of(context).size.width - 30,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: rowData(
+                              title:
+                                  'สำนักงานประกันสังคมได้รับการจัดตั้งขึ้นภายใต้กระทรวงมหาดไทย เมื่อวันที่ 3 กันยายน 2533 งานที่เกี่ยวข้องกับการจัดหาประกันสังคมและกองทุนเงินทดแทนได้ถูกโอนจากกรมประชาสงเคราะห์และกรมแรงงานตามลำดับไปยังสำนักงานประกันสังคม ในปีเดียวกันร่างพระราชบัญญัติประกันสังคมได้รับความเห็นชอบจากรัฐสภาและมีผลบังคับใช้เมื่อวันที่ 2 กันยายน 2533 นับตั้งแต่เริ่มก่อตั้งกระทรวงแรงงานในปี 2536 สำนักงานประกันสังคมอยู่ภายใต้การกำกับดูแลโดยรวม สำนักงานประกันสังคมมีหน้าที่รับผิดชอบโครงการประกันสังคมที่ครอบคลุมซึ่งรวมถึง การประสบอันตราย หรือเจ็บป่วยทุพพลภาพ และตาย ทั้งนี้เนื่องและไม่เนื่องจากการทำงาน รวมไปถึงการคลอดบุตรสงเคราะห์บุตร ชราภาพ และการว่างงาน',
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          Container(
+                            width: MediaQuery.of(context).size.width - 30,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'ช่องทางการติดต่อ',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Kanit',
+                                          fontSize: 15,
+                                          decoration: TextDecoration.none,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFE8F0F6),
+                                          borderRadius: BorderRadius.circular(
+                                            15,
+                                          ),
+                                        ),
+                                        alignment: Alignment.centerRight,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            'ติดต่อสาขา',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'Kanit',
+                                              fontSize: 12,
+                                              decoration: TextDecoration.none,
+                                              color: Color(0xFF005C9E),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10),
+
+                                  rowData2(
+                                    iconMain:
+                                        'assets/logo/icons/icon_phone_b.png',
+                                    title: 'เบอร์ติดต่อ',
+                                    subTitle:
+                                        snapshot.data != null
+                                            ? snapshot.data['telephone'] ?? ''
+                                            : '',
+                                    iconimg: 'assets/images/chat.png',
+                                    iconSub: Icons.phone_outlined,
+                                    onTap1: () {},
+                                    onTap2: () {},
+                                  ),
+                                  SizedBox(height: 10),
+                                  rowData2(
+                                    iconMain:
+                                        'assets/logo/icons/icon_facebook.png',
+                                    title: 'Website',
+                                    subTitle: 'https://www.sso.go.th',
+                                    iconimg: 'assets/images/chat.png',
+                                    onTap1: () {},
+                                    onTap2: () {},
+                                  ),
+                                  SizedBox(height: 10),
+                                  rowData2(
+                                    iconMain: 'assets/logo/icons/icon_mail.png',
+                                    title: 'Email',
+                                    subTitle: 'info@sso1506.com',
+                                    iconimg: 'assets/images/chat.png',
+                                    onTap1: () {},
+                                    onTap2: () {},
+                                  ),
+                                  SizedBox(height: 10),
+                                  rowData2(
+                                    iconMain: 'assets/logo/icons/icon_line.png',
+                                    title: 'Line',
+                                    subTitle: '@ssothai',
+                                    iconimg: 'assets/images/chat.png',
+                                    onTap1: () {},
+                                    onTap2: () {},
+                                  ),
+
+                                  SizedBox(height: 20),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 30),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             );
           } else {
-            return Scaffold(
-              appBar: header(context, goBack),
-              body: NotificationListener<OverscrollIndicatorNotification>(
-                onNotification: (OverscrollIndicatorNotification overScroll) {
-                  overScroll.disallowIndicator();
-                  return false;
-                },
-                child: ListView(
-                  physics: ScrollPhysics(),
-                  shrinkWrap: true,
-                  // controller: _controller,
-                  children: [
-                    Stack(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(top: 50),
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 0,
-                                blurRadius: 7,
-                                offset: Offset(
-                                  0,
-                                  3,
-                                ), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          // color: Colors.orange,
-                          child: Image.network(
-                            '',
-                            height: 350,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        SubHeader(th: "เกี่ยวกับเรา", en: "About Us"),
-                        Container(
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.only(
-                            top: 350.0,
-                            left: 15.0,
-                            right: 15.0,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 0,
-                                blurRadius: 7,
-                                offset: Offset(
-                                  0,
-                                  3,
-                                ), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          height: 100.0,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                // color: Colors.orange,
-                                padding: EdgeInsets.symmetric(vertical: 17.0),
-                                child: Image.asset("assets/logo/sso_only.png"),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                    left: 10.0,
-                                    right: 5.0,
-                                  ),
-                                  child: Text(
-                                    'สำนักงานประกันสังคม',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontFamily: 'Kanit',
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20.0),
-                    rowData(
-                      icon: Icon(
-                        Icons.location_on,
-                        color: Colors.white,
-                        size: 20.0,
-                      ),
-                      title: '-',
-                    ),
-                    rowData(
-                      icon: Icon(Icons.phone, color: Colors.white, size: 20.0),
-                      title: '-',
-                    ),
-                    rowData(
-                      icon: Icon(Icons.email, color: Colors.white, size: 20.0),
-                      title: '-',
-                    ),
-                    rowData(
-                      icon: Icon(
-                        Icons.language,
-                        color: Colors.white,
-                        size: 20.0,
-                      ),
-                      title: '-',
-                    ),
-                    SizedBox(height: 25.0),
-                    Container(
-                      height: 300,
-                      width: double.infinity,
-                      child: googleMap(13.8462512, 100.5234803),
-                    ),
-                  ],
-                ),
-              ),
-            );
+            return Container();
           }
         }
       },
@@ -480,45 +255,154 @@ class _AboutUsForm extends State<AboutUsForm> {
       onMapCreated: (GoogleMapController controller) {
         _mapController.complete(controller);
       },
-      markers:
-          <Marker>[
-            Marker(
-              markerId: MarkerId('1'),
-              position: LatLng(lat, lng),
-              icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueRed,
-              ),
-            ),
-          ].toSet(),
+      markers: <Marker>{
+        Marker(
+          markerId: MarkerId('1'),
+          position: LatLng(lat, lng),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        ),
+      },
     );
   }
 
-  Widget rowData({required Icon icon, String title = ''}) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 10.0),
-      padding: EdgeInsets.symmetric(horizontal: 15.0),
-      child: Row(
-        children: [
-          Container(
-            width: 30.0,
-            height: 30.0,
-            decoration: BoxDecoration(
-              color: Color(0xFF005C9E),
-              borderRadius: BorderRadius.circular(15),
+  Widget rowData({Icon? icon, String title = ''}) {
+    return GestureDetector(
+      child: Container(
+        margin: EdgeInsets.only(bottom: 10.0),
+        padding: EdgeInsets.symmetric(horizontal: 15.0),
+        child: Row(
+          children: [
+            Container(child: icon),
+            Expanded(
+              child: Center(
+                child: Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontFamily: 'Kanit',
+                      fontSize: 12,
+                      decoration: TextDecoration.none,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
             ),
-            child: Container(child: icon),
-          ),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text(
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget rowData2({
+    required String iconMain,
+    required String title,
+    required String subTitle,
+    required String iconimg,
+    IconData? iconSub,
+    Function? onTap1,
+    Function? onTap2,
+  }) {
+    return Row(
+      children: [
+        Container(
+          height: 45,
+          width: 45,
+
+          // decoration: BoxDecoration(
+          //   color: Color(0xFFE8F0F6),
+          //   borderRadius: BorderRadius.circular(15),
+          // ),
+          child: Image.asset(iconMain, fit: BoxFit.contain),
+        ),
+
+        SizedBox(width: 16),
+
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
                 title,
-                style: TextStyle(fontFamily: 'Kanit', fontSize: 10),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Kanit',
+                  fontSize: 13,
+                  decoration: TextDecoration.none,
+                  color: Color(0xFF707070),
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                subTitle,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Kanit',
+                  fontSize: 15,
+                  decoration: TextDecoration.none,
+                  color: Colors.black,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+
+        GestureDetector(
+          onTap: onTap1 as void Function()? ?? () {},
+          child: Container(
+            height: 45,
+            width: 45,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 0,
+                  blurRadius: 7,
+                  offset: Offset(0, 3),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Center(
+              child: SizedBox(
+                height: 30,
+                width: 30,
+                child: Image.asset(iconimg, fit: BoxFit.contain),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+
+        SizedBox(width: 16),
+
+        if (iconSub != null)
+          GestureDetector(
+            onTap: onTap2 as void Function()? ?? () {},
+            child: Container(
+              height: 45,
+              width: 45,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 0,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Center(
+                child: Icon(iconSub, color: Colors.black, size: 30.0),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

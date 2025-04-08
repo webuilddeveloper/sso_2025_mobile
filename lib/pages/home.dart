@@ -1,3 +1,5 @@
+// ignore_for_file: curly_braces_in_flow_control_structures, use_build_context_synchronously, prefer_typing_uninitialized_variables
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -59,9 +61,8 @@ class _HomePageState extends State<HomePage> {
 
   String? profileCode = "";
   String? userCode = '';
-  String? _imageUrl = '';
 
-  final seen = Set<String>();
+  final seen = <String>{};
   List unique = [];
   List resultImageLv0 = [];
   List imageLv0 = [];
@@ -70,6 +71,7 @@ class _HomePageState extends State<HomePage> {
   bool hiddenMainPopUp = false;
   bool showSlideUp = false;
 
+  // ignore: non_constant_identifier_names
   int add_badger = 0;
 
   @override
@@ -167,7 +169,7 @@ class _HomePageState extends State<HomePage> {
       enablePullDown: true,
       enablePullUp: false,
       header: WaterDropHeader(
-        complete: Container(child: Text('')),
+        complete: Text(''),
         completeDuration: Duration(milliseconds: 0),
       ),
       controller: _refreshController,
@@ -456,7 +458,7 @@ class _HomePageState extends State<HomePage> {
                             'title': 'สมัครเป็นผู้ประกันตน ม.40',
                             'description':
                                 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor',
-                            'imageUrl': 'assets/images/apply_as_an_insurer.png',
+                            'imageUrl': 'assets/images/insurer.png',
                           },
                         ]),
                         'บริการออนไลน์',
@@ -528,7 +530,7 @@ class _HomePageState extends State<HomePage> {
                       'title': 'สมัครเป็นผู้ประกันตน ม.40',
                       'description':
                           'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor',
-                      'imageUrl': 'assets/images/apply_as_an_insurer.png',
+                      'imageUrl': 'assets/images/insurer.png',
                     },
                   ]),
                   'บริการออนไลน์',
@@ -957,9 +959,7 @@ class _HomePageState extends State<HomePage> {
 
     var imageUrlSocial = await storage.read(key: 'profileImageUrl');
     if (imageUrlSocial != '' && imageUrlSocial != null) {
-      setState(() {
-        _imageUrl = imageUrlSocial;
-      });
+      setState(() {});
     }
     // print('-------------start response------------');
     var value = await storage.read(key: 'dataUserLoginSSO');
@@ -1021,7 +1021,7 @@ class _HomePageState extends State<HomePage> {
     // _futureKnowledge = post('${knowledgeApi}read', {'skip': 0, 'limit': 10});
     // _futurePoll = post('${pollApi}read', {'skip': 0, 'limit': 10});
     _futureAboutUs = postDio(aboutUsReadApi, {});
-    _futureRotation = postDio(rotationApi + 'read', {'skip': 0, 'limit': 10});
+    _futureRotation = postDio('${rotationApi}read', {'skip': 0, 'limit': 10});
     _futureMainPopUp = postDio(mainPopupReadApi, {'skip': 0, 'limit': 10});
 
     _addBadger();
@@ -1057,7 +1057,7 @@ class _HomePageState extends State<HomePage> {
         );
 
         if (index == -1) {
-          this.setState(() {
+          setState(() {
             hiddenMainPopUp = false;
           });
           return showDialog(
@@ -1079,12 +1079,12 @@ class _HomePageState extends State<HomePage> {
             },
           );
         } else {
-          this.setState(() {
+          setState(() {
             hiddenMainPopUp = true;
           });
         }
       } else {
-        this.setState(() {
+        setState(() {
           hiddenMainPopUp = false;
         });
         return showDialog(
@@ -1110,7 +1110,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<Null> _callReadPolicy() async {
-    var policy = await postDio(server + "m/policy/read", {
+    var policy = await postDio("${server}m/policy/read", {
       "category": "application",
     });
     if (policy.length > 0) {

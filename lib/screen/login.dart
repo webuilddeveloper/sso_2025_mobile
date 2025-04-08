@@ -454,8 +454,11 @@ class _LoginPageState extends State<LoginPage> {
             height: 50.0,
             width: 50.0,
             child: IconButton(
-              onPressed: () async {
-                _pressApple();
+              // onPressed: () async {
+              //   _pressApple();
+              // },
+              onPressed: () {
+                _ComingSoon(context);
               },
               icon: Image.asset("assets/logo/socials/apple.png"),
               padding: EdgeInsets.all(5.0),
@@ -466,8 +469,11 @@ class _LoginPageState extends State<LoginPage> {
           height: 50.0,
           width: 50.0,
           child: IconButton(
-            onPressed: () async {
-              _pressFacebook();
+            // onPressed: () async {
+            //   _pressFacebook();
+            // },
+            onPressed: () {
+              _ComingSoon(context);
             },
             icon: Image.asset("assets/logo/socials/Group379.png"),
             padding: EdgeInsets.all(5.0),
@@ -478,8 +484,11 @@ class _LoginPageState extends State<LoginPage> {
           height: 50.0,
           width: 50.0,
           child: IconButton(
-            onPressed: () async {
-              _pressGoogle();
+            // onPressed: () async {
+            //   _pressGoogle();
+            // },
+            onPressed: () {
+              _ComingSoon(context);
             },
             icon: Image.asset("assets/logo/socials/Group380.png"),
             padding: EdgeInsets.all(5.0),
@@ -808,6 +817,100 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => HomePage()),
+    );
+  }
+
+  void _ComingSoon(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.0),
+          ),
+          elevation: 10,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              color: Colors.white,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ตรงนี้คุณจะใส่รูปภาพเอง
+                Container(
+                  height: 120,
+                  width: 120,
+                  // decoration: BoxDecoration(
+                  //   shape: BoxShape.circle,
+                  //   color: Color(0xFFE4A025).withOpacity(0.15),
+                  //   border: Border.all(
+                  //     color: Color(0xFFE4A025).withOpacity(0.3),
+                  //     width: 2,
+                  //   ),
+                  // ),
+                  child: Image.asset(
+                    'assets/images/logo_1.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                SizedBox(height: 24),
+                Text(
+                  'เตรียมพบกันเร็วๆ นี้',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2D2D2D),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                SizedBox(height: 14),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    'บริการนี้จะเปิดให้ใช้งานเร็วๆ นี้\nโปรดติดตามข่าวสารจากเรา',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF6B6B6B),
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFE4A025),
+                      foregroundColor: Colors.white,
+                      elevation: 3,
+                      shadowColor: Color(0xFFE4A025).withOpacity(0.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: Text(
+                      'ตกลง',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
