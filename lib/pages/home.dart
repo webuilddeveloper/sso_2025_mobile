@@ -8,6 +8,7 @@ import 'package:flutter_app_badge/flutter_app_badge.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:sso/component/ai_chat_page.dart';
 import 'package:sso/component/carousel_banner.dart';
 import 'package:sso/component/loading_image_network.dart';
 import 'package:sso/component/sso/profile.dart';
@@ -89,19 +90,53 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: InkWell(
-        child: Image.asset('assets/images/emergency_number.png', height: 50),
-        onTap:
-            () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder:
-                    (context) => EmergencyNumber(
-                      title: 'เบอร์ฉุกเฉิน',
-                      code: '20220926145544-283-886',
-                    ),
-              ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF005C9E).withValues(alpha: 0.35),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
+            child: FloatingActionButton(
+              heroTag: 'ssoAiChatFAB',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const AiChatPage()),
+                );
+              },
+              backgroundColor: const Color(0xFF005C9E),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: const CircleBorder(),
+              tooltip: 'ผู้ช่วยประกันสังคม (SSO AI)',
+              child: const Icon(Icons.smart_toy_rounded, size: 28),
+            ),
+          ),
+          const SizedBox(height: 12),
+          InkWell(
+            child: Image.asset('assets/images/emergency_number.png', height: 50),
+            onTap:
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => EmergencyNumber(
+                          title: 'เบอร์ฉุกเฉิน',
+                          code: '20220926145544-283-886',
+                        ),
+                  ),
+                ),
+          ),
+        ],
       ),
       appBar: AppBar(
         centerTitle: false,
