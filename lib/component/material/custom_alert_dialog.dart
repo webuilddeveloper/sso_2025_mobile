@@ -244,7 +244,7 @@ class CustomAlertDialog extends StatelessWidget {
               ),
           child: DefaultTextStyle(
             style: Theme.of(context).textTheme.titleLarge!,
-            child: Semantics(child: title, namesRoute: true),
+            child: Semantics(namesRoute: true, child: title),
           ),
         ),
       );
@@ -290,12 +290,13 @@ class CustomAlertDialog extends StatelessWidget {
       ),
     );
 
-    if (label != null)
+    if (label != null) {
       dialogChild = Semantics(
         namesRoute: true,
         label: label,
         child: dialogChild,
       );
+    }
 
     return Dialog(child: dialogChild);
   }
@@ -546,12 +547,13 @@ class SimpleDialog extends StatelessWidget {
       ),
     );
 
-    if (label != null)
+    if (label != null) {
       dialogChild = Semantics(
         namesRoute: true,
         label: label,
         child: dialogChild,
       );
+    }
     return Dialog(child: dialogChild);
   }
 }
@@ -562,9 +564,8 @@ class _DialogRoute<T> extends PopupRoute<T> {
     bool barrierDismissible = true,
     this.barrierLabel,
     required this.child,
-    RouteSettings? settings,
-  })  : _barrierDismissible = barrierDismissible,
-        super(settings: settings);
+    super.settings,
+  })  : _barrierDismissible = barrierDismissible;
 
   final Widget child;
   final ThemeData theme;
@@ -592,9 +593,9 @@ class _DialogRoute<T> extends PopupRoute<T> {
       child: Builder(
         builder: (BuildContext context) {
           final Widget annotatedChild = Semantics(
-            child: child,
             scopesRoute: true,
             explicitChildNodes: true,
+            child: child,
           );
           // ignore: unnecessary_null_comparison
           return theme != null

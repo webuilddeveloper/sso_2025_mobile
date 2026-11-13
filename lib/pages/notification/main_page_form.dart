@@ -19,8 +19,8 @@ class MainPageForm extends StatefulWidget {
 }
 
 class _MainPageForm extends State<MainPageForm> {
-  late Comment comment;
-  late int _limit;
+  Comment? comment;
+  int _limit = 10;
 
   final RefreshController _refreshController = RefreshController(
     initialRefresh: false,

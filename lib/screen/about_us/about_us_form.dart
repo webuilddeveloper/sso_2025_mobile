@@ -15,7 +15,7 @@ class AboutUsForm extends StatefulWidget {
 
 class _AboutUsForm extends State<AboutUsForm> {
   // final Set<Marker> _markers = {};
-  Completer<GoogleMapController> _mapController = Completer();
+  final Completer<GoogleMapController> _mapController = Completer();
 
   @override
   void initState() {
@@ -307,7 +307,7 @@ class _AboutUsForm extends State<AboutUsForm> {
   }) {
     return Row(
       children: [
-        Container(
+        SizedBox(
           height: 45,
           width: 45,
 

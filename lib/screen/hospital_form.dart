@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sso/component/custom_dialog.dart';
-import 'package:sso/pages/blank_page/toast_fail.dart';
 import 'package:sso/screen/hospital_success.dart';
 import 'package:sso/shared/api_provider.dart';
 

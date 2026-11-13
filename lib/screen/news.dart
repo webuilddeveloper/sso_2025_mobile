@@ -8,14 +8,14 @@ import 'package:sso/shared/api_provider.dart';
 import 'package:sso/shared/extension.dart';
 
 class NewsPage extends StatefulWidget {
-  const NewsPage({Key? key}) : super(key: key);
+  const NewsPage({super.key});
 
   @override
   State<NewsPage> createState() => _NewsPageState();
 }
 
 class _NewsPageState extends State<NewsPage> {
-  RefreshController _refreshController =
+  final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   late Future<dynamic> _future;
   late Future<dynamic> _futureHighLight;
@@ -166,7 +166,7 @@ class _NewsPageState extends State<NewsPage> {
   }
 
   _buildList(model) {
-    if (model == null || !(model is List) || model.isEmpty) {
+    if (model == null || model is! List || model.isEmpty) {
       return Expanded(
         child: Center(
           child: Text(
@@ -263,7 +263,7 @@ class _NewsPageState extends State<NewsPage> {
           ),
         ),
       ),
-      child: Container(
+      child: SizedBox(
         height: 45,
         child: Row(
           children: [
@@ -303,7 +303,7 @@ class _NewsPageState extends State<NewsPage> {
           ),
         ),
       ),
-      child: Container(
+      child: SizedBox(
         height: 155,
         width: 165,
         child: Column(

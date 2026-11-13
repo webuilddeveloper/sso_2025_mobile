@@ -745,12 +745,6 @@ class _LoginPageState extends State<LoginPage> {
     try {
       var obj = await loginLine();
 
-      // ตรวจสอบว่าผู้ใช้กดยกเลิกหรือไม่
-      if (obj == null) {
-        print("ผู้ใช้กดยกเลิกการเข้าสู่ระบบ");
-        return;
-      }
-
       final idToken = obj.accessToken.idToken;
       final userEmail = (idToken != null) ? idToken['email'] ?? '' : '';
 

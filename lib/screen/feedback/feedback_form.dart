@@ -12,12 +12,12 @@ import 'package:sso/pages/blank_page/blank_loading.dart';
 import 'package:sso/shared/api_provider.dart';
 
 class FeedbackForm extends StatefulWidget {
-  FeedbackForm({
-    Key? key,
+  const FeedbackForm({
+    super.key,
     required this.code,
     required this.title,
     this.callback,
-  }) : super(key: key);
+  });
 
   final String code;
   final String title;
@@ -40,7 +40,7 @@ class _FeedbackForm extends State<FeedbackForm> {
   final txtDescription = TextEditingController();
   String selectCategoryValue = '';
   String selectProvinceValue = '';
-  List<dynamic> _itemImage = [];
+  final List<dynamic> _itemImage = [];
   String imageUrl = '';
   ScrollController scrollController = ScrollController();
 
@@ -89,284 +89,285 @@ class _FeedbackForm extends State<FeedbackForm> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Column(
-                    children: [
-                      DropdownButtonFormField<dynamic>(
-                        value: selectCategoryValue,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        elevation: 16,
-                        style: const TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xFF0B5C9E),
-                              width: 1.0,
+                      children: [
+                        DropdownButtonFormField<dynamic>(
+                          value: selectCategoryValue,
+                          icon: const Icon(Icons.arrow_drop_down),
+                          elevation: 16,
+                          style: const TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color(0xFF0B5C9E),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(7),
                             ),
-                            borderRadius: BorderRadius.circular(7),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xFFE4E4E4),
-                              width: 1.0,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color(0xFFE4E4E4),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(7),
                             ),
-                            borderRadius: BorderRadius.circular(7),
+                            hintText: 'กรุณาเลือกสถานที่',
+                            contentPadding: const EdgeInsets.all(10.0),
                           ),
-                          hintText: 'กรุณาเลือกสถานที่',
-                          contentPadding: const EdgeInsets.all(10.0),
-                        ),
-                        validator:
-                            (value) =>
-                                value == '' || value == null
-                                    ? 'กรุณาเลือกหัวข้อ'
-                                    : null,
-                        onChanged: (d) {
-                          // This is called when the user selects an item.
-                          setState(() {
-                            selectCategoryValue = d;
-                          });
-                          print('00000000 $selectCategoryValue');
-                        },
-                        items:
-                            reporterCategoryList?.map((item) {
-                              // print(item);
-                              return DropdownMenuItem(
-                                child: Text(
-                                  item['title'],
-                                  style: TextStyle(
-                                    fontSize: 15.00,
-                                    fontFamily: 'Kanit',
-                                    color: Color(0xFF000070),
+                          validator:
+                              (value) =>
+                                  value == '' || value == null
+                                      ? 'กรุณาเลือกหัวข้อ'
+                                      : null,
+                          onChanged: (d) {
+                            // This is called when the user selects an item.
+                            setState(() {
+                              selectCategoryValue = d;
+                            });
+                            print('00000000 $selectCategoryValue');
+                          },
+                          items:
+                              reporterCategoryList?.map((item) {
+                                // print(item);
+                                return DropdownMenuItem(
+                                  value: item['value'],
+                                  child: Text(
+                                    item['title'],
+                                    style: TextStyle(
+                                      fontSize: 15.00,
+                                      fontFamily: 'Kanit',
+                                      color: Color(0xFF000070),
+                                    ),
                                   ),
-                                ),
-                                value: item['value'],
-                              );
-                            }).toList(),
-                      ),
+                                );
+                              }).toList(),
+                        ),
 
-                      SizedBox(height: 20),
-                      Container(
-                        child: Column(
-                          children: [
-                            TextField(
-                              // controller: txtDescription,
-                              keyboardType: TextInputType.multiline,
-                              maxLines: 4,
-                              // maxLength: 100,
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Kanit',
-                                color: Color(0xFF005C9E),
+                        SizedBox(height: 20),
+                        Container(
+                          child: Column(
+                            children: [
+                              TextField(
+                                // controller: txtDescription,
+                                keyboardType: TextInputType.multiline,
+                                maxLines: 4,
+                                // maxLength: 100,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontFamily: 'Kanit',
+                                  color: Color(0xFF005C9E),
+                                ),
+                                decoration: InputDecoration(
+                                  fillColor: Color(0xFFE8F0F6),
+                                  filled: true,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color(0xFF0B5C9E),
+                                      width: 1.0,
+                                    ),
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(5.0),
+                                      topRight: Radius.circular(5.0),
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color(0xFFE8F0F6),
+                                      width: 1.0,
+                                    ),
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(5.0),
+                                      topRight: Radius.circular(5.0),
+                                    ),
+                                    gapPadding: 1,
+                                  ),
+                                  hintText: 'กรุณาใส่รายละเอียด หรือ แนบรูปภาพ',
+                                  contentPadding: const EdgeInsets.all(10.0),
+                                ),
+                                controller: txtDescription,
                               ),
-                              decoration: InputDecoration(
-                                fillColor: Color(0xFFE8F0F6),
-                                filled: true,
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xFF0B5C9E),
-                                    width: 1.0,
+                              if (_itemImage.isNotEmpty)
+                                Container(
+                                  color: Color(0xFFE8F0F6),
+                                  padding: EdgeInsets.only(
+                                    top: 10.0,
+                                    bottom: 10.0,
                                   ),
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(5.0),
-                                    topRight: Radius.circular(5.0),
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xFFE8F0F6),
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(5.0),
-                                    topRight: Radius.circular(5.0),
-                                  ),
-                                  gapPadding: 1,
-                                ),
-                                hintText: 'กรุณาใส่รายละเอียด หรือ แนบรูปภาพ',
-                                contentPadding: const EdgeInsets.all(10.0),
-                              ),
-                              controller: txtDescription,
-                            ),
-                            if (_itemImage.length > 0)
-                              Container(
-                                color: Color(0xFFE8F0F6),
-                                padding: EdgeInsets.only(
-                                  top: 10.0,
-                                  bottom: 10.0,
-                                ),
-                                child: GridView.builder(
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 3,
-                                        childAspectRatio: 1 / 1,
-                                      ),
-                                  physics: ClampingScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: _itemImage.length,
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      margin: EdgeInsets.only(top: 5.0),
-                                      width: 400,
-                                      child: MaterialButton(
-                                        onPressed: () {
-                                          dialogDeleteImage(
-                                            _itemImage[index]['id'].toString(),
-                                          );
-                                        },
-                                        child: loadingImageNetwork(
-                                          _itemImage[index]['imageUrl'],
-                                          width: 1000,
-                                          fit: BoxFit.cover,
+                                  child: GridView.builder(
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3,
+                                          childAspectRatio: 1 / 1,
                                         ),
-                                        // Image.network(
-                                        //   _itemImage[index]['imageUrl'],
-                                        //   width: 1000,
-                                        //   fit: BoxFit.cover,
-                                        // ),
-                                        // ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            Container(
-                              padding: EdgeInsets.only(left: 10.0),
-                              height: 34,
-                              decoration: BoxDecoration(
-                                color: Color(0xFF3880B3),
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(5.0),
-                                  bottomRight: Radius.circular(5.0),
-                                ),
-                              ),
-                              child: MaterialButton(
-                                onPressed: () {
-                                  _showPickerImage(context);
-                                },
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      height: 18,
-                                      width: 18,
-                                      margin: EdgeInsets.only(right: 8.0),
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: ExactAssetImage(
-                                            'assets/logo/icons/picture.png',
+                                    physics: ClampingScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: _itemImage.length,
+                                    itemBuilder: (context, index) {
+                                      return Container(
+                                        margin: EdgeInsets.only(top: 5.0),
+                                        width: 400,
+                                        child: MaterialButton(
+                                          onPressed: () {
+                                            dialogDeleteImage(
+                                              _itemImage[index]['id']
+                                                  .toString(),
+                                            );
+                                          },
+                                          child: loadingImageNetwork(
+                                            _itemImage[index]['imageUrl'],
+                                            width: 1000,
+                                            fit: BoxFit.cover,
                                           ),
-                                          fit: BoxFit.contain,
+                                          // Image.network(
+                                          //   _itemImage[index]['imageUrl'],
+                                          //   width: 1000,
+                                          //   fit: BoxFit.cover,
+                                          // ),
+                                          // ),
                                         ),
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        'รูปภาพ',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Kanit',
-                                          fontSize: 13,
-                                          letterSpacing: 0.23,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      // FutureBuilder<dynamic>(
-                      //     future:
-                      //         _readCategory(snapshot.data[index]['code']),
-                      //     builder: (context, _) {
-                      //       if (_.hasData) {
-                      //         return ClipRRect(
-                      //             borderRadius: BorderRadius.circular(10.0),
-                      //             child: loadingImageNetwork(
-                      //               _.data,
-                      //               height: 80,
-                      //               width: 80,
-                      //               fit: BoxFit.fill,
-                      //             ));
-                      //       } else {
-                      //         return Container();
-                      //       }
-                      //     }),
-                      DropdownButtonFormField<dynamic>(
-                        value: selectProvinceValue,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        elevation: 16,
-                        style: const TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xFF0B5C9E),
-                              width: 1.0,
-                            ),
-                            borderRadius: BorderRadius.circular(7),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xFFE4E4E4),
-                              width: 1.0,
-                            ),
-                            borderRadius: BorderRadius.circular(7),
-                          ),
-                          hintText: 'กรุณาเลือกสถานที่',
-                          contentPadding: const EdgeInsets.all(10.0),
-                        ),
-                        onChanged: (d) {
-                          setState(() {
-                            selectProvinceValue = d;
-                          });
-                        },
-                        items:
-                            provinceList!.map((item) {
-                              // print(item);
-                              return DropdownMenuItem(
-                                child: Text(
-                                  item['title'],
-                                  style: TextStyle(
-                                    fontSize: 15.00,
-                                    fontFamily: 'Kanit',
-                                    color: Color(0xFF000070),
+                                      );
+                                    },
                                   ),
                                 ),
-                                value: item['code'],
-                              );
-                            }).toList(),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.only(bottom: 29.0),
-                    child: MaterialButton(
-                      height: 35,
-                      minWidth: 168,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                      onPressed: () {
-                        // launchInWebViewWithJavaScript(model['fileUrl']);
-                        submitReporter();
-                      },
-                      child: Text(
-                        "ส่งข้อเสนอแนะ",
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Color.fromARGB(255, 255, 255, 255),
+                              Container(
+                                padding: EdgeInsets.only(left: 10.0),
+                                height: 34,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF3880B3),
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(5.0),
+                                    bottomRight: Radius.circular(5.0),
+                                  ),
+                                ),
+                                child: MaterialButton(
+                                  onPressed: () {
+                                    _showPickerImage(context);
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        height: 18,
+                                        width: 18,
+                                        margin: EdgeInsets.only(right: 8.0),
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: ExactAssetImage(
+                                              'assets/logo/icons/picture.png',
+                                            ),
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          'รูปภาพ',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: 'Kanit',
+                                            fontSize: 13,
+                                            letterSpacing: 0.23,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        // FutureBuilder<dynamic>(
+                        //     future:
+                        //         _readCategory(snapshot.data[index]['code']),
+                        //     builder: (context, _) {
+                        //       if (_.hasData) {
+                        //         return ClipRRect(
+                        //             borderRadius: BorderRadius.circular(10.0),
+                        //             child: loadingImageNetwork(
+                        //               _.data,
+                        //               height: 80,
+                        //               width: 80,
+                        //               fit: BoxFit.fill,
+                        //             ));
+                        //       } else {
+                        //         return Container();
+                        //       }
+                        //     }),
+                        DropdownButtonFormField<dynamic>(
+                          value: selectProvinceValue,
+                          icon: const Icon(Icons.arrow_drop_down),
+                          elevation: 16,
+                          style: const TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color(0xFF0B5C9E),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color(0xFFE4E4E4),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            hintText: 'กรุณาเลือกสถานที่',
+                            contentPadding: const EdgeInsets.all(10.0),
+                          ),
+                          onChanged: (d) {
+                            setState(() {
+                              selectProvinceValue = d;
+                            });
+                          },
+                          items:
+                              provinceList!.map((item) {
+                                // print(item);
+                                return DropdownMenuItem(
+                                  value: item['code'],
+                                  child: Text(
+                                    item['title'],
+                                    style: TextStyle(
+                                      fontSize: 15.00,
+                                      fontFamily: 'Kanit',
+                                      color: Color(0xFF000070),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.only(bottom: 29.0),
+                      child: MaterialButton(
+                        height: 35,
+                        minWidth: 168,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                        onPressed: () {
+                          // launchInWebViewWithJavaScript(model['fileUrl']);
+                          submitReporter();
+                        },
+                        color: Color(0xFFE4A025),
+                        child: Text(
+                          "ส่งข้อเสนอแนะ",
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: Color.fromARGB(255, 255, 255, 255),
+                          ),
                         ),
                       ),
-                      color: Color(0xFFE4A025),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
         ),
       ),
     );
@@ -392,8 +393,8 @@ class _FeedbackForm extends State<FeedbackForm> {
             },
             color: Color.fromRGBO(194, 223, 249, 1),
             textColor: Colors.white,
-            child: Icon(Icons.close, size: 29),
             shape: CircleBorder(),
+            child: Icon(Icons.close, size: 29),
           ),
         ),
       ],
@@ -452,9 +453,9 @@ class _FeedbackForm extends State<FeedbackForm> {
     //   imageQuality: 100,
     // );
 
-    final ImagePicker _picker = ImagePicker();
+    final ImagePicker picker = ImagePicker();
     // Pick an image
-    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+    final XFile? image = await picker.pickImage(source: ImageSource.camera);
 
     setState(() {
       _image = image;
@@ -468,9 +469,9 @@ class _FeedbackForm extends State<FeedbackForm> {
     //   imageQuality: 100,
     // );
 
-    final ImagePicker _picker = ImagePicker();
+    final ImagePicker picker = ImagePicker();
     // Pick an image
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     setState(() {
       _image = image;
@@ -622,11 +623,11 @@ class _FeedbackForm extends State<FeedbackForm> {
     final result = await postObjectData('reporter/create', data);
 
     if (result['status'] == 'S') {
-      _itemImage.forEach((element) {
+      for (var element in _itemImage) {
         element['reference'] = result['objectData']['code'];
         final resultImage = postObjectData('reporter/gallery/create', element);
         print('00000007777777777777777 $element');
-      });
+      }
 
       return showDialog(
         barrierDismissible: false,

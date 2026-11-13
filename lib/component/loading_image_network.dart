@@ -4,11 +4,6 @@ import 'package:sso/component/loading_tween.dart';
 String sanitizeImageUrl(String url) {
   if (url.isEmpty) return '';
 
-  // Dead legacy server IP from 2020
-  if (url.contains('122.155.223.63')) {
-    return '';
-  }
-
   // Rewrite legacy document subdomain lc.we-builds.com to active gateway.we-builds.com
   var cleanUrl = url
       .replaceAll('http://lc.we-builds.com', 'https://gateway.we-builds.com')

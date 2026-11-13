@@ -9,7 +9,7 @@ import 'package:sso/pages/home.dart';
 import 'package:sso/shared/api_provider.dart';
 
 class PollAnswerPage extends StatefulWidget {
-  const PollAnswerPage({Key? key, this.model}) : super(key: key);
+  const PollAnswerPage({super.key, this.model});
 
   final dynamic model;
 
@@ -20,7 +20,7 @@ class PollAnswerPage extends StatefulWidget {
 class _PollAnswerPageState extends State<PollAnswerPage> {
   FlutterSecureStorage storage = FlutterSecureStorage();
   dynamic question;
-  late User userData;
+  User userData = User();
 
   @override
   void initState() {
@@ -94,18 +94,23 @@ class _PollAnswerPageState extends State<PollAnswerPage> {
     var progressComplete = 0;
     bool sc = false;
     questionList.forEach(
-      (c) async => {
-        sc = false,
+      (c) {
+        sc = false;
         c['answers'].forEach(
-          (e) => {
-            if (c['category'] == 'text')
-              {
-                if (e['title'] != '') {sc = true},
-              },
-            if (e['value']) {sc = true},
+          (e) {
+            if (c['category'] == 'text') {
+              if (e['title'] != null && e['title'] != '') {
+                sc = true;
+              }
+            }
+            if (e['value'] == true) {
+              sc = true;
+            }
           },
-        ),
-        if (sc) {progressComplete += 1},
+        );
+        if (sc) {
+          progressComplete += 1;
+        }
       },
     );
     widthBar = (MediaQuery.of(context).size.width - 30) / questionList.length;
@@ -248,14 +253,14 @@ class _PollAnswerPageState extends State<PollAnswerPage> {
           dynamic currentQuestion = question['questions'][indexQuestion];
           List<dynamic> currentAnswers = currentQuestion['answers'];
           currentAnswers.forEach(
-            (e) => {
+            (e) {
               setState(() {
                 if (e['code'] == model['code']) {
                   e['value'] = true;
                 } else {
                   e['value'] = false;
                 }
-              }),
+              });
             },
           );
         },
@@ -340,7 +345,7 @@ class _PollAnswerPageState extends State<PollAnswerPage> {
                   return Future.value(false);
                 },
                 child: CupertinoAlertDialog(
-                  title: new Text(
+                  title: Text(
                     'กรุณาตอบคำถาม',
                     style: TextStyle(
                       fontSize: 16,
@@ -353,7 +358,7 @@ class _PollAnswerPageState extends State<PollAnswerPage> {
                   actions: [
                     CupertinoDialogAction(
                       isDefaultAction: true,
-                      child: new Text(
+                      child: Text(
                         "ตกลง",
                         style: TextStyle(
                           fontSize: 13,
@@ -390,7 +395,7 @@ class _PollAnswerPageState extends State<PollAnswerPage> {
                     (answer) => {
                       if (answer['value'])
                         {
-                          postDio(server + 'm/poll/reply/create', {
+                          postDio('${server}m/poll/reply/create', {
                             'reference': reference.toString(),
                             'username': userData.username,
                             'firstName': userData.firstName,
@@ -423,14 +428,13 @@ class _PollAnswerPageState extends State<PollAnswerPage> {
 }
 
 class PollDialog extends StatefulWidget {
-  PollDialog({Key? key, required this.titleHome, this.userData})
-    : super(key: key);
+  const PollDialog({super.key, required this.titleHome, this.userData});
 
   final dynamic userData;
   final String titleHome;
 
   @override
-  _PollDialogState createState() => new _PollDialogState();
+  _PollDialogState createState() => _PollDialogState();
 }
 
 class _PollDialogState extends State<PollDialog> {
@@ -445,7 +449,7 @@ class _PollDialogState extends State<PollDialog> {
         width: double.infinity,
         color: Colors.white,
         child: CupertinoAlertDialog(
-          title: new Text(
+          title: Text(
             'บันทึกคำตอบเรียบร้อย',
             style: TextStyle(
               fontSize: 16,
@@ -458,7 +462,7 @@ class _PollDialogState extends State<PollDialog> {
           actions: [
             CupertinoDialogAction(
               isDefaultAction: true,
-              child: new Text(
+              child: Text(
                 "ตกลง",
                 style: TextStyle(
                   fontSize: 13,

@@ -10,7 +10,7 @@ import 'package:sso/pages/profile/sso/login_connect_sso.dart';
 import 'package:sso/screen/login.dart';
 
 class RegisterConnectFormOTPPage extends StatefulWidget {
-  RegisterConnectFormOTPPage({Key? key, required this.phone}) : super(key: key);
+  const RegisterConnectFormOTPPage({super.key, required this.phone});
   final String phone;
   @override
   _RegisterConnectFormOTPPageState createState() =>

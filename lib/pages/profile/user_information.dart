@@ -34,10 +34,10 @@ class _UserInformationPageState extends State<UserInformationPage> {
   String _lastName = 'Co.,Ltd';
   String _idCard = '1100499882123';
   String _section = '33';
-  String _hospital = 'โรงพยาบาลกรุงเทพ';
+  final String _hospital = 'โรงพยาบาลกรุงเทพ';
   String _phone = '081-234-5678';
-  String _bankName = 'ธนาคารกรุงไทย';
-  String _bankAccountNo = '012-3-45678-9';
+  final String _bankName = 'ธนาคารกรุงไทย';
+  final String _bankAccountNo = '012-3-45678-9';
 
   final txtUsername = TextEditingController();
   final txtPassword = TextEditingController();
@@ -112,16 +112,21 @@ class _UserInformationPageState extends State<UserInformationPage> {
         if (user is Map) {
           setState(() {
             _imageUrl = user['imageUrl'] ?? '';
-            if (user['firstName'] != null && user['firstName'].toString().isNotEmpty) {
+            if (user['firstName'] != null &&
+                user['firstName'].toString().isNotEmpty) {
               _firstName = user['firstName'];
               _lastName = user['lastName'] ?? '';
             }
-            if (user['idCard'] != null && user['idCard'].toString().isNotEmpty) {
+            if (user['idCard'] != null &&
+                user['idCard'].toString().isNotEmpty) {
               _idCard = user['idCard'].toString();
-            } else if (user['idcard'] != null && user['idcard'].toString().isNotEmpty) {
+            } else if (user['idcard'] != null &&
+                user['idcard'].toString().isNotEmpty) {
               _idCard = user['idcard'].toString();
             }
-            if (user['category'] != null && user['category'].toString().isNotEmpty && user['category'].toString() != 'guest') {
+            if (user['category'] != null &&
+                user['category'].toString().isNotEmpty &&
+                user['category'].toString() != 'guest') {
               _section = user['category'].toString();
             } else {
               _section = '33';
@@ -164,15 +169,61 @@ class _UserInformationPageState extends State<UserInformationPage> {
         var res = await postDio(profileReadApi, {'code': pCode});
         if (res != null && res is Map) {
           setState(() {
-            if (res['imageUrl'] != null) _imageUrl = res['imageUrl'];
-            if (res['firstName'] != null) _firstName = res['firstName'];
+            if (res['imageUrl'] != null &&
+                res['imageUrl'].toString().trim().isNotEmpty) {
+              _imageUrl = res['imageUrl'].toString().trim();
+            }
+            if (res['firstName'] != null &&
+                res['firstName'].toString().trim().isNotEmpty) {
+              _firstName = res['firstName'].toString().trim();
+            }
             if (res['lastName'] != null) _lastName = res['lastName'] ?? '';
             if (res['idcard'] != null) _idCard = res['idcard'].toString();
-            if (res['category'] != null) _section = res['category'].toString();
+            if (res['category'] != null &&
+                res['category'].toString().trim().isNotEmpty &&
+                res['category'].toString() != 'guest') {
+              _section = res['category'].toString();
+            }
           });
         }
       } catch (e) {
         debugPrint('Error reading profile in user_information: $e');
+      }
+
+      // Also query m/Register/read to fetch image and profile directly from database
+      try {
+        final regRes = await postObjectData("m/Register/read", {'code': pCode});
+        if (regRes != null &&
+            regRes['status'] == 'S' &&
+            regRes['objectData'] != null &&
+            regRes['objectData'].isNotEmpty) {
+          var obj = regRes['objectData'][0];
+          String rImg = obj['imageUrl'] ?? '';
+          if (rImg.isNotEmpty) {
+            _imageUrl = rImg;
+            await storage.write(key: 'profileImageUrl', value: rImg);
+          }
+          if (obj['category'] != null &&
+              obj['category'].toString().trim().isNotEmpty &&
+              obj['category'].toString() != 'guest') {
+            _section = obj['category'].toString();
+          }
+          if (obj['firstName'] != null &&
+              obj['firstName'].toString().trim().isNotEmpty) {
+            _firstName = obj['firstName'].toString();
+            _lastName = obj['lastName']?.toString() ?? '';
+          }
+          if (obj['idCard'] != null &&
+              obj['idCard'].toString().trim().isNotEmpty) {
+            _idCard = obj['idCard'].toString();
+          } else if (obj['idcard'] != null &&
+              obj['idcard'].toString().trim().isNotEmpty) {
+            _idCard = obj['idcard'].toString();
+          }
+          setState(() {});
+        }
+      } catch (e) {
+        debugPrint('Error reading m/Register/read in user_information: $e');
       }
     }
 
@@ -182,6 +233,12 @@ class _UserInformationPageState extends State<UserInformationPage> {
         _imageUrl = localImg;
       });
     }
+
+    if (_section.isEmpty || _section == 'guest') {
+      setState(() {
+        _section = '33';
+      });
+    }
   }
 
   void _showBenefitAccountDialog() {
@@ -189,181 +246,224 @@ class _UserInformationPageState extends State<UserInformationPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 15),
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
+      builder:
+          (ctx) => Container(
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
             ),
-            Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE8F0F6),
-                    borderRadius: BorderRadius.circular(12),
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 15),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                  child: const Icon(Icons.account_balance, color: Color(0xFF005C9E), size: 24),
                 ),
-                const SizedBox(width: 12),
-                const Expanded(
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE8F0F6),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.account_balance,
+                        color: Color(0xFF005C9E),
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'บัญชีรับเงินประโยชน์ทดแทน',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF005C9E),
+                            ),
+                          ),
+                          Text(
+                            'ผูกบัญชีสำหรับรับเงินสิทธิประโยชน์ สปส.',
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF7FAFD),
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(
+                      color: const Color(0xFF005C9E).withOpacity(0.2),
+                    ),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Image.asset(
+                                'assets/images/correct.png',
+                                width: 20,
+                                height: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'พร้อมเพย์ (PromptPay)',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE8F5E9),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Text(
+                              'ผูกสำเร็จ (Active)',
+                              style: TextStyle(
+                                color: Color(0xFF2E7D32),
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
                       Text(
-                        'บัญชีรับเงินประโยชน์ทดแทน',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF005C9E),
+                        'ผูกกับเลขบัตรประชาชน: ${_formatIdCard(_idCard)}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black87,
                         ),
                       ),
-                      Text(
-                        'ผูกบัญชีสำหรับรับเงินสิทธิประโยชน์ สปส.',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'ใช้รับเงิน: บำเหน็จ/บำนาญชราภาพ, สงเคราะห์บุตร, ทันตกรรม, คลอดบุตร, ว่างงาน',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF646464),
+                        ),
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.credit_card,
+                                color: Colors.grey[700],
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'บัญชีธนาคารรับเงินสำรอง',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Text(
+                            'บัญชีรอง',
+                            style: TextStyle(color: Colors.grey, fontSize: 11),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        '$_bankName • เลขที่ $_bankAccountNo',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'ชื่อบัญชี: $_firstName $_lastName',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF646464),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  height: 46,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF005C9E),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'ข้อมูลบัญชีรับเงินสิทธิประโยชน์เป็นปัจจุบันแล้ว',
+                          ),
+                          backgroundColor: Color(0xFF005C9E),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'ตกลง',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
               ],
             ),
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF7FAFD),
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: const Color(0xFF005C9E).withOpacity(0.2)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Image.asset('assets/images/correct.png', width: 20, height: 20),
-                          const SizedBox(width: 8),
-                          const Text(
-                            'พร้อมเพย์ (PromptPay)',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE8F5E9),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text(
-                          'ผูกสำเร็จ (Active)',
-                          style: TextStyle(
-                            color: Color(0xFF2E7D32),
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'ผูกกับเลขบัตรประชาชน: ${_formatIdCard(_idCard)}',
-                    style: const TextStyle(fontSize: 14, color: Colors.black87),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'ใช้รับเงิน: บำเหน็จ/บำนาญชราภาพ, สงเคราะห์บุตร, ทันตกรรม, คลอดบุตร, ว่างงาน',
-                    style: TextStyle(fontSize: 12, color: Color(0xFF646464)),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.credit_card, color: Colors.grey[700], size: 20),
-                          const SizedBox(width: 8),
-                          const Text(
-                            'บัญชีธนาคารรับเงินสำรอง',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                          ),
-                        ],
-                      ),
-                      const Text(
-                        'บัญชีรอง',
-                        style: TextStyle(color: Colors.grey, fontSize: 11),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    '$_bankName • เลขที่ $_bankAccountNo',
-                    style: const TextStyle(fontSize: 14, color: Colors.black87),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'ชื่อบัญชี: $_firstName $_lastName',
-                    style: const TextStyle(fontSize: 12, color: Color(0xFF646464)),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              height: 46,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF005C9E),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('ข้อมูลบัญชีรับเงินสิทธิประโยชน์เป็นปัจจุบันแล้ว'),
-                      backgroundColor: Color(0xFF005C9E),
-                    ),
-                  );
-                },
-                child: const Text('ตกลง', style: TextStyle(color: Colors.white, fontSize: 16)),
-              ),
-            ),
-            const SizedBox(height: 10),
-          ],
-        ),
-      ),
+          ),
     );
   }
 
@@ -376,9 +476,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
     u.imageUrl = _imageUrl;
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => DigitalCardPage(user: u),
-      ),
+      MaterialPageRoute(builder: (_) => DigitalCardPage(user: u)),
     );
   }
 
@@ -427,7 +525,10 @@ class _UserInformationPageState extends State<UserInformationPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFE8F0F6),
                       borderRadius: BorderRadius.circular(12),
@@ -435,7 +536,11 @@ class _UserInformationPageState extends State<UserInformationPage> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.verified, size: 14, color: Color(0xFF005C9E)),
+                        const Icon(
+                          Icons.verified,
+                          size: 14,
+                          color: Color(0xFF005C9E),
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           'ผู้ประกันตนมาตรา ${_section == 'guest' || _section.isEmpty ? '33' : _section}',
@@ -451,7 +556,10 @@ class _UserInformationPageState extends State<UserInformationPage> {
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFE8F0F6),
                       borderRadius: BorderRadius.circular(12),
@@ -459,7 +567,11 @@ class _UserInformationPageState extends State<UserInformationPage> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.local_hospital, size: 14, color: Color(0xFF005C9E)),
+                        const Icon(
+                          Icons.local_hospital,
+                          size: 14,
+                          color: Color(0xFF005C9E),
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           _hospital,
@@ -489,12 +601,13 @@ class _UserInformationPageState extends State<UserInformationPage> {
           iconBgColor: const Color(0xFFEBF3FA),
           title: 'ข้อมูลผู้ใช้งานและข้อมูลส่วนตัว',
           subtitle: 'ชื่อ-นามสกุล, วันเกิด, เบอร์โทรศัพท์, อีเมล',
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EditUserInformationPage(),
-            ),
-          ).then((value) => readStorage()),
+          onTap:
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditUserInformationPage(),
+                ),
+              ).then((value) => readStorage()),
         ),
         _buildMenuItem(
           icon: Icons.location_on_rounded,
@@ -502,12 +615,11 @@ class _UserInformationPageState extends State<UserInformationPage> {
           iconBgColor: const Color(0xFFFFF4E5),
           title: 'ที่อยู่ของฉัน',
           subtitle: 'ที่อยู่ตามทะเบียนบ้านและที่อยู่ติดต่อจัดส่ง',
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const MyAddressPage(),
-            ),
-          ),
+          onTap:
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MyAddressPage()),
+              ),
         ),
         _buildMenuItem(
           icon: Icons.account_balance_rounded,
@@ -523,12 +635,11 @@ class _UserInformationPageState extends State<UserInformationPage> {
           iconBgColor: const Color(0xFFE0F2F1),
           title: 'สถานพยาบาลตามสิทธิและการเปลี่ยนสิทธิ',
           subtitle: '$_hospital (เปลี่ยนสิทธิประจำปี)',
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const HospitalPage(),
-            ),
-          ),
+          onTap:
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HospitalPage()),
+              ),
         ),
 
         // หมวด 2: บริการดิจิทัลและสิทธิประโยชน์
@@ -547,12 +658,13 @@ class _UserInformationPageState extends State<UserInformationPage> {
           iconBgColor: const Color(0xFFE1F5FE),
           title: 'ข้อมูลการเชื่อมต่อประกันสังคม',
           subtitle: 'สถานะเชื่อมต่อระบบฐานข้อมูล สปส.',
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ConnectSSOPage(goHome: false),
-            ),
-          ).then((value) => readStorage()),
+          onTap:
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ConnectSSOPage(goHome: false),
+                ),
+              ).then((value) => readStorage()),
         ),
         _buildMenuItem(
           icon: Icons.share_rounded,
@@ -560,12 +672,11 @@ class _UserInformationPageState extends State<UserInformationPage> {
           iconBgColor: const Color(0xFFF3E5F5),
           title: 'การเชื่อมต่อบัญชีโซเชียลเน็ตเวิร์ก',
           subtitle: 'Google, Facebook, Line, Apple ID',
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ConnectSocialPage(),
-            ),
-          ).then((value) => readStorage()),
+          onTap:
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ConnectSocialPage()),
+              ).then((value) => readStorage()),
         ),
 
         // หมวด 3: ความปลอดภัยและการช่วยเหลือ
@@ -576,12 +687,11 @@ class _UserInformationPageState extends State<UserInformationPage> {
           iconBgColor: const Color(0xFFFFF3E0),
           title: 'เปลี่ยนรหัสผ่าน',
           subtitle: 'ความปลอดภัยของบัญชีผู้ใช้งาน',
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChangePasswordPage(),
-            ),
-          ).then((value) => readStorage()),
+          onTap:
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ChangePasswordPage()),
+              ).then((value) => readStorage()),
         ),
         _buildMenuItem(
           icon: Icons.verified_user_rounded,
@@ -589,12 +699,11 @@ class _UserInformationPageState extends State<UserInformationPage> {
           iconBgColor: const Color(0xFFE8EAF6),
           title: 'นโยบายเงื่อนไขและข้อตกลง (PDPA)',
           subtitle: 'ข้อกำหนดการใช้บริการและการคุ้มครองข้อมูล',
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProfilePolicySSOPage(),
-            ),
-          ).then((value) => readStorage()),
+          onTap:
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfilePolicySSOPage()),
+              ).then((value) => readStorage()),
         ),
         _buildMenuItem(
           icon: Icons.phone_in_talk_rounded,
@@ -602,12 +711,13 @@ class _UserInformationPageState extends State<UserInformationPage> {
           iconBgColor: const Color(0xFFFFEBEE),
           title: 'ติดต่อสำนักงานประกันสังคม (สายด่วน 1506)',
           subtitle: 'โทร 1506 ตลอด 24 ชม. หรือติดต่อสาขา สปส.',
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProfileSSOPage(model: _futureAboutUs),
-            ),
-          ).then((value) => readStorage()),
+          onTap:
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileSSOPage(model: _futureAboutUs),
+                ),
+              ).then((value) => readStorage()),
         ),
 
         const SizedBox(height: 15),
@@ -620,7 +730,11 @@ class _UserInformationPageState extends State<UserInformationPage> {
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(Icons.power_settings_new, color: Color(0xFFFC4137), size: 20),
+                Icon(
+                  Icons.power_settings_new,
+                  color: Color(0xFFFC4137),
+                  size: 20,
+                ),
                 SizedBox(width: 8),
                 Text(
                   "ออกจากระบบ",
@@ -747,7 +861,10 @@ class _UserInformationPageState extends State<UserInformationPage> {
             Stack(
               alignment: Alignment.topCenter,
               children: <Widget>[
-                Padding(padding: const EdgeInsets.only(top: 75.0), child: card()),
+                Padding(
+                  padding: const EdgeInsets.only(top: 75.0),
+                  child: card(),
+                ),
                 SizedBox(
                   width: 150.0,
                   height: 150.0,

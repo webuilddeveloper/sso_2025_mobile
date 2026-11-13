@@ -7,10 +7,10 @@ import 'package:sso/widget/text_form_field.dart';
 import 'change_phone_request_otp.dart';
 import 'login_connect_sso.dart';
 
-DateTime now = new DateTime.now();
+DateTime now = DateTime.now();
 
 class ChangePhoneStep3SSOPage extends StatefulWidget {
-  ChangePhoneStep3SSOPage({Key? key, required this.idcard}) : super(key: key);
+  const ChangePhoneStep3SSOPage({super.key, required this.idcard});
   final String idcard;
 
   @override
@@ -19,23 +19,23 @@ class ChangePhoneStep3SSOPage extends StatefulWidget {
 }
 
 class _ChangePhoneStep3SSOPageState extends State<ChangePhoneStep3SSOPage> {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
 
-  String _username = '';
-  String _password = '';
-  String _facebookID = '';
-  String _appleID = '';
-  String _googleID = '';
-  String _lineID = '';
-  String _email = '';
-  String _imageUrl = '';
-  String _category = '';
-  String _prefixName = '';
-  String _firstName = '';
-  String _lastName = '';
+  final String _username = '';
+  final String _password = '';
+  final String _facebookID = '';
+  final String _appleID = '';
+  final String _googleID = '';
+  final String _lineID = '';
+  final String _email = '';
+  final String _imageUrl = '';
+  final String _category = '';
+  final String _prefixName = '';
+  final String _firstName = '';
+  final String _lastName = '';
 
   Map userProfile = {};
-  bool _isOnlyWebLogin = false;
+  final bool _isOnlyWebLogin = false;
 
   DataUser? dataUser;
   final _formKey = GlobalKey<FormState>();
@@ -90,7 +90,7 @@ class _ChangePhoneStep3SSOPageState extends State<ChangePhoneStep3SSOPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Padding(
-                    padding: new EdgeInsets.only(
+                    padding: EdgeInsets.only(
                       top: MediaQuery.of(context).padding.top,
                     ),
                   ),

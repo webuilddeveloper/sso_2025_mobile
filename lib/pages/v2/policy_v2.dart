@@ -43,7 +43,7 @@ class _PolicyV2Page extends State<PolicyV2Page> {
   List acceptPolicyList = [];
 
   _read() async {
-    _futureModel = postDio(server + "m/policy/read", {
+    _futureModel = postDio("${server}m/policy/read", {
       "skip": 0,
       "limit": 100,
       "category": widget.category,
@@ -55,6 +55,7 @@ class _PolicyV2Page extends State<PolicyV2Page> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: WillPopScope(
+        onWillPop: confirmExit,
         child: NotificationListener<OverscrollIndicatorNotification>(
           onNotification: (OverscrollIndicatorNotification overScroll) {
             overScroll.disallowIndicator();
@@ -72,7 +73,6 @@ class _PolicyV2Page extends State<PolicyV2Page> {
             child: _futureBuilderModel(),
           ),
         ),
-        onWillPop: confirmExit,
       ),
     );
   }
@@ -158,8 +158,8 @@ class _PolicyV2Page extends State<PolicyV2Page> {
                   },
                   color: Color(0xFF1B6CA8),
                   textColor: Colors.white,
-                  child: Icon(Icons.arrow_back, size: 29),
                   shape: CircleBorder(),
+                  child: Icon(Icons.arrow_back, size: 29),
                 ),
               ),
             )
@@ -227,9 +227,7 @@ class _PolicyV2Page extends State<PolicyV2Page> {
                                   color: Color(0xFFEEBA33),
                                 ),
                                 child: Text(
-                                  (index + 1).toString() +
-                                      '/' +
-                                      policyLength.toString(),
+                                  '${index + 1}/$policyLength',
                                   style: TextStyle(
                                     fontSize: 17,
                                     fontFamily: 'Kanit',
@@ -332,9 +330,7 @@ class _PolicyV2Page extends State<PolicyV2Page> {
                     color: Color(0xFFEEBA33),
                   ),
                   child: Text(
-                    (currentCardIndex + 1).toString() +
-                        '/' +
-                        policyLength.toString(),
+                    '${currentCardIndex + 1}/$policyLength',
                     style: TextStyle(
                       fontSize: 17,
                       fontFamily: 'Kanit',
@@ -449,7 +445,7 @@ class _PolicyV2Page extends State<PolicyV2Page> {
               // height: MediaQuery.of(context).size.height / 2.5,
               decoration: BoxDecoration(
                 shape: BoxShape.rectangle,
-                color: const Color(0xFFFFFF),
+                color: const Color(0x00ffffff),
               ),
               child: Container(
                 decoration: BoxDecoration(
@@ -555,9 +551,9 @@ class _PolicyV2Page extends State<PolicyV2Page> {
   }
 
   sendAcceptedPolicy() async {
-    acceptPolicyList.forEach((e) {
-      postDio(server + 'm/policy/create', e);
-    });
+    for (var e in acceptPolicyList) {
+      postDio('${server}m/policy/create', e);
+    }
     return dialogConfirm();
   }
 }

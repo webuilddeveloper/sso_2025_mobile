@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CarouselRotation extends StatefulWidget {
-  CarouselRotation({Key? key, this.model, this.nav}) : super(key: key);
+  const CarouselRotation({super.key, this.model, this.nav});
 
   final Future<dynamic>? model;
   final Function(String, String, dynamic, String)? nav;
@@ -54,7 +54,7 @@ class _CarouselRotation extends State<CarouselRotation> {
                 ),
                 items:
                     snapshot.data.map<Widget>((document) {
-                      return new InkWell(
+                      return InkWell(
                         onTap: () {
                           widget.nav!(
                             snapshot.data[_current]['linkUrl'],

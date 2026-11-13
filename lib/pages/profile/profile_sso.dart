@@ -7,7 +7,7 @@ import 'package:sso/pages/profile/user_information.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfileSSOPage extends StatefulWidget {
-  ProfileSSOPage({Key? key, required this.model}) : super(key: key);
+  const ProfileSSOPage({super.key, required this.model});
 
   final Future<dynamic> model;
 
@@ -16,14 +16,14 @@ class ProfileSSOPage extends StatefulWidget {
 }
 
 class _ProfileSSOPageState extends State<ProfileSSOPage> {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
 
   String _imageUrl = '';
 
   late Future<dynamic> futureModel;
 
-  ScrollController scrollController = new ScrollController();
+  ScrollController scrollController = ScrollController();
 
   @override
   void dispose() {
@@ -38,7 +38,7 @@ class _ProfileSSOPageState extends State<ProfileSSOPage> {
   }
 
   _makePhoneCall(String url) async {
-    url = 'tel:' + url;
+    url = 'tel:$url';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -83,7 +83,7 @@ class _ProfileSSOPageState extends State<ProfileSSOPage> {
             child: Text(
               'สำนักงานประกันสังคม',
               textAlign: TextAlign.center,
-              style: new TextStyle(
+              style: TextStyle(
                 fontSize: 20.0,
                 color: Color(0xFF005C9E),
                 fontWeight: FontWeight.normal,
@@ -95,7 +95,7 @@ class _ProfileSSOPageState extends State<ProfileSSOPage> {
             child: Text(
               'กระทรวงแรงงาน',
               textAlign: TextAlign.center,
-              style: new TextStyle(
+              style: TextStyle(
                 fontSize: 15.0,
                 color: Color(0xFF005C9E),
                 fontWeight: FontWeight.normal,
@@ -214,9 +214,9 @@ class _ProfileSSOPageState extends State<ProfileSSOPage> {
             ),
           );
         } else {
-          if (snapshot.hasError)
+          if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          else if (snapshot.hasData) {
+          } else if (snapshot.hasData) {
             return Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -225,7 +225,11 @@ class _ProfileSSOPageState extends State<ProfileSSOPage> {
                 ),
               ),
               child: Scaffold(
-                appBar: header(context, goBack, title: 'ติดต่อสำนักงานประกันสังคม'),
+                appBar: header(
+                  context,
+                  goBack,
+                  title: 'ติดต่อสำนักงานประกันสังคม',
+                ),
                 backgroundColor: Colors.transparent,
                 body: Container(
                   child: ListView(
@@ -234,14 +238,14 @@ class _ProfileSSOPageState extends State<ProfileSSOPage> {
                     physics: ClampingScrollPhysics(),
                     padding: const EdgeInsets.all(10.0),
                     children: <Widget>[
-                      new Stack(
+                      Stack(
                         alignment: Alignment.topCenter,
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.only(top: 75.0),
                             child: card(snapshot.data),
                           ),
-                          Container(
+                          SizedBox(
                             width: 150.0,
                             height: 150.0,
                             child: Padding(
@@ -252,15 +256,18 @@ class _ProfileSSOPageState extends State<ProfileSSOPage> {
                                   image: DecorationImage(
                                     fit: BoxFit.cover,
                                     image:
-                                        (snapshot.data['imageLogoUrl'] != null &&
+                                        (snapshot.data['imageLogoUrl'] !=
+                                                    null &&
                                                 snapshot.data['imageLogoUrl']
                                                     .toString()
                                                     .isNotEmpty)
                                             ? NetworkImage(
-                                              sanitizeImageUrl(
-                                                snapshot.data['imageLogoUrl'],
-                                              ),
-                                            ) as ImageProvider
+                                                  sanitizeImageUrl(
+                                                    snapshot
+                                                        .data['imageLogoUrl'],
+                                                  ),
+                                                )
+                                                as ImageProvider
                                             : const AssetImage(
                                               "assets/logo/sso.png",
                                             ),

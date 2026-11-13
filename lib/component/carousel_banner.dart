@@ -11,8 +11,7 @@ import 'package:sso/component/loading_tween.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CarouselBanner extends StatefulWidget {
-  const CarouselBanner({Key? key, this.model, required this.url, this.height = 70})
-    : super(key: key);
+  const CarouselBanner({super.key, this.model, required this.url, this.height = 70});
 
   final dynamic model;
   final String url;
@@ -345,8 +344,7 @@ class _Carousel2 extends State<Carousel2> {
 }
 
 class Carousel3 extends StatefulWidget {
-  const Carousel3({Key? key, required this.model, required this.url})
-    : super(key: key);
+  const Carousel3({super.key, required this.model, required this.url});
 
   final Future<dynamic> model;
   final String url;

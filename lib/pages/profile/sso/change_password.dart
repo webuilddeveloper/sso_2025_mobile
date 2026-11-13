@@ -1,14 +1,12 @@
 // ignore_for_file: unnecessary_null_comparison, library_private_types_in_public_api, use_build_context_synchronously, sort_child_properties_last
 
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sso/component/custom_dialog.dart';
 import 'package:sso/component/header.dart';
 import 'package:sso/component/loading_image_network.dart';
 // import 'package:sso/pages/auth/login.dart';
-import 'package:sso/pages/profile/user_information.dart';
 import 'package:sso/screen/login.dart';
 import 'package:sso/shared/api_provider.dart';
 import 'package:sso/widget/text_form_field.dart';
@@ -92,9 +90,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       await showSSODialog(
         context,
         title: 'เปลี่ยนรหัสผ่านไม่สำเร็จ',
-        message: result != null && result['message'] != null
-            ? result['message'].toString()
-            : 'รหัสผ่านเดิมไม่ถูกต้อง หรือเกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
+        message:
+            result != null && result['message'] != null
+                ? result['message'].toString()
+                : 'รหัสผ่านเดิมไม่ถูกต้อง หรือเกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
         type: SSODialogType.error,
         confirmText: 'ตกลง',
       );
@@ -436,9 +435,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         image: DecorationImage(
                           fit: BoxFit.cover,
                           image:
-                              _imageUrl.isNotEmpty && !_imageUrl.contains('122.155.223.63')
-                                  ? NetworkImage(sanitizeImageUrl(_imageUrl)) as ImageProvider
-                                  : const AssetImage("assets/images/user_not_found.png"),
+                              _imageUrl.isNotEmpty
+                                  ? NetworkImage(sanitizeImageUrl(_imageUrl))
+                                      as ImageProvider
+                                  : const AssetImage(
+                                    "assets/images/user_not_found.png",
+                                  ),
                         ),
                       ),
                     ),

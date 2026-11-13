@@ -11,7 +11,7 @@ import 'package:sso/shared/extension.dart';
 import 'package:sso/shared/scroll_behavior.dart';
 
 class PollFormPage extends StatefulWidget {
-  const PollFormPage({Key? key, this.model}) : super(key: key);
+  const PollFormPage({super.key, this.model});
 
   final dynamic model;
 

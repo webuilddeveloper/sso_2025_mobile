@@ -17,68 +17,66 @@ import 'package:sso/shared/line.dart';
 // flutter build apk --build-name=1.0.0 --build-number=1
 const appName = 'SSO Plus';
 const versionName = '0.0.3';
-const versionNumber = 3;
-const versionReadApi = server + 'm/v2/version/read';
+const versionNumber = 13;
+const versionReadApi = '${server}m/v2/version/read';
 
 const server = 'https://sso.we-builds.com/sso-api/';
 const serverUpload = 'https://gateway.we-builds.com/wb-document/upload';
 
-const sharedApi = server + 'configulation/shared/';
-const registerApi = server + 'm/register/';
-const newsApi = server + 'm/news/';
+const sharedApi = '${server}configulation/shared/';
+const registerApi = '${server}m/register/';
+const newsApi = '${server}m/news/';
 const newsGalleryApi = 'm/news/gallery/read';
-const pollApi = server + 'm/poll/';
-const faqApi = server + 'm/faq/';
-const knowledgeApi = server + 'm/knowledge/';
-const contactApi = server + 'm/contact/';
-const bannerApi = server + 'banner/';
+const pollApi = '${server}m/poll/';
+const faqApi = '${server}m/faq/';
+const knowledgeApi = '${server}m/knowledge/';
+const contactApi = '${server}m/contact/';
+const bannerApi = '${server}banner/';
 const bannerGalleryApi = 'm/banner/gallery/read';
-const rotationApi = server + 'rotation/';
+const rotationApi = '${server}rotation/';
 const rotationGalleryApi = 'm/rotation/gallery/read';
-const privilegeReadApi = server + "m/privilege/read";
-const menuApi = server + "m/menu/";
-const aboutUsReadApi = server + "m/aboutus/read";
-const mainPopupReadApi = server + 'm/MainPopup/read';
-const bannerReadApi = server + 'm/Banner/main/read';
-const facebookLogin = server + 'm/v2/register/facebook/login';
-const questionApi = server + 'm/question/';
-const answerApi = server + 'm/answer/';
-const comingSoonApi = server + 'm/comingsoon/read';
-const comingSoonGalleryApi = server + 'm/comingsoon/gallery/read';
-const reporterApi = server + 'm/reporter/';
-const reporterGalleryApi = server + 'm/reporter/gallery/read';
+const privilegeReadApi = "${server}m/privilege/read";
+const menuApi = "${server}m/menu/";
+const aboutUsReadApi = "${server}m/aboutus/read";
+const mainPopupReadApi = '${server}m/MainPopup/read';
+const bannerReadApi = '${server}m/Banner/main/read';
+const facebookLogin = '${server}m/v2/register/facebook/login';
+const questionApi = '${server}m/question/';
+const answerApi = '${server}m/answer/';
+const comingSoonApi = '${server}m/comingsoon/read';
+const comingSoonGalleryApi = '${server}m/comingsoon/gallery/read';
+const reporterApi = '${server}m/reporter/';
+const reporterGalleryApi = '${server}m/reporter/gallery/read';
 const readProvinceApi = 'route/province/read';
 
 // comment
-const newsCommentApi = server + 'm/news/comment/';
+const newsCommentApi = '${server}m/news/comment/';
 
 //category
-const knowledgeCategoryApi = server + 'm/knowledge/category/';
-const newsCategoryApi = server + 'm/news/category/';
-const privilegeCategoryApi = server + 'm/privilege/category/';
-const contactCategoryApi = server + 'm/contact/category/';
-const reporterCategoryApi = server + 'm/reporter/category/read';
+const knowledgeCategoryApi = '${server}m/knowledge/category/';
+const newsCategoryApi = '${server}m/news/category/';
+const privilegeCategoryApi = '${server}m/privilege/category/';
+const contactCategoryApi = '${server}m/contact/category/';
+const reporterCategoryApi = '${server}m/reporter/category/read';
 
-const splashApi = server + 'm/splash/read';
+const splashApi = '${server}m/splash/read';
 
-const profileReadApi = server + 'm/v2/register/read';
+const profileReadApi = '${server}m/v2/register/read';
 // const organizationImageReadApi = server + 'm/v2/organization/image/read';
-const notificationApi = server + 'm/v2/notification/';
+const notificationApi = '${server}m/v2/notification/';
 
 Future<dynamic> postCategory(String url, dynamic criteria) async {
   var body = json.encode({
     "permission": "all",
-    "skip": criteria['skip'] != null ? criteria['skip'] : 0,
-    "limit": criteria['limit'] != null ? criteria['limit'] : 1,
-    "code": criteria['code'] != null ? criteria['code'] : '',
-    "reference": criteria['reference'] != null ? criteria['reference'] : '',
-    "description":
-        criteria['description'] != null ? criteria['description'] : '',
-    "category": criteria['category'] != null ? criteria['category'] : '',
-    "keySearch": criteria['keySearch'] != null ? criteria['keySearch'] : '',
-    "username": criteria['username'] != null ? criteria['username'] : '',
-    "isHighlight":
-        criteria['isHighlight'] != null ? criteria['isHighlight'] : false,
+    "skip": criteria['skip'] ?? 0,
+    "limit": criteria['limit'] ?? 1,
+    "code": criteria['code'] ?? '',
+    "reference": criteria['reference'] ?? '',
+    "description": criteria['description'] ?? '',
+    "category": criteria['category'] ?? '',
+    "keySearch": criteria['keySearch'] ?? '',
+    "username": criteria['username'] ?? '',
+    "isHighlight": criteria['isHighlight'] ?? false,
   });
 
   var response = await http.post(
@@ -100,17 +98,15 @@ Future<dynamic> postCategory(String url, dynamic criteria) async {
 Future<dynamic> post(String url, dynamic criteria) async {
   var body = json.encode({
     "permission": "all",
-    "skip": criteria['skip'] != null ? criteria['skip'] : 0,
-    "limit": criteria['limit'] != null ? criteria['limit'] : 1,
-    "code": criteria['code'] != null ? criteria['code'] : '',
-    "reference": criteria['reference'] != null ? criteria['reference'] : '',
-    "description":
-        criteria['description'] != null ? criteria['description'] : '',
-    "category": criteria['category'] != null ? criteria['category'] : '',
-    "keySearch": criteria['keySearch'] != null ? criteria['keySearch'] : '',
-    "username": criteria['username'] != null ? criteria['username'] : '',
-    "isHighlight":
-        criteria['isHighlight'] != null ? criteria['isHighlight'] : false,
+    "skip": criteria['skip'] ?? 0,
+    "limit": criteria['limit'] ?? 1,
+    "code": criteria['code'] ?? '',
+    "reference": criteria['reference'] ?? '',
+    "description": criteria['description'] ?? '',
+    "category": criteria['category'] ?? '',
+    "keySearch": criteria['keySearch'] ?? '',
+    "username": criteria['username'] ?? '',
+    "isHighlight": criteria['isHighlight'] ?? false,
   });
 
   var response = await http.post(
@@ -127,17 +123,13 @@ Future<dynamic> post(String url, dynamic criteria) async {
 Future<dynamic> postAny(String url, dynamic criteria) async {
   var body = json.encode({
     "permission": "all",
-    "skip": criteria['skip'] != null ? criteria['skip'] : 0,
-    "limit": criteria['limit'] != null ? criteria['limit'] : 1,
-    "code": criteria['code'] != null ? criteria['code'] : '',
-    "createBy": criteria['createBy'] != null ? criteria['createBy'] : '',
-    "imageUrlCreateBy":
-        criteria['imageUrlCreateBy'] != null
-            ? criteria['imageUrlCreateBy']
-            : '',
-    "reference": criteria['reference'] != null ? criteria['reference'] : '',
-    "description":
-        criteria['description'] != null ? criteria['description'] : '',
+    "skip": criteria['skip'] ?? 0,
+    "limit": criteria['limit'] ?? 1,
+    "code": criteria['code'] ?? '',
+    "createBy": criteria['createBy'] ?? '',
+    "imageUrlCreateBy": criteria['imageUrlCreateBy'] ?? '',
+    "reference": criteria['reference'] ?? '',
+    "description": criteria['description'] ?? '',
   });
 
   var response = await http.post(
@@ -153,9 +145,9 @@ Future<dynamic> postAny(String url, dynamic criteria) async {
 
 Future<dynamic> postLogin(String url, dynamic criteria) async {
   var body = json.encode({
-    "category": criteria['category'] != null ? criteria['category'] : '',
-    "password": criteria['password'] != null ? criteria['password'] : '',
-    "username": criteria['username'] != null ? criteria['username'] : '',
+    "category": criteria['category'] ?? '',
+    "password": criteria['password'] ?? '',
+    "username": criteria['username'] ?? '',
   });
 
   var response = await http.post(
@@ -220,10 +212,7 @@ Future<String> uploadImage(File file) async {
     "Image": await MultipartFile.fromFile(file.path, filename: fileName),
   });
 
-  var response = await dio.post(
-    serverUpload,
-    data: formData,
-  );
+  var response = await dio.post(serverUpload, data: formData);
   return response.data['imageUrl'] ?? '';
 }
 
@@ -264,7 +253,7 @@ Future<dynamic> postConfigShare() async {
   var body = json.encode({});
 
   var response = await http.post(
-    Uri.parse(server + 'configulation/shared/read'),
+    Uri.parse('${server}configulation/shared/read'),
     body: body,
     headers: {"Accept": "application/json", "Content-Type": "application/json"},
   );
@@ -384,7 +373,10 @@ Future<dynamic> postDioFull(String url, dynamic criteria) async {
     return Future.value(response.data);
   } on DioException catch (e) {
     debugPrint('DioException in postDioFull ($url): ${e.message}');
-    return {'status': 'E', 'message': 'การเชื่อมต่อขัดข้อง กรุณาลองใหม่อีกครั้ง'};
+    return {
+      'status': 'E',
+      'message': 'การเชื่อมต่อขัดข้อง กรุณาลองใหม่อีกครั้ง',
+    };
   } catch (e) {
     debugPrint('Exception in postDioFull ($url): $e');
     return {'status': 'E', 'message': 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง'};

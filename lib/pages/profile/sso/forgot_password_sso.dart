@@ -10,7 +10,7 @@ import 'package:sso/widget/text_form_field.dart';
 // import '../../home.dart';
 import 'login_connect_sso.dart';
 
-DateTime now = new DateTime.now();
+DateTime now = DateTime.now();
 
 class ForgotPasswordSSOPage extends StatefulWidget {
   // ForgotPasswordSSOPage({Key key, this.title}) : super(key: key);
@@ -20,7 +20,7 @@ class ForgotPasswordSSOPage extends StatefulWidget {
 }
 
 class _ForgotPasswordSSOPageState extends State<ForgotPasswordSSOPage> {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
 
   String _username = '';
   String _password = '';
@@ -36,7 +36,7 @@ class _ForgotPasswordSSOPageState extends State<ForgotPasswordSSOPage> {
   String _lastName = '';
 
   Map userProfile = {};
-  bool _isOnlyWebLogin = false;
+  final bool _isOnlyWebLogin = false;
 
   DataUser? dataUser;
 
@@ -74,7 +74,7 @@ class _ForgotPasswordSSOPageState extends State<ForgotPasswordSSOPage> {
   }
 
   void checkStatus() async {
-    final storage = new FlutterSecureStorage();
+    final storage = FlutterSecureStorage();
     String? value = await storage.read(key: 'dataUserLoginSSO');
     if (value != null && value != '') {
       Navigator.pushReplacement(
@@ -131,7 +131,7 @@ class _ForgotPasswordSSOPageState extends State<ForgotPasswordSSOPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Padding(
-                    padding: new EdgeInsets.only(
+                    padding: EdgeInsets.only(
                       top: MediaQuery.of(context).padding.top,
                     ),
                   ),

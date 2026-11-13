@@ -132,7 +132,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<void> readPolicy() async {
     try {
-      print('---------------111111---------${_username}');
+      print('---------------111111---------$_username');
       final result = await postObjectData('m/policy/read', {
         'username': _username,
         'category': 'register',
@@ -151,7 +151,7 @@ class _RegisterPageState extends State<RegisterPage> {
       }
     } catch (e) {
       print("Exception in readPolicy: $e");
-      throw e; // ส่งต่อข้อผิดพลาดเพื่อให้ catchError ใน initState จัดการ
+      rethrow; // ส่งต่อข้อผิดพลาดเพื่อให้ catchError ใน initState จัดการ
     }
   }
 
@@ -256,7 +256,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
         );
       } else {
-        String errMsg = (result != null && result.message != null && result.message.isNotEmpty)
+        String errMsg = (result.message != null && result.message.isNotEmpty)
             ? result.message
             : 'การลงทะเบียนไม่สำเร็จ กรุณาตรวจสอบข้อมูลและลองใหม่อีกครั้ง';
         return showDialog(

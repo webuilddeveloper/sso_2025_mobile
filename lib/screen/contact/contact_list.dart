@@ -8,11 +8,11 @@ import '../../component/material/input_with_label.dart';
 
 class ContactListV2 extends StatefulWidget {
   const ContactListV2({
-    Key? key,
+    super.key,
     required this.title,
     required this.code,
     // this.subCategory,
-  }) : super(key: key);
+  });
 
   final String title;
   final String code;
@@ -101,7 +101,7 @@ class _ContactListV2 extends State<ContactListV2> {
         },
         child: GestureDetector(
           onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
+            FocusScope.of(context).requestFocus(FocusNode());
           },
           child: Column(
             children: [
@@ -188,7 +188,7 @@ class _ContactListV2 extends State<ContactListV2> {
                     return Container(
                       height: 70,
                       decoration: BoxDecoration(
-                        borderRadius: new BorderRadius.circular(5.0),
+                        borderRadius: BorderRadius.circular(5.0),
                         color: Color(0xFFFFFFFF),
                       ),
                       padding: EdgeInsets.all(10.0),

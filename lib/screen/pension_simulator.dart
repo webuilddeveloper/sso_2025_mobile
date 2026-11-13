@@ -19,8 +19,8 @@ class _PensionSimulatorPageState extends State<PensionSimulatorPage>
   double _employeeContribution = 42500;
   double _employerContribution = 42500;
   double _govContribution = 12000;
-  double _dividendReturn = 8450;
-  int _accumulatedMonths = 185;
+  final double _dividendReturn = 8450;
+  final int _accumulatedMonths = 185;
   bool _isLoading = true;
 
   // Simulator parameters

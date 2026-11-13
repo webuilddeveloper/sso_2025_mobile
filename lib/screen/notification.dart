@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class NotificationPage extends StatefulWidget {
-  const NotificationPage({Key? key}) : super(key: key);
+  const NotificationPage({super.key});
 
   @override
   State<NotificationPage> createState() => _NotificationPageState();
@@ -111,7 +111,7 @@ class _NotificationPageState extends State<NotificationPage> {
         child: ListView(
           physics: BouncingScrollPhysics(),
           children: [
-            if (model.length > 0)
+            if (model.isNotEmpty)
               Text(
                 'จากประกันสังคมถึงท่าน',
                 style: TextStyle(
@@ -130,7 +130,7 @@ class _NotificationPageState extends State<NotificationPage> {
               itemCount: model.length,
             ),
             SizedBox(height: 25),
-            if (modelSuggest.length > 0)
+            if (modelSuggest.isNotEmpty)
               Text(
                 'แนะนำ',
                 style: TextStyle(

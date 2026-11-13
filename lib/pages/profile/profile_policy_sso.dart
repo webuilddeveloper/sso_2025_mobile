@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sso/component/header.dart';
-import 'package:sso/pages/profile/user_information.dart';
 import 'package:sso/shared/api_provider.dart';
 
 class ProfilePolicySSOPage extends StatefulWidget {
@@ -59,7 +58,9 @@ class _ProfilePolicySSOPageState extends State<ProfilePolicySSOPage> {
         'category': 'register',
       });
 
-      if (result != null && result['status'] == 'S' && result['objectData'] != null) {
+      if (result != null &&
+          result['status'] == 'S' &&
+          result['objectData'] != null) {
         _dataPolicySet = [..._dataPolicySet, ...result['objectData']];
       }
 
@@ -68,7 +69,9 @@ class _ProfilePolicySSOPageState extends State<ProfilePolicySSOPage> {
         'category': 'verification',
       });
 
-      if (result1 != null && result1['status'] == 'S' && result1['objectData'] != null) {
+      if (result1 != null &&
+          result1['status'] == 'S' &&
+          result1['objectData'] != null) {
         _dataPolicySet = [..._dataPolicySet, ...result1['objectData']];
       }
 
@@ -77,7 +80,9 @@ class _ProfilePolicySSOPageState extends State<ProfilePolicySSOPage> {
         'category': 'marketing',
       });
 
-      if (result2 != null && result2['status'] == 'S' && result2['objectData'] != null) {
+      if (result2 != null &&
+          result2['status'] == 'S' &&
+          result2['objectData'] != null) {
         _dataPolicySet = [..._dataPolicySet, ...result2['objectData']];
       }
     } catch (e) {
@@ -197,7 +202,11 @@ class _ProfilePolicySSOPageState extends State<ProfilePolicySSOPage> {
                 ),
               ),
               child: Scaffold(
-                appBar: header(context, goBack, title: 'นโยบายและเงื่อนไข (PDPA)'),
+                appBar: header(
+                  context,
+                  goBack,
+                  title: 'นโยบายและเงื่อนไข (PDPA)',
+                ),
                 backgroundColor: Colors.transparent,
                 body: ListView(
                   controller: scrollController,
@@ -222,7 +231,9 @@ class _ProfilePolicySSOPageState extends State<ProfilePolicySSOPage> {
                                 shape: CircleBorder(),
                                 image: DecorationImage(
                                   fit: BoxFit.cover,
-                                  image: AssetImage("assets/images/logoNoText.png"),
+                                  image: AssetImage(
+                                    "assets/images/logoNoText.png",
+                                  ),
                                 ),
                               ),
                             ),

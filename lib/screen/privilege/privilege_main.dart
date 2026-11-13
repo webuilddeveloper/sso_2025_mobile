@@ -12,7 +12,7 @@ import 'package:sso/shared/api_provider.dart';
 import 'package:http/http.dart' as http;
 
 class PrivilegeMain extends StatefulWidget {
-  PrivilegeMain({Key? key, required this.title}) : super(key: key);
+  const PrivilegeMain({super.key, required this.title});
   final String title;
 
   @override
@@ -47,7 +47,7 @@ class _PrivilegeMain extends State<PrivilegeMain> {
       "limit": 999, // integer value type
     });
     var response = await http.post(
-      Uri.parse(privilegeCategoryApi + 'read'),
+      Uri.parse('${privilegeCategoryApi}read'),
       body: body,
       headers: {
         "Accept": "application/json",
@@ -60,7 +60,7 @@ class _PrivilegeMain extends State<PrivilegeMain> {
       category = data['objectData'];
     });
 
-    if (category.length > 0) {
+    if (category.isNotEmpty) {
       for (int i = 0; i <= category.length - 1; i++) {
         var res = post(privilegeReadApi, {
           'skip': 0,
@@ -87,7 +87,7 @@ class _PrivilegeMain extends State<PrivilegeMain> {
         },
         child: GestureDetector(
           onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
+            FocusScope.of(context).requestFocus(FocusNode());
           },
           child: ListView(
             // controller: _controller,
@@ -142,7 +142,7 @@ class _PrivilegeMain extends State<PrivilegeMain> {
                 },
               ),
               for (int i = 0; i < listData.length; i++)
-                new ListContentHorizontalPrivilege(
+                ListContentHorizontalPrivilege(
                   code: category[i]['code'],
                   title: category[i]['title'],
                   model: listData[i],

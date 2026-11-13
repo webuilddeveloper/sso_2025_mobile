@@ -33,7 +33,7 @@ class LoginConnectionSSOPage extends StatefulWidget {
   final bool isShowStep2 = false;
 
   const LoginConnectionSSOPage({
-    Key? key,
+    super.key,
     required this.step,
     // @required this.password,
     // @required this.facebookID,
@@ -46,7 +46,7 @@ class LoginConnectionSSOPage extends StatefulWidget {
     // @required this.prefixName,
     // @required this.firstName,
     // @required this.lastName,
-  }) : super(key: key);
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -55,19 +55,19 @@ class LoginConnectionSSOPage extends StatefulWidget {
 
 class _LoginConnectionSSOPageState extends State<LoginConnectionSSOPage> {
   final storage = FlutterSecureStorage();
-  int _step = 0;
-  String _username = '';
-  String _password = '';
-  String _facebookID = '';
-  String _appleID = '';
-  String _googleID = '';
-  String _lineID = '';
-  String _email = '';
-  String _imageUrl = '';
-  String _category = '';
-  String _prefixName = '';
-  String _firstName = '';
-  String _lastName = '';
+  final int _step = 0;
+  final String _username = '';
+  final String _password = '';
+  final String _facebookID = '';
+  final String _appleID = '';
+  final String _googleID = '';
+  final String _lineID = '';
+  final String _email = '';
+  final String _imageUrl = '';
+  final String _category = '';
+  final String _prefixName = '';
+  final String _firstName = '';
+  final String _lastName = '';
 
   final bool _isLoginSocial = false;
   final bool _isLoginSocialHaveEmail = false;
@@ -81,7 +81,7 @@ class _LoginConnectionSSOPageState extends State<LoginConnectionSSOPage> {
 
   // Option 2
   // ignore: unused_field
-  String _selectedPrefixName = 'นาย';
+  final String _selectedPrefixName = 'นาย';
 
   final txtUsername = TextEditingController();
   final txtPassword = TextEditingController();
@@ -151,7 +151,9 @@ class _LoginConnectionSSOPageState extends State<LoginConnectionSSOPage> {
         'category': 'verification',
       });
 
-      if (result != null && result['status'] == 'S' && result['objectData'] != null) {
+      if (result != null &&
+          result['status'] == 'S' &&
+          result['objectData'] != null) {
         setState(() {
           _dataPolicy = [..._dataPolicy, ...result['objectData']];
         });

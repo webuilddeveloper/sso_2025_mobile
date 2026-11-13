@@ -8,11 +8,10 @@ import '../../home.dart';
 import 'change_phone_step_3_sso.dart';
 import 'login_connect_sso.dart';
 
-DateTime now = new DateTime.now();
+DateTime now = DateTime.now();
 
 class ChangePhoneStep2SSOPage extends StatefulWidget {
-  ChangePhoneStep2SSOPage({Key? key, required this.idcard, required this.phone})
-    : super(key: key);
+  const ChangePhoneStep2SSOPage({super.key, required this.idcard, required this.phone});
   final String idcard;
   final String phone;
 
@@ -22,7 +21,7 @@ class ChangePhoneStep2SSOPage extends StatefulWidget {
 }
 
 class _ChangePhoneStep2SSOPageState extends State<ChangePhoneStep2SSOPage> {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
 
   String _username = '';
   String _password = '';
@@ -38,7 +37,7 @@ class _ChangePhoneStep2SSOPageState extends State<ChangePhoneStep2SSOPage> {
   String _lastName = '';
 
   Map userProfile = {};
-  bool _isOnlyWebLogin = false;
+  final bool _isOnlyWebLogin = false;
 
   DataUser? dataUser;
   final _formKey = GlobalKey<FormState>();
@@ -79,7 +78,7 @@ class _ChangePhoneStep2SSOPageState extends State<ChangePhoneStep2SSOPage> {
   }
 
   void checkStatus() async {
-    final storage = new FlutterSecureStorage();
+    final storage = FlutterSecureStorage();
     String? value = await storage.read(key: 'dataUserLoginSSO');
     if (value != null && value != '') {
       Navigator.pushReplacement(
@@ -136,7 +135,7 @@ class _ChangePhoneStep2SSOPageState extends State<ChangePhoneStep2SSOPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Padding(
-                    padding: new EdgeInsets.only(
+                    padding: EdgeInsets.only(
                       top: MediaQuery.of(context).padding.top,
                     ),
                   ),

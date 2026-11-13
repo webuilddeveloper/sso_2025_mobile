@@ -47,10 +47,10 @@ class _EventCalendarPageState extends State<EventCalendarPage>
 
   String keySearch = '';
   bool isHighlight = false;
-  int _limit = 10;
+  final int _limit = 10;
   double heightAnimate = 130;
 
-  RefreshController _refreshController =
+  final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   @override
@@ -81,7 +81,7 @@ class _EventCalendarPageState extends State<EventCalendarPage>
     var objectData = [];
     var value = await storage.read(key: 'dataUserLoginSSO');
     json.decode(value!);
-    final result = await postDio(server + "m/EventCalendar/mark/read2", {
+    final result = await postDio("${server}m/EventCalendar/mark/read2", {
       "year": DateTime.now().year,
       'profileCode': '',
     });
@@ -97,11 +97,7 @@ class _EventCalendarPageState extends State<EventCalendarPage>
 
       // map current month list.
 
-      itemEvent = Map.fromIterable(
-        markData,
-        key: (item) => DateTime.parse(item['date']),
-        value: (item) => item['items'],
-      );
+      itemEvent = { for (var item in markData) DateTime.parse(item['date']) : item['items'] };
 
       var mainEvent = LinkedHashMap<DateTime, List<dynamic>>(
         equals: isSameDay,
@@ -129,8 +125,9 @@ class _EventCalendarPageState extends State<EventCalendarPage>
     // expand data['items'].
     List<dynamic> listExpand = [];
     for (var i = 0; i < data.length; i++) {
-      if (data[i]['items'].length > 0)
+      if (data[i]['items'].length > 0) {
         listExpand = [...data[i]['items'], ...listExpand];
+      }
     }
 
     // remove same data.
@@ -272,12 +269,12 @@ class _EventCalendarPageState extends State<EventCalendarPage>
                   if (_calendarFormat == CalendarFormat.month)
                     AnimatedSize(
                       curve: Curves.fastOutSlowIn,
+                      duration: Duration(
+                          milliseconds: heightAnimate == 130 ? 1 : 400),
                       child: Image.asset(
                         'assets/images/builds_1.png',
                         fit: BoxFit.fitWidth,
                       ),
-                      duration: Duration(
-                          milliseconds: heightAnimate == 130 ? 1 : 400),
                     ),
                   if (_calendarFormat == CalendarFormat.week)
                     Container(
@@ -471,7 +468,7 @@ class _EventCalendarPageState extends State<EventCalendarPage>
                 ),
               ),
             )
-            .toList(),
+            ,
         if (events.length > 3)
           Padding(
             padding: const EdgeInsets.only(left: 1.0),
@@ -756,9 +753,7 @@ final kEvents = LinkedHashMap<DateTime, List<dynamic>>(
   hashCode: getHashCode,
 )..addAll(_kEventSource);
 
-final _kEventSource = Map.fromIterable(List.generate(1, (index) => index),
-    key: (item) => DateTime.utc(kFirstDay.year, kFirstDay.month, item * 5),
-    value: (item) => [
+final _kEventSource = { for (var item in List.generate(1, (index) => index)) DateTime.utc(kFirstDay.year, kFirstDay.month, item * 5) : [
           {
             "code": "",
             "dateStart": "20201222",
@@ -766,7 +761,7 @@ final _kEventSource = Map.fromIterable(List.generate(1, (index) => index),
             "title": "",
             "imageUrl": ""
           }
-        ]);
+        ] };
 // ..addAll({
 //   kToday: [
 //     Event('', '', ''),

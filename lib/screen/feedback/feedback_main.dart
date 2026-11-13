@@ -13,11 +13,11 @@ import 'package:sso/shared/extension.dart';
 
 class FeedbackMain extends StatefulWidget {
   const FeedbackMain({
-    Key? key,
+    super.key,
     required this.code,
     required this.title,
     this.callback,
-  }) : super(key: key);
+  });
 
   final String code;
   final String title;
@@ -32,7 +32,7 @@ List<dynamic> gallerys = [];
 String? image;
 
 class _FeedbackMain extends State<FeedbackMain> {
-  ScrollController scrollController = new ScrollController();
+  ScrollController scrollController = ScrollController();
   late Future<dynamic> _futureModel;
   late Future<dynamic> futureGalleryModel;
   @override
@@ -110,7 +110,7 @@ class _FeedbackMain extends State<FeedbackMain> {
                                                 top: 10.0,
                                                 right: 10.0,
                                               ),
-                                              decoration: new BoxDecoration(
+                                              decoration: BoxDecoration(
                                                 boxShadow: [
                                                   BoxShadow(
                                                     color: Colors.blueGrey,
@@ -118,7 +118,7 @@ class _FeedbackMain extends State<FeedbackMain> {
                                                   ),
                                                 ],
                                                 borderRadius:
-                                                    new BorderRadius.circular(
+                                                    BorderRadius.circular(
                                                       11.0,
                                                     ),
                                               ),
@@ -255,7 +255,7 @@ class _FeedbackMain extends State<FeedbackMain> {
                           height: 35,
                           minWidth: 168,
                           shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(28),
+                            borderRadius: BorderRadius.circular(28),
                           ),
                           onPressed:
                               () => Navigator.push(
@@ -264,6 +264,7 @@ class _FeedbackMain extends State<FeedbackMain> {
                                   builder: (context) => FeedbackForm(code: '', title: '',),
                                 ),
                               ),
+                          color: Color(0xFFE4A025),
                           child: Text(
                             "ส่งข้อเสนอแนะ",
                             style: TextStyle(
@@ -271,7 +272,6 @@ class _FeedbackMain extends State<FeedbackMain> {
                               color: Color.fromARGB(255, 255, 255, 255),
                             ),
                           ),
-                          color: Color(0xFFE4A025),
                         ),
                       ),
                     ],

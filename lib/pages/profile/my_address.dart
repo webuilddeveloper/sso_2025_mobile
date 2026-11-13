@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sso/component/custom_dialog.dart';
-import 'package:sso/shared/api_provider.dart';
 
 class MyAddressPage extends StatefulWidget {
   const MyAddressPage({super.key});

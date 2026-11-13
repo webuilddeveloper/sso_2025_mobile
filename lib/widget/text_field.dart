@@ -21,7 +21,7 @@ labelTextFieldLogin(String label, image) {
     children: <Widget>[
       Image.asset(image, height: 20),
       Text(
-        ' ${label}',
+        ' $label',
         style: TextStyle(
           fontSize: 20.00,
           fontFamily: 'Kanit',

@@ -34,7 +34,7 @@ class _ChangePhoneStep1SSOPageState extends State<ChangePhoneStep1SSOPage> {
   String _lastName = '';
 
   Map userProfile = {};
-  bool _isOnlyWebLogin = false;
+  final bool _isOnlyWebLogin = false;
 
   DataUser? dataUser;
   final _formKey = GlobalKey<FormState>();

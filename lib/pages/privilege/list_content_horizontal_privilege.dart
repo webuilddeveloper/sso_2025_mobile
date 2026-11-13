@@ -5,14 +5,14 @@ import 'package:sso/shared/extension.dart';
 
 // ignore: must_be_immutable
 class ListContentHorizontalPrivilege extends StatefulWidget {
-  ListContentHorizontalPrivilege({
-    Key? key,
+  const ListContentHorizontalPrivilege({
+    super.key,
     required this.title,
     required this.code,
     this.model,
     this.navigationList,
     this.navigationForm,
-  }) : super(key: key);
+  });
 
   final String code;
   final String title;
@@ -216,7 +216,7 @@ myCard(
               ? EdgeInsets.only(left: 5.0, right: 15.0)
               : EdgeInsets.symmetric(horizontal: 5.0),
       decoration: BoxDecoration(
-        borderRadius: new BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(5),
         // color: Color(0xFF005C9E),
         color: Colors.transparent,
       ),
@@ -227,7 +227,7 @@ myCard(
           Container(
             height: 150.0,
             decoration: BoxDecoration(
-              borderRadius: new BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topLeft: const Radius.circular(5.0),
                 topRight: const Radius.circular(5.0),
               ),
@@ -244,7 +244,7 @@ myCard(
             alignment: Alignment.topLeft,
             height: 40,
             decoration: BoxDecoration(
-              borderRadius: new BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 bottomLeft: const Radius.circular(5.0),
                 bottomRight: const Radius.circular(5.0),
               ),

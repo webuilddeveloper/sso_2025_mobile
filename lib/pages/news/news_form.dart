@@ -9,7 +9,7 @@ import 'package:sso/shared/extension.dart';
 import 'package:sso/shared/scroll_behavior.dart';
 
 class NewsFormPage extends StatefulWidget {
-  const NewsFormPage({Key? key, this.model, required code}) : super(key: key);
+  const NewsFormPage({super.key, this.model, required code});
 
   final dynamic model;
 

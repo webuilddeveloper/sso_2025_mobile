@@ -47,6 +47,18 @@
 	<true/>
 	<key>NSFaceIDUsageDescription</key>
 	<string>We use Face ID to sign you in securely</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>แอปพลิเคชันต้องการเข้าถึงไมโครโฟนเพื่อใช้งานการสั่งการด้วยเสียงและการสนทนากับระบบผู้ช่วยอัจฉริยะ (AI Chat)</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>แอปพลิเคชันต้องการเข้าถึงระบบรู้จำเสียงพูดเพื่อแปลงเสียงเป็นข้อความสำหรับการค้นหาข้อมูล</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>แอปพลิเคชันต้องการเข้าถึงตำแหน่งของคุณเพื่อค้นหาสถานพยาบาลและสำนักงานประกันสังคมที่อยู่ใกล้เคียง</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>แอปพลิเคชันต้องการเข้าถึงตำแหน่งของคุณเพื่อค้นหาและแนะนำสถานพยาบาลที่อยู่ใกล้คุณ</string>
+	<key>NSCameraUsageDescription</key>
+	<string>แอปพลิเคชันต้องการเข้าถึงกล้องเพื่อถ่ายภาพสำหรับเปลี่ยนรูปโปรไฟล์และแนบเอกสาร</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>แอปพลิเคชันต้องการเข้าถึงคลังรูปภาพเพื่อเลือกรูปโปรไฟล์และแนบเอกสาร</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

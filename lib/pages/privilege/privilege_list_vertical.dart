@@ -4,10 +4,10 @@ import 'package:sso/shared/extension.dart';
 
 class PrivilegeListVertical extends StatefulWidget {
   const PrivilegeListVertical({
-    Key? key,
+    super.key,
     required this.site,
     required this.model,
-  }) : super(key: key);
+  });
 
   final String site;
   final Future<dynamic> model;
@@ -88,7 +88,7 @@ class _PrivilegeListVertical extends State<PrivilegeListVertical> {
             },
             child: Container(
               padding: const EdgeInsets.all(1),
-              decoration: new BoxDecoration(
+              decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.5),
@@ -97,7 +97,7 @@ class _PrivilegeListVertical extends State<PrivilegeListVertical> {
                     offset: Offset(0, 3), // changes position of shadow
                   ),
                 ],
-                borderRadius: new BorderRadius.circular(6.0),
+                borderRadius: BorderRadius.circular(6.0),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10.0),
@@ -128,7 +128,7 @@ class _PrivilegeListVertical extends State<PrivilegeListVertical> {
                 ? EdgeInsets.only(bottom: 5.0, right: 5.0)
                 : EdgeInsets.only(bottom: 5.0, left: 5.0),
         decoration: BoxDecoration(
-          borderRadius: new BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(5),
           color: Color(0xFFE8F0F6),
         ),
         child: Column(
@@ -138,7 +138,7 @@ class _PrivilegeListVertical extends State<PrivilegeListVertical> {
               child: Container(
                 height: 157.0,
                 decoration: BoxDecoration(
-                  borderRadius: new BorderRadius.only(
+                  borderRadius: BorderRadius.only(
                     topLeft: const Radius.circular(5.0),
                     topRight: const Radius.circular(5.0),
                   ),
@@ -156,7 +156,7 @@ class _PrivilegeListVertical extends State<PrivilegeListVertical> {
               alignment: Alignment.topLeft,
               height: 40,
               decoration: BoxDecoration(
-                borderRadius: new BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   bottomLeft: const Radius.circular(5.0),
                   bottomRight: const Radius.circular(5.0),
                 ),

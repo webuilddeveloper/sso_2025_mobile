@@ -43,7 +43,7 @@ class _ConnectSocialPageState extends State<ConnectSocialPage> {
   bool showTxtPasswordOld = true;
   bool showTxtPassword = true;
   bool showTxtConPassword = true;
-  bool _isOnlyWebLogin = false;
+  final bool _isOnlyWebLogin = false;
 
   bool showIsEdit = false;
   String linkAccount = '';
@@ -500,7 +500,7 @@ class _ConnectSocialPageState extends State<ConnectSocialPage> {
                           {
                             // loginWithFacebook(),
                           }
-                        else if (linkAccount != '' && linkAccount != null)
+                        else if (linkAccount != '')
                           {submitUnLinkConnectSocial('facebook')},
                       },
                 ),
@@ -514,7 +514,7 @@ class _ConnectSocialPageState extends State<ConnectSocialPage> {
                         categorySelected = 'line',
                         if (_lineID == '')
                           {loginWithLine()}
-                        else if (linkAccount != '' && linkAccount != null)
+                        else if (linkAccount != '')
                           {submitUnLinkConnectSocial('line')},
                       },
                 ),
@@ -528,7 +528,7 @@ class _ConnectSocialPageState extends State<ConnectSocialPage> {
                         categorySelected = "google",
                         if (_googleID == '')
                           {loginWithGoogle()}
-                        else if (linkAccount != '' && linkAccount != null)
+                        else if (linkAccount != '')
                           {submitUnLinkConnectSocial('google')},
                       },
                 ),
@@ -660,7 +660,7 @@ class _ConnectSocialPageState extends State<ConnectSocialPage> {
                   return 'กรุณากรอกยืนยันรหัสผ่านใหม่.';
                 }
 
-                if (model != txtPassword.text && txtPassword != null) {
+                if (model != txtPassword.text) {
                   return 'กรุณากรอกรหัสผ่านให้ตรงกัน.';
                 }
 
@@ -708,7 +708,7 @@ class _ConnectSocialPageState extends State<ConnectSocialPage> {
                             categorySelected = 'guest';
                           });
                           if (form!.validate()) {
-                            form!.save();
+                            form.save();
                             submitConnectSocial();
                           }
                         },

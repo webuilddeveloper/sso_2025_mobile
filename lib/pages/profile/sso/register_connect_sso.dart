@@ -51,23 +51,23 @@ class RegisterConnectionSSOPage extends StatefulWidget {
 }
 
 class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
 
-  String _username = '';
-  String _password = '';
-  String _facebookID = '';
-  String _appleID = '';
-  String _googleID = '';
-  String _lineID = '';
-  String _email = '';
-  String _imageUrl = '';
-  String _category = '';
-  String _prefixName = '';
-  String _firstName = '';
-  String _lastName = '';
+  final String _username = '';
+  final String _password = '';
+  final String _facebookID = '';
+  final String _appleID = '';
+  final String _googleID = '';
+  final String _lineID = '';
+  final String _email = '';
+  final String _imageUrl = '';
+  final String _category = '';
+  final String _prefixName = '';
+  final String _firstName = '';
+  final String _lastName = '';
 
-  bool _isLoginSocial = false;
-  bool _isLoginSocialHaveEmail = false;
+  final bool _isLoginSocial = false;
+  final bool _isLoginSocialHaveEmail = false;
   bool _isShowStep1 = true;
   bool _isShowStep2 = false;
   bool _isShowStep3 = false;
@@ -77,7 +77,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
 
   final _formKey = GlobalKey<FormState>();
 
-  List<String> _prefixNames = ['นาย', 'นาง', 'นางสาว']; // Option 2
+  final List<String> _prefixNames = ['นาย', 'นาง', 'นางสาว']; // Option 2
   String _selectedPrefixName = 'นาย';
 
   final txtUsername = TextEditingController();
@@ -93,7 +93,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
 
   late Future<dynamic> futureModel;
 
-  ScrollController scrollController = new ScrollController();
+  ScrollController scrollController = ScrollController();
 
   int _selectedDay = 0;
   int _selectedMonth = 0;
@@ -117,7 +117,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
 
   @override
   void initState() {
-    var now = new DateTime.now();
+    var now = DateTime.now();
     setState(() {
       year = now.year;
       month = now.month;
@@ -156,7 +156,9 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
         'category': 'verification',
       });
 
-      if (result != null && result['status'] == 'S' && result['objectData'] != null) {
+      if (result != null &&
+          result['status'] == 'S' &&
+          result['objectData'] != null) {
         setState(() {
           _dataPolicy = [..._dataPolicy, ...result['objectData']];
         });
@@ -189,8 +191,8 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
       return showDialog(
         context: context,
         builder:
-            (BuildContext context) => new CupertinoAlertDialog(
-              title: new Text(
+            (BuildContext context) => CupertinoAlertDialog(
+              title: Text(
                 'กรุณาติ้ก ยอมรับข้อตกลงในการใช้บริการ',
                 style: TextStyle(
                   fontSize: 16,
@@ -203,7 +205,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
               actions: [
                 CupertinoDialogAction(
                   isDefaultAction: true,
-                  child: new Text(
+                  child: Text(
                     "ยกเลิก",
                     style: TextStyle(
                       fontSize: 13,
@@ -260,8 +262,8 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
       return showDialog(
         context: context,
         builder:
-            (BuildContext context) => new CupertinoAlertDialog(
-              title: new Text(
+            (BuildContext context) => CupertinoAlertDialog(
+              title: Text(
                 'ลงทะเบียนประกันสังคมเรียบร้อยแล้ว',
                 style: TextStyle(
                   fontSize: 16,
@@ -274,7 +276,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
               actions: [
                 CupertinoDialogAction(
                   isDefaultAction: true,
-                  child: new Text(
+                  child: Text(
                     "ยกเลิก",
                     style: TextStyle(
                       fontSize: 13,
@@ -294,8 +296,8 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
       return showDialog(
         context: context,
         builder:
-            (BuildContext context) => new CupertinoAlertDialog(
-              title: new Text(
+            (BuildContext context) => CupertinoAlertDialog(
+              title: Text(
                 'ลงทะเบียนระบบประกันสังคมไม่สำเร็จ',
                 style: TextStyle(
                   fontSize: 16,
@@ -308,7 +310,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
               actions: [
                 CupertinoDialogAction(
                   isDefaultAction: true,
-                  child: new Text(
+                  child: Text(
                     "ยกเลิก",
                     style: TextStyle(
                       fontSize: 13,
@@ -341,15 +343,26 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
           ),
           child: Column(
             children: <Widget>[
-              new Row(
+              Row(
                 children: [
-                  new Column(
+                  Column(
                     children: <Widget>[
-                      new Container(
+                      Container(
                         width: 50.0,
                         height: 50.0,
                         padding: EdgeInsets.all(5),
                         alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color:
+                              _isShowStep1
+                                  ? Color(0xFFFFC324)
+                                  : Color(0xFFFFFFFF),
+                          borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                          border: Border.all(
+                            color: Color(0xFFFFC324),
+                            width: 2.0,
+                          ),
+                        ),
                         child: Text(
                           '1',
                           textAlign: TextAlign.center,
@@ -360,23 +373,10 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
                             fontFamily: 'Kanit',
                           ),
                         ),
-                        decoration: new BoxDecoration(
-                          color:
-                              _isShowStep1
-                                  ? Color(0xFFFFC324)
-                                  : Color(0xFFFFFFFF),
-                          borderRadius: new BorderRadius.all(
-                            new Radius.circular(25.0),
-                          ),
-                          border: new Border.all(
-                            color: Color(0xFFFFC324),
-                            width: 2.0,
-                          ),
-                        ),
                       ),
                       Text(
                         'ข้อตกลง',
-                        style: new TextStyle(
+                        style: TextStyle(
                           fontSize: 10.0,
                           color: Colors.white,
                           fontWeight: FontWeight.w100,
@@ -394,13 +394,24 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
                       ),
                     ),
                   ),
-                  new Column(
+                  Column(
                     children: <Widget>[
-                      new Container(
+                      Container(
                         width: 50.0,
                         height: 50.0,
                         padding: EdgeInsets.all(5),
                         alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color:
+                              _isShowStep2
+                                  ? Color(0xFFFFC324)
+                                  : Color(0xFFFFFFFF),
+                          borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                          border: Border.all(
+                            color: Color(0xFFFFC324),
+                            width: 2.0,
+                          ),
+                        ),
                         child: Text(
                           '2',
                           textAlign: TextAlign.center,
@@ -411,23 +422,10 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
                             fontFamily: 'Kanit',
                           ),
                         ),
-                        decoration: new BoxDecoration(
-                          color:
-                              _isShowStep2
-                                  ? Color(0xFFFFC324)
-                                  : Color(0xFFFFFFFF),
-                          borderRadius: new BorderRadius.all(
-                            new Radius.circular(25.0),
-                          ),
-                          border: new Border.all(
-                            color: Color(0xFFFFC324),
-                            width: 2.0,
-                          ),
-                        ),
                       ),
                       Text(
                         'ข้อมูลส่วนตัว',
-                        style: new TextStyle(
+                        style: TextStyle(
                           fontSize: 10.0,
                           color: Colors.white,
                           fontWeight: FontWeight.w100,
@@ -445,13 +443,24 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
                       ),
                     ),
                   ),
-                  new Column(
+                  Column(
                     children: <Widget>[
-                      new Container(
+                      Container(
                         width: 50.0,
                         height: 50.0,
                         padding: EdgeInsets.all(5),
                         alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color:
+                              _isShowStep3
+                                  ? Color(0xFFFFC324)
+                                  : Color(0xFFFFFFFF),
+                          borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                          border: Border.all(
+                            color: Color(0xFFFFC324),
+                            width: 2.0,
+                          ),
+                        ),
                         child: Text(
                           '3',
                           textAlign: TextAlign.center,
@@ -462,23 +471,10 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
                             fontFamily: 'Kanit',
                           ),
                         ),
-                        decoration: new BoxDecoration(
-                          color:
-                              _isShowStep3
-                                  ? Color(0xFFFFC324)
-                                  : Color(0xFFFFFFFF),
-                          borderRadius: new BorderRadius.all(
-                            new Radius.circular(25.0),
-                          ),
-                          border: new Border.all(
-                            color: Color(0xFFFFC324),
-                            width: 2.0,
-                          ),
-                        ),
                       ),
                       Text(
                         'ยืนยันตัวตน',
-                        style: new TextStyle(
+                        style: TextStyle(
                           fontSize: 10.0,
                           color: Colors.white,
                           fontWeight: FontWeight.w100,
@@ -520,13 +516,13 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
       children: <Widget>[
         for (var item in _dataPolicy)
           Html(data: item['description'].toString()),
-        new Container(
+        Container(
           alignment: Alignment.center,
           child: CheckboxListTile(
             activeColor: Color(0xFF005C9E),
             title: Text(
               "ฉันยอมรับข้อตกลงในการบริการ",
-              style: new TextStyle(
+              style: TextStyle(
                 fontSize: 10.0,
                 fontWeight: FontWeight.normal,
                 fontFamily: 'Kanit',
@@ -661,7 +657,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
             ),
           SizedBox(height: 20.0),
           labelTextFormField('คำนำหน้า'),
-          new Container(
+          Container(
             width: 5000.0,
             padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
             decoration: BoxDecoration(
@@ -699,6 +695,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
               items:
                   _prefixNames.map((prefixName) {
                     return DropdownMenuItem(
+                      value: prefixName,
                       child: new Text(
                         prefixName,
                         style: TextStyle(
@@ -707,7 +704,6 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
                           color: Color(0xFF005C9E),
                         ),
                       ),
-                      value: prefixName,
                     );
                   }).toList(),
             ),
@@ -756,6 +752,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
                   if (model!.isEmpty) {
                     return 'กรุณากรอกวันเดือนปีเกิด.';
                   }
+                  return null;
                 },
               ),
             ),
@@ -814,7 +811,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
             false,
             true,
           ),
-          new Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               // Container(
@@ -877,7 +874,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
                   onPressed: () {
                     final form = _formKey.currentState;
                     if (form!.validate()) {
-                      form!.save();
+                      form.save();
                       checkValueStep2();
                     }
                   },
@@ -906,7 +903,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
       children: <Widget>[
         Text(
           "ยืนยันตัวตน การสมัครสมาชิก",
-          style: new TextStyle(
+          style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
             fontFamily: 'Kanit',
@@ -914,7 +911,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
         ),
         Text(
           "โปรดตรวจสอบความถูกต้องของข้อมูล จากนั้นระบุรหัสผ่านที่ได้รับจาก SMS-OTP เพื่อความปลอดภัยในการเปลี่ยนรหัสผ่าน",
-          style: new TextStyle(
+          style: TextStyle(
             fontSize: 15.0,
             fontWeight: FontWeight.normal,
             fontFamily: 'Kanit',
@@ -924,7 +921,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
         SizedBox(height: 20.0),
         Text(
           "เลขที่บัตรประชาชน:",
-          style: new TextStyle(
+          style: TextStyle(
             fontSize: 15.0,
             fontWeight: FontWeight.normal,
             fontFamily: 'Kanit',
@@ -933,7 +930,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
         ),
         Text(
           txtIdCard.text,
-          style: new TextStyle(
+          style: TextStyle(
             fontSize: 15.0,
             fontWeight: FontWeight.normal,
             fontFamily: 'Kanit',
@@ -941,7 +938,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
         ),
         Text(
           "เบอร์โทรศัพท์",
-          style: new TextStyle(
+          style: TextStyle(
             fontSize: 15.0,
             fontWeight: FontWeight.normal,
             fontFamily: 'Kanit',
@@ -950,7 +947,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
         ),
         Text(
           txtPhone.text,
-          style: new TextStyle(
+          style: TextStyle(
             fontSize: 15.0,
             fontWeight: FontWeight.normal,
             fontFamily: 'Kanit',
@@ -961,7 +958,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
           child: Text(
             "กรุณากดปุ่ม “Request OTP”",
             textAlign: TextAlign.center,
-            style: new TextStyle(
+            style: TextStyle(
               fontSize: 15.0,
               fontWeight: FontWeight.normal,
               fontFamily: 'Kanit',
@@ -973,7 +970,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
           child: Text(
             "เพื่อรับรหัสรักษาความปลอดภัย SMS-OTP",
             textAlign: TextAlign.center,
-            style: new TextStyle(
+            style: TextStyle(
               fontSize: 15.0,
               fontWeight: FontWeight.normal,
               fontFamily: 'Kanit',
@@ -1046,9 +1043,9 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
             ),
           );
         } else {
-          if (snapshot.hasError)
+          if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          else
+          } else {
             return Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -1070,6 +1067,7 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
                 ),
               ),
             );
+          }
         }
       },
     );

@@ -6,16 +6,16 @@ import '../../home.dart';
 import 'login_connect_sso.dart';
 import 'forgot_password_form_otp.dart';
 
-DateTime now = new DateTime.now();
+DateTime now = DateTime.now();
 
 class ForgotPasswordRequestOTPPage extends StatefulWidget {
   final String idcard;
   final String phone;
-  ForgotPasswordRequestOTPPage({
-    Key? key,
+  const ForgotPasswordRequestOTPPage({
+    super.key,
     required this.idcard,
     required this.phone,
-  }) : super(key: key);
+  });
 
   @override
   _ForgotPasswordRequestOTPPageState createState() =>
@@ -24,7 +24,7 @@ class ForgotPasswordRequestOTPPage extends StatefulWidget {
 
 class _ForgotPasswordRequestOTPPageState
     extends State<ForgotPasswordRequestOTPPage> {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
 
   String _username = '';
   String _password = '';
@@ -38,11 +38,11 @@ class _ForgotPasswordRequestOTPPageState
   String _prefixName = '';
   String _firstName = '';
   String _lastName = '';
-  String _phone = '';
-  String _idcard = '';
+  final String _phone = '';
+  final String _idcard = '';
 
   Map userProfile = {};
-  bool _isOnlyWebLogin = false;
+  final bool _isOnlyWebLogin = false;
 
   DataUser? dataUser;
 
@@ -79,7 +79,7 @@ class _ForgotPasswordRequestOTPPageState
   }
 
   void checkStatus() async {
-    final storage = new FlutterSecureStorage();
+    final storage = FlutterSecureStorage();
     String? value = await storage.read(key: 'dataUserLoginSSO');
     if (value != null && value != '') {
       Navigator.pushReplacement(
@@ -136,7 +136,7 @@ class _ForgotPasswordRequestOTPPageState
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Padding(
-                    padding: new EdgeInsets.only(
+                    padding: EdgeInsets.only(
                       top: MediaQuery.of(context).padding.top,
                     ),
                   ),
@@ -156,7 +156,7 @@ class _ForgotPasswordRequestOTPPageState
                             children: <Widget>[
                               Text(
                                 "ลืมรหัสผ่าน",
-                                style: new TextStyle(
+                                style: TextStyle(
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Kanit',
@@ -164,7 +164,7 @@ class _ForgotPasswordRequestOTPPageState
                               ),
                               Text(
                                 "โปรดตรวจสอบความถูกต้องของข้อมูล จากนั้นระบุรหัสผ่านที่ได้รับจาก SMS-OTP เพื่อความปลอดภัยในการเปลี่ยนรหัสผ่าน",
-                                style: new TextStyle(
+                                style: TextStyle(
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.normal,
                                   fontFamily: 'Kanit',
@@ -174,7 +174,7 @@ class _ForgotPasswordRequestOTPPageState
                               SizedBox(height: 20.0),
                               Text(
                                 "เลขที่บัตรประชาชน:",
-                                style: new TextStyle(
+                                style: TextStyle(
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.normal,
                                   fontFamily: 'Kanit',
@@ -183,7 +183,7 @@ class _ForgotPasswordRequestOTPPageState
                               ),
                               Text(
                                 widget.idcard,
-                                style: new TextStyle(
+                                style: TextStyle(
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.normal,
                                   fontFamily: 'Kanit',
@@ -191,7 +191,7 @@ class _ForgotPasswordRequestOTPPageState
                               ),
                               Text(
                                 "เบอร์โทรศัพท์",
-                                style: new TextStyle(
+                                style: TextStyle(
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.normal,
                                   fontFamily: 'Kanit',
@@ -200,7 +200,7 @@ class _ForgotPasswordRequestOTPPageState
                               ),
                               Text(
                                 widget.phone,
-                                style: new TextStyle(
+                                style: TextStyle(
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.normal,
                                   fontFamily: 'Kanit',
@@ -211,7 +211,7 @@ class _ForgotPasswordRequestOTPPageState
                                 child: Text(
                                   "กรุณากดปุ่ม “Request OTP”",
                                   textAlign: TextAlign.center,
-                                  style: new TextStyle(
+                                  style: TextStyle(
                                     fontSize: 15.0,
                                     fontWeight: FontWeight.normal,
                                     fontFamily: 'Kanit',
@@ -223,7 +223,7 @@ class _ForgotPasswordRequestOTPPageState
                                 child: Text(
                                   "เพื่อรับรหัสรักษาความปลอดภัย SMS-OTP",
                                   textAlign: TextAlign.center,
-                                  style: new TextStyle(
+                                  style: TextStyle(
                                     fontSize: 15.0,
                                     fontWeight: FontWeight.normal,
                                     fontFamily: 'Kanit',

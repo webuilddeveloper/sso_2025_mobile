@@ -1163,6 +1163,20 @@ class _HomePageState extends State<HomePage> {
       finalImageUrl = imageUrlSocial;
     }
 
+    if (finalImageUrl.isEmpty && (profileCode ?? '').isNotEmpty) {
+      try {
+        final regRes = await postObjectData("m/Register/read", {'code': profileCode!});
+        if (regRes != null && regRes['status'] == 'S' && regRes['objectData'] != null && regRes['objectData'].isNotEmpty) {
+          var obj = regRes['objectData'][0];
+          String rImg = obj['imageUrl'] ?? '';
+          if (rImg.isNotEmpty) {
+            finalImageUrl = rImg;
+            await storage.write(key: 'profileImageUrl', value: rImg);
+          }
+        }
+      } catch (_) {}
+    }
+
     setState(() {
       userData = User(
         idcard: finalIdCard,

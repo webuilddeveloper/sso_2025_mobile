@@ -30,7 +30,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
 
   final _formKey = GlobalKey<FormState>();
 
-  List<String> _prefixNames = ['นาย', 'นาง', 'นางสาว']; // Option 2
+  final List<String> _prefixNames = ['นาย', 'นาง', 'นางสาว']; // Option 2
   String _selectedPrefixName = 'นาย';
 
   final txtEmail = TextEditingController();
@@ -87,37 +87,44 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
   Future<dynamic> readUser() async {
     final result = await postObjectData("m/Register/read", {'code': _code});
 
-    if (result['status'] == 'S') {
-      await storage.write(
-        key: 'dataUserLoginSSO',
-        value: jsonEncode(result['objectData'][0]),
-      );
+    if (result != null &&
+        result['status'] == 'S' &&
+        result['objectData'] != null &&
+        result['objectData'].isNotEmpty) {
+      var obj = result['objectData'][0];
+      String serverImg = obj['imageUrl'] ?? '';
+      if (serverImg.isNotEmpty) {
+        await storage.write(key: 'profileImageUrl', value: serverImg);
+      }
 
-      if (result['objectData'][0]['birthDay'] != '') {
-        var date = result['objectData'][0]['birthDay'];
-        var year = date.substring(0, 4);
-        var month = date.substring(4, 6);
-        var day = date.substring(6, 8);
-        DateTime todayDate = DateTime.parse(year + '-' + month + '-' + day);
+      await storage.write(key: 'dataUserLoginSSO', value: jsonEncode(obj));
 
-        // DateTime todayDate =
-        //     DateTime.parse(todayDateBase);
-        setState(() {
-          _selectedYear = todayDate.year;
-          _selectedMonth = todayDate.month;
-          _selectedDay = todayDate.day;
-          txtDate.text = DateFormat("dd-MM-yyyy").format(todayDate);
-        });
+      if (obj['birthDay'] != null && obj['birthDay'] != '') {
+        var date = obj['birthDay'].toString();
+        if (date.length >= 8) {
+          var year = date.substring(0, 4);
+          var month = date.substring(4, 6);
+          var day = date.substring(6, 8);
+          DateTime todayDate = DateTime.parse('$year-$month-$day');
+          setState(() {
+            _selectedYear = todayDate.year;
+            _selectedMonth = todayDate.month;
+            _selectedDay = todayDate.day;
+            txtDate.text = DateFormat("dd-MM-yyyy").format(todayDate);
+          });
+        }
       }
 
       setState(() {
-        _imageUrl = result['objectData'][0]['imageUrl'] ?? '';
-        txtFirstName.text = result['objectData'][0]['firstName'] ?? '';
-        txtLastName.text = result['objectData'][0]['lastName'] ?? '';
-        txtEmail.text = result['objectData'][0]['email'] ?? '';
-        txtPhone.text = result['objectData'][0]['phone'] ?? '';
-        _selectedPrefixName = result['objectData'][0]['prefixName'] ?? '';
-        _code = result['objectData'][0]['code'] ?? '';
+        if (serverImg.isNotEmpty) {
+          _imageUrl = serverImg;
+        }
+        txtFirstName.text = obj['firstName'] ?? '';
+        txtLastName.text = obj['lastName'] ?? '';
+        txtEmail.text = obj['email'] ?? '';
+        txtPhone.text = obj['phone'] ?? '';
+        _selectedPrefixName = obj['prefixName'] ?? '';
+        _code = obj['code'] ?? '';
       });
     }
   }
@@ -144,14 +151,24 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
     user['imageUrl'] = _imageUrl;
     await storage.write(
       key: 'dataUserLoginSSO',
-      value: jsonEncode(result != null && result['objectData'] != null ? result['objectData'] : user),
+      value: jsonEncode(
+        result != null && result['objectData'] != null
+            ? result['objectData']
+            : user,
+      ),
     );
     if (_imageUrl.isNotEmpty) {
       await storage.write(key: 'profileImageUrl', value: _imageUrl);
     }
     if (txtFirstName.text.trim().isNotEmpty) {
-      await storage.write(key: 'profileFirstName', value: txtFirstName.text.trim());
-      await storage.write(key: 'profileLastName', value: txtLastName.text.trim());
+      await storage.write(
+        key: 'profileFirstName',
+        value: txtFirstName.text.trim(),
+      );
+      await storage.write(
+        key: 'profileLastName',
+        value: txtLastName.text.trim(),
+      );
     }
 
     if (!mounted) return;
@@ -179,13 +196,15 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
             txtLastName.text = user['lastName'] ?? '';
             txtEmail.text = user['email'] ?? '';
             txtPhone.text = user['phone'] ?? '';
-            if (user['prefixName'] != null && user['prefixName'].toString().isNotEmpty) {
+            if (user['prefixName'] != null &&
+                user['prefixName'].toString().isNotEmpty) {
               _selectedPrefixName = user['prefixName'].toString();
             }
             _code = user['code']?.toString() ?? '';
           });
 
-          if (user['birthDay'] != null && user['birthDay'].toString().length >= 8) {
+          if (user['birthDay'] != null &&
+              user['birthDay'].toString().length >= 8) {
             var date = user['birthDay'].toString();
             var year = date.substring(0, 4);
             var month = date.substring(4, 6);
@@ -203,6 +222,12 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
             readUser();
           }
         }
+      }
+      String? localImg = await storage.read(key: 'profileImageUrl');
+      if (localImg != null && localImg.isNotEmpty) {
+        setState(() {
+          _imageUrl = localImg;
+        });
       }
     } catch (e) {
       debugPrint('Error in readStorage edit_user_information: $e');
@@ -315,6 +340,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
               items:
                   _prefixNames.map((prefixName) {
                     return DropdownMenuItem(
+                      value: prefixName,
                       child: Text(
                         prefixName,
                         style: TextStyle(
@@ -323,7 +349,6 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                           color: Color(0xFF005C9E),
                         ),
                       ),
-                      value: prefixName,
                     );
                   }).toList(),
             ),
@@ -372,6 +397,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                   if (model!.isEmpty) {
                     return 'กรุณากรอกวันเดือนปีเกิด.';
                   }
+                  return null;
                 },
               ),
             ),
@@ -429,16 +455,16 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
       child: Row(
         children: <Widget>[
           Container(
-            child: Padding(
-              padding: EdgeInsets.all(5.0),
-              child: Image.asset(urlImage, height: 5.0, width: 5.0),
-            ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5.0),
               color: Color(0xFF0B5C9E),
             ),
             width: 30.0,
             height: 30.0,
+            child: Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Image.asset(urlImage, height: 5.0, width: 5.0),
+            ),
           ),
           Container(
             width: MediaQuery.of(context).size.width * 0.63,
@@ -504,7 +530,10 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                 var user = json.decode(value);
                 if (user is Map) {
                   user['imageUrl'] = res;
-                  await storage.write(key: 'dataUserLoginSSO', value: jsonEncode(user));
+                  await storage.write(
+                    key: 'dataUserLoginSSO',
+                    value: jsonEncode(user),
+                  );
                 }
               } catch (_) {}
             }
@@ -645,7 +674,10 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: const Color(0xFF005C9E),
-                                border: Border.all(color: Colors.white, width: 2),
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
+                                ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.15),

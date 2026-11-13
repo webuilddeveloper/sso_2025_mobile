@@ -10,7 +10,7 @@ import 'package:sso/screen/login.dart';
 import 'sso/login_connect_sso.dart';
 
 class ConnectSSOPage extends StatefulWidget {
-  ConnectSSOPage({Key? key, required this.goHome}) : super(key: key);
+  const ConnectSSOPage({super.key, required this.goHome});
 
   final bool goHome;
 
@@ -19,32 +19,32 @@ class ConnectSSOPage extends StatefulWidget {
 }
 
 class _ConnectSSOPageState extends State<ConnectSSOPage> {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
 
-  String _username = '';
-  String _password = '';
-  String _facebookID = '';
-  String _appleID = '';
-  String _googleID = '';
-  String _lineID = '';
-  String _email = '';
+  final String _username = '';
+  final String _password = '';
+  final String _facebookID = '';
+  final String _appleID = '';
+  final String _googleID = '';
+  final String _lineID = '';
+  final String _email = '';
   String _imageUrl = '';
-  String _category = '';
-  String _prefixName = '';
+  final String _category = '';
+  final String _prefixName = '';
   String _firstName = '';
   String _lastName = '';
   String _idCard = '';
 
-  bool _isLoginSocial = false;
-  bool _isLoginSocialHaveEmail = false;
-  bool _isShowStep1 = true;
-  bool _isShowStep2 = false;
-  bool _checkedValue = false;
+  final bool _isLoginSocial = false;
+  final bool _isLoginSocialHaveEmail = false;
+  final bool _isShowStep1 = true;
+  final bool _isShowStep2 = false;
+  final bool _checkedValue = false;
 
   final _formKey = GlobalKey<FormState>();
 
-  List<String> _prefixNames = ['นาย', 'นาง', 'นางสาว']; // Option 2
-  String _selectedPrefixName = 'นาย';
+  final List<String> _prefixNames = ['นาย', 'นาง', 'นางสาว']; // Option 2
+  final String _selectedPrefixName = 'นาย';
 
   final txtUsername = TextEditingController();
   final txtPassword = TextEditingController();
@@ -54,7 +54,7 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
 
   late Future<dynamic> futureModel;
 
-  ScrollController scrollController = new ScrollController();
+  ScrollController scrollController = ScrollController();
 
   @override
   void dispose() {
@@ -107,23 +107,23 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
       child: Row(
         children: <Widget>[
           Container(
-            child: new Padding(
-              padding: EdgeInsets.all(5.0),
-              child: Image.asset(urlImage, height: 5.0, width: 5.0),
-            ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5.0),
               color: Color(0xFF0B5C9E),
             ),
             width: 30.0,
             height: 30.0,
+            child: new Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Image.asset(urlImage, height: 5.0, width: 5.0),
+            ),
           ),
           Container(
             width: MediaQuery.of(context).size.width * 0.63,
             margin: EdgeInsets.only(left: 10.0, right: 10.0),
             child: Text(
               title,
-              style: new TextStyle(
+              style: TextStyle(
                 fontSize: 12.0,
                 color: Color(0xFF005C9E),
                 fontWeight: FontWeight.normal,
@@ -148,7 +148,7 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Container(
+        SizedBox(
           width: 100.0,
           height: 100.0,
           child: Padding(
@@ -159,9 +159,12 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image:
-                      _imageUrl.isNotEmpty && !_imageUrl.contains('122.155.223.63')
-                          ? NetworkImage(sanitizeImageUrl(_imageUrl)) as ImageProvider
-                          : const AssetImage("assets/images/user_not_found.png"),
+                      _imageUrl.isNotEmpty
+                          ? NetworkImage(sanitizeImageUrl(_imageUrl))
+                              as ImageProvider
+                          : const AssetImage(
+                            "assets/images/user_not_found.png",
+                          ),
                 ),
               ),
             ),
@@ -239,7 +242,7 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
         SizedBox(height: 20.0),
         Text(
           "ท่านเชื่อมต่อไปยังระบบสมาชิกผู้ประกันตนเรียบร้อย",
-          style: new TextStyle(
+          style: TextStyle(
             fontSize: 13.0,
             color: Color(0xFF005C9E),
             fontWeight: FontWeight.normal,
@@ -284,7 +287,7 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
             Text(
               label,
               textAlign: TextAlign.start,
-              style: new TextStyle(
+              style: TextStyle(
                 fontSize: 15.0,
                 fontWeight: FontWeight.normal,
                 fontFamily: 'Kanit',
@@ -293,7 +296,7 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
             Text(
               value,
               textAlign: TextAlign.start,
-              style: new TextStyle(
+              style: TextStyle(
                 fontSize: 18.0,
                 color: Color(0xFF005C9E),
                 fontWeight: FontWeight.normal,
@@ -310,7 +313,7 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Container(
+        SizedBox(
           width: 100.0,
           height: 100.0,
           child: Padding(
@@ -321,9 +324,12 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image:
-                      _imageUrl.isNotEmpty && !_imageUrl.contains('122.155.223.63')
-                          ? NetworkImage(sanitizeImageUrl(_imageUrl)) as ImageProvider
-                          : const AssetImage("assets/images/user_not_found.png"),
+                      _imageUrl.isNotEmpty
+                          ? NetworkImage(sanitizeImageUrl(_imageUrl))
+                              as ImageProvider
+                          : const AssetImage(
+                            "assets/images/user_not_found.png",
+                          ),
                 ),
               ),
             ),
@@ -336,7 +342,7 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
             width: 50.0,
           ),
         ),
-        Container(
+        SizedBox(
           width: 100.0,
           height: 100.0,
           // alignment: Alignment.centerLeft,
@@ -398,7 +404,7 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
         ),
         Text(
           "ท่านกำลังเข้าสู่ระบบสมาชิกผู้ประกันตน",
-          style: new TextStyle(
+          style: TextStyle(
             fontSize: 13.0,
             color: Color(0xFF005C9E),
             fontWeight: FontWeight.normal,
@@ -466,16 +472,6 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
               //   children: <Widget>[
               Container(
                 alignment: Alignment.center,
-                child: Text(
-                  'ข้อมูลการเชื่อมต่อประกันสังคม',
-                  textAlign: TextAlign.center,
-                  style: new TextStyle(
-                    fontSize: 18.0,
-                    color: Color(0xFF005C9E),
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Kanit',
-                  ),
-                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   color: Colors.white,
@@ -486,6 +482,16 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
                 ),
                 height: 70,
                 width: MediaQuery.of(context).size.width * 0.8,
+                child: Text(
+                  'ข้อมูลการเชื่อมต่อประกันสังคม',
+                  textAlign: TextAlign.center,
+                  style: new TextStyle(
+                    fontSize: 18.0,
+                    color: Color(0xFF005C9E),
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Kanit',
+                  ),
+                ),
               ),
               // Padding(
               //   padding: EdgeInsets.only(top: 75.0),

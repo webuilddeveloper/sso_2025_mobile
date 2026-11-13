@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 buttonCloseBack(BuildContext context) {
   return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.end,
     children: [
       Container(
         // width: 60,
@@ -23,8 +25,6 @@ buttonCloseBack(BuildContext context) {
         ),
       ),
     ],
-    mainAxisAlignment: MainAxisAlignment.center,
-    crossAxisAlignment: CrossAxisAlignment.end,
   );
 }
 

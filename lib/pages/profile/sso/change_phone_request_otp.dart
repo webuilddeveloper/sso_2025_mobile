@@ -5,14 +5,14 @@ import 'package:sso/pages/profile/sso/change_phone_form_otp.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'login_connect_sso.dart';
 
-DateTime now = new DateTime.now();
+DateTime now = DateTime.now();
 
 class ChangePhoneRequestOTPPage extends StatefulWidget {
-  ChangePhoneRequestOTPPage({
-    Key? key,
+  const ChangePhoneRequestOTPPage({
+    super.key,
     required this.phone,
     required this.idcard,
-  }) : super(key: key);
+  });
   final String phone;
   final String idcard;
 
@@ -22,7 +22,7 @@ class ChangePhoneRequestOTPPage extends StatefulWidget {
 }
 
 class _ChangePhoneRequestOTPPageState extends State<ChangePhoneRequestOTPPage> {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
 
   String _username = '';
   String _password = '';
@@ -38,7 +38,7 @@ class _ChangePhoneRequestOTPPageState extends State<ChangePhoneRequestOTPPage> {
   String _lastName = '';
 
   Map userProfile = {};
-  bool _isOnlyWebLogin = false;
+  final bool _isOnlyWebLogin = false;
 
   DataUser? dataUser;
 
@@ -104,7 +104,7 @@ class _ChangePhoneRequestOTPPageState extends State<ChangePhoneRequestOTPPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Padding(
-                    padding: new EdgeInsets.only(
+                    padding: EdgeInsets.only(
                       top: MediaQuery.of(context).padding.top,
                     ),
                   ),
@@ -124,7 +124,7 @@ class _ChangePhoneRequestOTPPageState extends State<ChangePhoneRequestOTPPage> {
                             children: <Widget>[
                               Text(
                                 "เปลี่ยนแปลงหมายเลขโทรศัพท์",
-                                style: new TextStyle(
+                                style: TextStyle(
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Kanit',
@@ -132,7 +132,7 @@ class _ChangePhoneRequestOTPPageState extends State<ChangePhoneRequestOTPPage> {
                               ),
                               Text(
                                 "โปรดตรวจสอบความถูกต้องของข้อมูล จากนั้นระบุรหัสผ่านที่ได้รับจาก SMS-OTP เพื่อความปลอดภัยในการเปลี่ยนรหัสผ่าน",
-                                style: new TextStyle(
+                                style: TextStyle(
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.normal,
                                   fontFamily: 'Kanit',
@@ -142,7 +142,7 @@ class _ChangePhoneRequestOTPPageState extends State<ChangePhoneRequestOTPPage> {
                               SizedBox(height: 20.0),
                               Text(
                                 "เลขที่บัตรประชาชน:",
-                                style: new TextStyle(
+                                style: TextStyle(
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.normal,
                                   fontFamily: 'Kanit',
@@ -151,7 +151,7 @@ class _ChangePhoneRequestOTPPageState extends State<ChangePhoneRequestOTPPage> {
                               ),
                               Text(
                                 widget.idcard,
-                                style: new TextStyle(
+                                style: TextStyle(
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.normal,
                                   fontFamily: 'Kanit',
@@ -159,7 +159,7 @@ class _ChangePhoneRequestOTPPageState extends State<ChangePhoneRequestOTPPage> {
                               ),
                               Text(
                                 "เบอร์โทรศัพท์",
-                                style: new TextStyle(
+                                style: TextStyle(
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.normal,
                                   fontFamily: 'Kanit',
@@ -168,7 +168,7 @@ class _ChangePhoneRequestOTPPageState extends State<ChangePhoneRequestOTPPage> {
                               ),
                               Text(
                                 widget.phone,
-                                style: new TextStyle(
+                                style: TextStyle(
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.normal,
                                   fontFamily: 'Kanit',
@@ -179,7 +179,7 @@ class _ChangePhoneRequestOTPPageState extends State<ChangePhoneRequestOTPPage> {
                                 child: Text(
                                   "กรุณากดปุ่ม “Request OTP”",
                                   textAlign: TextAlign.center,
-                                  style: new TextStyle(
+                                  style: TextStyle(
                                     fontSize: 15.0,
                                     fontWeight: FontWeight.normal,
                                     fontFamily: 'Kanit',
@@ -191,7 +191,7 @@ class _ChangePhoneRequestOTPPageState extends State<ChangePhoneRequestOTPPage> {
                                 child: Text(
                                   "เพื่อรับรหัสรักษาความปลอดภัย SMS-OTP",
                                   textAlign: TextAlign.center,
-                                  style: new TextStyle(
+                                  style: TextStyle(
                                     fontSize: 15.0,
                                     fontWeight: FontWeight.normal,
                                     fontFamily: 'Kanit',

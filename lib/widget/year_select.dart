@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 
 class YearSelectWidget extends StatefulWidget {
   const YearSelectWidget({
-    Key? key,
+    super.key,
     this.current = 0,
     this.start = 60,
     required this.changed,
-  }) : super(key: key);
+  });
   final int start;
   final int current;
   final Function changed;

@@ -10,7 +10,7 @@ import 'package:sso/pages/profile/sso/login_connect_sso.dart';
 import 'package:sso/screen/login.dart';
 
 class ChangePhoneFormOTPPage extends StatefulWidget {
-  ChangePhoneFormOTPPage({Key? key, required this.phone}) : super(key: key);
+  const ChangePhoneFormOTPPage({super.key, required this.phone});
   final String phone;
 
   @override
@@ -18,7 +18,7 @@ class ChangePhoneFormOTPPage extends StatefulWidget {
 }
 
 class _ChangePhoneFormOTPPageState extends State<ChangePhoneFormOTPPage> {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -35,7 +35,7 @@ class _ChangePhoneFormOTPPageState extends State<ChangePhoneFormOTPPage> {
 
   late Future<dynamic> futureModel;
 
-  ScrollController scrollController = new ScrollController();
+  ScrollController scrollController = ScrollController();
 
   @override
   void dispose() {
@@ -65,8 +65,8 @@ class _ChangePhoneFormOTPPageState extends State<ChangePhoneFormOTPPage> {
       barrierDismissible: false,
       context: context,
       builder:
-          (BuildContext context) => new CupertinoAlertDialog(
-            title: new Text(
+          (BuildContext context) => CupertinoAlertDialog(
+            title: Text(
               'เปลี่ยนหมายเลขโทรศัพท์แล้ว กำลังนำท่านกลับเข้าสู่ระบบผู้ประกันตน',
               style: TextStyle(
                 fontSize: 15,
@@ -79,7 +79,7 @@ class _ChangePhoneFormOTPPageState extends State<ChangePhoneFormOTPPage> {
             actions: [
               CupertinoDialogAction(
                 isDefaultAction: true,
-                child: new Text(
+                child: Text(
                   "ยืนยัน",
                   style: TextStyle(
                     // fontWeight: FontWeight.normal,
@@ -156,7 +156,7 @@ class _ChangePhoneFormOTPPageState extends State<ChangePhoneFormOTPPage> {
       submitChangePhoneFormOTP();
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => new HomePage()),
+        MaterialPageRoute(builder: (context) => HomePage()),
       );
     } else {}
   }

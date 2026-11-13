@@ -11,7 +11,7 @@ import '../component/header.dart';
 import '../component/material/input_with_label.dart';
 
 class faqListPage extends StatefulWidget {
-  const faqListPage({Key? key, required this.username}) : super(key: key);
+  const faqListPage({super.key, required this.username});
   final String username;
   @override
   _faqListPageState createState() => _faqListPageState();
@@ -20,7 +20,7 @@ class faqListPage extends StatefulWidget {
 class _faqListPageState extends State<faqListPage> {
   late Future<dynamic> futureModel;
 
-  RefreshController _refreshController = RefreshController(
+  final RefreshController _refreshController = RefreshController(
     initialRefresh: false,
   );
 
@@ -79,11 +79,11 @@ class _faqListPageState extends State<faqListPage> {
         },
         child: GestureDetector(
           onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
+            FocusScope.of(context).requestFocus(FocusNode());
           },
           child: Column(
             children: [
-              Container(
+              SizedBox(
                 height: 180,
                 width: double.infinity,
                 child: Stack(

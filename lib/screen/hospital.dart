@@ -23,12 +23,13 @@ class _HospitalPageState extends State<HospitalPage> {
   String _profileName = 'We Build Operate Co.,Ltd';
   String _imageUrl = '';
   String _section = '33';
-  String _hospitalName = 'โรงพยาบาลกรุงเทพ';
+  final String _hospitalName = 'โรงพยาบาลกรุงเทพ';
   dynamic currentHospital = {
     'title': 'โรงพยาบาลกรุงเทพ',
     'imageUrl': '',
     'description': 'กรุงเทพมหานครและปริมณฑล',
-    'date': '${DateTime.now().day}/${DateTime.now().month}/${(DateTime.now().year + 543) % 100}',
+    'date':
+        '${DateTime.now().day}/${DateTime.now().month}/${(DateTime.now().year + 543) % 100}',
   };
 
   List<dynamic> temp = [
@@ -36,19 +37,22 @@ class _HospitalPageState extends State<HospitalPage> {
       'title': 'โรงพยาบาลจุฬาลงกรณ์ สภากาชาดไทย',
       'imageUrl': '',
       'description': 'เขตปทุมวัน กรุงเทพมหานคร',
-      'date': '${DateTime.now().day}/${DateTime.now().month}/${(DateTime.now().year + 543) % 100}',
+      'date':
+          '${DateTime.now().day}/${DateTime.now().month}/${(DateTime.now().year + 543) % 100}',
     },
     {
       'title': 'โรงพยาบาลศิริราช',
       'imageUrl': '',
       'description': 'เขตบางกอกน้อย กรุงเทพมหานคร',
-      'date': '${DateTime.now().day}/${DateTime.now().month}/${(DateTime.now().year + 543) % 100}',
+      'date':
+          '${DateTime.now().day}/${DateTime.now().month}/${(DateTime.now().year + 543) % 100}',
     },
     {
       'title': 'โรงพยาบาลรามาธิบดี',
       'imageUrl': '',
       'description': 'เขตราชเทวี กรุงเทพมหานคร',
-      'date': '${DateTime.now().day}/${DateTime.now().month}/${(DateTime.now().year + 543) % 100}',
+      'date':
+          '${DateTime.now().day}/${DateTime.now().month}/${(DateTime.now().year + 543) % 100}',
     },
   ];
 
@@ -66,13 +70,18 @@ class _HospitalPageState extends State<HospitalPage> {
         if (user is Map) {
           setState(() {
             userData = user;
-            if (user['firstName'] != null) {
-              _profileName = '${user['firstName']} ${user['lastName'] ?? ''}'.trim();
+            if (user['firstName'] != null &&
+                user['firstName'].toString().isNotEmpty) {
+              _profileName =
+                  '${user['firstName']} ${user['lastName'] ?? ''}'.trim();
             }
-            if (user['imageUrl'] != null) {
+            if (user['imageUrl'] != null &&
+                user['imageUrl'].toString().isNotEmpty) {
               _imageUrl = user['imageUrl'].toString();
             }
-            if (user['category'] != null) {
+            if (user['category'] != null &&
+                user['category'].toString().isNotEmpty &&
+                user['category'].toString() != 'guest') {
               _section = user['category'].toString();
             }
           });
@@ -89,7 +98,7 @@ class _HospitalPageState extends State<HospitalPage> {
           _profileName = '$pFirst ${pLast ?? ''}'.trim();
         });
       }
-      if (pCat != null && pCat.isNotEmpty) {
+      if (pCat != null && pCat.isNotEmpty && pCat != 'guest') {
         setState(() {
           _section = pCat;
         });
@@ -99,17 +108,63 @@ class _HospitalPageState extends State<HospitalPage> {
         var pData = await postDio(profileReadApi, {'code': pCode});
         if (pData != null && pData is Map) {
           setState(() {
-            if (pData['firstName'] != null) {
-              _profileName = '${pData['firstName']} ${pData['lastName'] ?? ''}'.trim();
+            if (pData['firstName'] != null &&
+                pData['firstName'].toString().isNotEmpty) {
+              _profileName =
+                  '${pData['firstName']} ${pData['lastName'] ?? ''}'.trim();
             }
-            if (pData['imageUrl'] != null) {
+            if (pData['imageUrl'] != null &&
+                pData['imageUrl'].toString().isNotEmpty) {
               _imageUrl = pData['imageUrl'].toString();
             }
-            if (pData['category'] != null) {
+            if (pData['category'] != null &&
+                pData['category'].toString().isNotEmpty &&
+                pData['category'].toString() != 'guest') {
               _section = pData['category'].toString();
             }
           });
         }
+
+        try {
+          final regRes = await postObjectData("m/Register/read", {
+            'code': pCode,
+          });
+          if (regRes != null &&
+              regRes['status'] == 'S' &&
+              regRes['objectData'] != null &&
+              regRes['objectData'].isNotEmpty) {
+            var obj = regRes['objectData'][0];
+            String rImg = obj['imageUrl'] ?? '';
+            if (rImg.isNotEmpty) {
+              _imageUrl = rImg;
+              await storage.write(key: 'profileImageUrl', value: rImg);
+            }
+            if (obj['category'] != null &&
+                obj['category'].toString().isNotEmpty &&
+                obj['category'].toString() != 'guest') {
+              _section = obj['category'].toString();
+            }
+            if (obj['firstName'] != null &&
+                obj['firstName'].toString().isNotEmpty) {
+              _profileName =
+                  '${obj['firstName']} ${obj['lastName'] ?? ''}'.trim();
+            }
+            setState(() {});
+          }
+        } catch (_) {}
+      }
+
+      String? localImg = await storage.read(key: 'profileImageUrl');
+      if (localImg != null && localImg.isNotEmpty) {
+        setState(() {
+          _imageUrl = localImg;
+        });
+      }
+
+      if (_section.isEmpty || _section == 'guest') {
+        setState(() {
+          _section = '33';
+        });
       }
 
       var poiHospitals = await postDio('${server}m/poi/read', {
@@ -117,7 +172,9 @@ class _HospitalPageState extends State<HospitalPage> {
         'limit': 20,
       });
 
-      if (poiHospitals != null && poiHospitals is List && poiHospitals.isNotEmpty) {
+      if (poiHospitals != null &&
+          poiHospitals is List &&
+          poiHospitals.isNotEmpty) {
         setState(() {
           temp = poiHospitals;
         });
@@ -231,10 +288,7 @@ class _HospitalPageState extends State<HospitalPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            _profileName,
-                            style: TextStyle(fontSize: 13),
-                          ),
+                          Text(_profileName, style: TextStyle(fontSize: 13)),
                           Text(
                             'ผู้ประกันตนมาตรา ${_section == 'guest' || _section.isEmpty ? '33' : _section}',
                             style: const TextStyle(
@@ -389,7 +443,9 @@ class _HospitalPageState extends State<HospitalPage> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF005C9E).withOpacity(0.2)),
+                border: Border.all(
+                  color: const Color(0xFF005C9E).withOpacity(0.2),
+                ),
               ),
               child: const Icon(
                 Icons.local_hospital_rounded,
@@ -402,7 +458,10 @@ class _HospitalPageState extends State<HospitalPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('สถานพยาบาลปัจจุบัน', style: TextStyle(fontSize: 13, fontFamily: 'Kanit')),
+                  const Text(
+                    'สถานพยาบาลปัจจุบัน',
+                    style: TextStyle(fontSize: 13, fontFamily: 'Kanit'),
+                  ),
                   Expanded(
                     child: Text(
                       currentHospital['title'] ?? 'โรงพยาบาลกรุงเทพ',
@@ -417,7 +476,10 @@ class _HospitalPageState extends State<HospitalPage> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 25,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFE4A025),
                       borderRadius: BorderRadius.circular(17),
@@ -534,7 +596,9 @@ class _HospitalPageState extends State<HospitalPage> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF005C9E).withOpacity(0.15)),
+                border: Border.all(
+                  color: const Color(0xFF005C9E).withOpacity(0.15),
+                ),
               ),
               child: const Icon(
                 Icons.local_hospital_outlined,

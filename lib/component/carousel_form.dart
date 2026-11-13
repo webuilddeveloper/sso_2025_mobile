@@ -25,8 +25,8 @@ class CarouselForm extends StatefulWidget {
 }
 
 class _CarouselForm extends State<CarouselForm> {
-  late Comment comment;
-  late int _limit;
+  Comment? comment;
+  int _limit = 10;
 
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);

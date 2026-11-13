@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BlankLoading extends StatefulWidget {
-  BlankLoading({Key? key, this.width, this.height}) : super(key: key);
+  const BlankLoading({super.key, this.width, this.height});
 
   final double? width;
   final double? height;
@@ -48,7 +48,7 @@ class _BlankLoading extends State<BlankLoading>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: widget.width,
       child: AnimatedBuilder(
         animation: _controller,

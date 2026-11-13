@@ -6,14 +6,14 @@ import 'package:sso/shared/api_provider.dart';
 import 'package:sso/shared/extension.dart';
 
 class PollPage extends StatefulWidget {
-  const PollPage({Key? key}) : super(key: key);
+  const PollPage({super.key});
 
   @override
   State<PollPage> createState() => _PollPageState();
 }
 
 class _PollPageState extends State<PollPage> {
-  RefreshController _refreshController =
+  final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   late Future<dynamic> _future;
   late Future<dynamic> _futureHighLight;
@@ -203,7 +203,7 @@ class _PollPageState extends State<PollPage> {
           ),
         ),
       ),
-      child: Container(
+      child: SizedBox(
         height: 45,
         child: Row(
           children: [
@@ -243,7 +243,7 @@ class _PollPageState extends State<PollPage> {
           ),
         ),
       ),
-      child: Container(
+      child: SizedBox(
         height: 155,
         width: 165,
         child: Column(

@@ -15,7 +15,7 @@ class ForgotPasswordChangeSSOPage extends StatefulWidget {
 
 class _ForgotPasswordChangeSSOPageState
     extends State<ForgotPasswordChangeSSOPage> {
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -32,7 +32,7 @@ class _ForgotPasswordChangeSSOPageState
 
   late Future<dynamic> futureModel;
 
-  ScrollController scrollController = new ScrollController();
+  ScrollController scrollController = ScrollController();
 
   @override
   void dispose() {
@@ -72,8 +72,8 @@ class _ForgotPasswordChangeSSOPageState
       barrierDismissible: false,
       context: context,
       builder:
-          (BuildContext context) => new CupertinoAlertDialog(
-            title: new Text(
+          (BuildContext context) => CupertinoAlertDialog(
+            title: Text(
               'เปลี่ยนรหัสผ่านแล้ว กำลังนำท่านกลับเข้าสู่ระบบผู้ประกันตน',
               style: TextStyle(
                 fontSize: 15,
@@ -86,7 +86,7 @@ class _ForgotPasswordChangeSSOPageState
             actions: [
               CupertinoDialogAction(
                 isDefaultAction: true,
-                child: new Text(
+                child: Text(
                   "ยืนยัน",
                   style: TextStyle(
                     // fontWeight: FontWeight.normal,
@@ -156,7 +156,7 @@ class _ForgotPasswordChangeSSOPageState
           Padding(padding: EdgeInsets.only(top: 10.0)),
           Text(
             'เปลี่ยนรหัสผ่าน',
-            style: new TextStyle(
+            style: TextStyle(
               fontSize: 20.0,
               // color: Color(0xFF005C9E),
               fontWeight: FontWeight.bold,
@@ -165,7 +165,7 @@ class _ForgotPasswordChangeSSOPageState
           ),
           Text(
             'กรุณาระบุรหัสผ่านใหม่ของท่าน และยืนยันรหัสใหม่',
-            style: new TextStyle(
+            style: TextStyle(
               fontSize: 15.0,
               color: Color(0xFF005C9E),
               fontWeight: FontWeight.normal,
@@ -212,10 +212,11 @@ class _ForgotPasswordChangeSSOPageState
               }
 
               String pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{6,}$';
-              RegExp regex = new RegExp(pattern);
+              RegExp regex = RegExp(pattern);
               if (!regex.hasMatch(model)) {
                 return 'กรุณากรอกรูปแบบรหัสผ่านให้ถูกต้อง.';
               }
+              return null;
             },
             controller: txtPasswordNew,
             enabled: true,
@@ -261,15 +262,16 @@ class _ForgotPasswordChangeSSOPageState
                 return 'กรุณากรอกยืนยันรหัสผ่าน.';
               }
 
-              if (model != txtPasswordNew.text && txtPasswordNew != null) {
+              if (model != txtPasswordNew.text) {
                 return 'กรุณากรอกรหัสผ่านให้ตรงกัน.';
               }
 
               String pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{6,}$';
-              RegExp regex = new RegExp(pattern);
+              RegExp regex = RegExp(pattern);
               if (!regex.hasMatch(model)) {
                 return 'กรุณากรอกรูปแบบรหัสผ่านให้ถูกต้อง.';
               }
+              return null;
             },
             controller: txtConPasswordNew,
             enabled: true,
@@ -291,7 +293,7 @@ class _ForgotPasswordChangeSSOPageState
                 onPressed: () {
                   final form = _formKey.currentState;
                   if (form!.validate()) {
-                    form!.save();
+                    form.save();
                     submitForgotPasswordChangeSSO();
                   }
                 },
@@ -319,23 +321,23 @@ class _ForgotPasswordChangeSSOPageState
       child: Row(
         children: <Widget>[
           Container(
-            child: new Padding(
-              padding: EdgeInsets.all(5.0),
-              child: Image.asset(urlImage, height: 5.0, width: 5.0),
-            ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5.0),
               color: Color(0xFF0B5C9E),
             ),
             width: 30.0,
             height: 30.0,
+            child: new Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Image.asset(urlImage, height: 5.0, width: 5.0),
+            ),
           ),
           Container(
             width: MediaQuery.of(context).size.width * 0.63,
             margin: EdgeInsets.only(left: 10.0, right: 10.0),
             child: Text(
               title,
-              style: new TextStyle(
+              style: TextStyle(
                 fontSize: 12.0,
                 color: Color(0xFF005C9E),
                 fontWeight: FontWeight.normal,
@@ -400,7 +402,7 @@ class _ForgotPasswordChangeSSOPageState
             physics: ClampingScrollPhysics(),
             padding: const EdgeInsets.all(10.0),
             children: <Widget>[
-              new Stack(
+              Stack(
                 alignment: Alignment.topCenter,
                 children: <Widget>[
                   Padding(padding: EdgeInsets.only(top: 10.0), child: card()),

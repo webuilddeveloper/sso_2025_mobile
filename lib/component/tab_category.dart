@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_html/style.dart';
 
 class CategorySelector extends StatefulWidget {
-  CategorySelector({
-    Key? key,
+  const CategorySelector({
+    super.key,
     required this.site,
     required this.model,
     required this.onChange,
-  }) : super(key: key);
+  });
 
   //  final VoidCallback onTabCategory;
   final String site;
@@ -37,7 +37,7 @@ class _CategorySelectorState extends State<CategorySelector> {
           return Container(
             height: 60.0,
             margin: EdgeInsets.only(left: 5.0),
-            decoration: new BoxDecoration(color: Colors.white),
+            decoration: BoxDecoration(color: Colors.white),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: snapshot.data.length,
@@ -92,7 +92,7 @@ class _CategorySelectorState extends State<CategorySelector> {
             height: 45.0,
             padding: EdgeInsets.only(left: 5.0, right: 5.0),
             margin: EdgeInsets.symmetric(horizontal: 30.0),
-            decoration: new BoxDecoration(
+            decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.5),
@@ -101,7 +101,7 @@ class _CategorySelectorState extends State<CategorySelector> {
                   offset: Offset(0, 3), // changes position of shadow
                 ),
               ],
-              borderRadius: new BorderRadius.circular(6.0),
+              borderRadius: BorderRadius.circular(6.0),
               color: Colors.white,
             ),
           );

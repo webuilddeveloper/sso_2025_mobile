@@ -12,9 +12,9 @@ import '../../component/material/input_with_label.dart';
 
 class ContactCategoryListV2 extends StatefulWidget {
   const ContactCategoryListV2({
-    Key? key,
+    super.key,
     required this.username,
-  }) : super(key: key);
+  });
   final String username;
   @override
   _ContactCategoryListV2State createState() => _ContactCategoryListV2State();
@@ -25,7 +25,7 @@ class _ContactCategoryListV2State extends State<ContactCategoryListV2> {
   late Future<dynamic> _futureCategoryContact;
   late Future<dynamic> futureModelSearch;
 
-  RefreshController _refreshController =
+  final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   @override
@@ -73,7 +73,7 @@ class _ContactCategoryListV2State extends State<ContactCategoryListV2> {
         },
         child: GestureDetector(
           onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
+            FocusScope.of(context).requestFocus(FocusNode());
           },
           child: Column(
             children: [
@@ -251,8 +251,9 @@ class _ContactCategoryListV2State extends State<ContactCategoryListV2> {
                 children: children,
               ),
             );
-          } else
+          } else {
             return Container();
+          }
         } else {
           return Container();
         }

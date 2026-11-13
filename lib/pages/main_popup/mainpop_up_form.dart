@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MainPopup extends StatefulWidget {
-  MainPopup({Key? key, required this.model, this.nav}) : super(key: key);
+  const MainPopup({super.key, required this.model, this.nav});
 
   final Future<dynamic> model;
   final Function(String, String, dynamic, String, String)? nav;
@@ -82,7 +82,7 @@ class _MainPopup extends State<MainPopup> {
                   ),
                   items:
                       snapshot.data.map<Widget>((document) {
-                        return new Container(
+                        return Container(
                           child: Center(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),

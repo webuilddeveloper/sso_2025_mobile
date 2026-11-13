@@ -9,7 +9,7 @@ import 'package:sso/shared/extension.dart';
 import 'package:sso/shared/scroll_behavior.dart';
 
 class EventCalendarFormPage extends StatefulWidget {
-  const EventCalendarFormPage({Key? key, this.model}) : super(key: key);
+  const EventCalendarFormPage({super.key, this.model});
 
   final dynamic model;
 
