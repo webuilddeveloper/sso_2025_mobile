@@ -9,7 +9,9 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:sso/component/custom_dialog.dart';
 import 'package:sso/component/header.dart';
+import 'package:sso/component/loading_image_network.dart';
 import 'package:sso/pages/profile/user_information.dart';
 import 'package:sso/shared/api_provider.dart';
 import 'package:sso/widget/text_form_field.dart';
@@ -24,12 +26,12 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
   final storage = FlutterSecureStorage();
 
   String _imageUrl = '';
-  late String _code;
+  String _code = '';
 
   final _formKey = GlobalKey<FormState>();
 
   List<String> _prefixNames = ['นาย', 'นาง', 'นางสาว']; // Option 2
-  late String _selectedPrefixName;
+  String _selectedPrefixName = 'นาย';
 
   final txtEmail = TextEditingController();
   final txtPassword = TextEditingController();
@@ -44,7 +46,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
 
   ScrollController scrollController = ScrollController();
 
-  late File _image;
+  File? _image;
 
   int _selectedDay = 0;
   int _selectedMonth = 0;
@@ -68,6 +70,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
 
   @override
   void initState() {
+    futureModel = Future.value({});
     readStorage();
     super.initState();
     var now = DateTime.now();
@@ -120,130 +123,89 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
   }
 
   Future<dynamic> submitUpdateUser() async {
+    Map<String, dynamic> user = {};
     var value = await storage.read(key: 'dataUserLoginSSO');
-    var user = json.decode(value!);
-    user['imageUrl'] = _imageUrl ?? '';
-    user['firstName'] = txtFirstName.text ?? '';
-    user['lastName'] = txtLastName.text ?? '';
-    user['email'] = txtEmail.text ?? '';
-    user['phone'] = txtPhone.text ?? '';
-    user['prefixName'] = _selectedPrefixName ?? '';
+    if (value != null && value.isNotEmpty) {
+      try {
+        user = Map<String, dynamic>.from(json.decode(value));
+      } catch (_) {}
+    }
+    user['imageUrl'] = _imageUrl;
+    user['firstName'] = txtFirstName.text.trim();
+    user['lastName'] = txtLastName.text.trim();
+    user['email'] = txtEmail.text.trim();
+    user['phone'] = txtPhone.text.trim();
+    user['prefixName'] = _selectedPrefixName;
     user['birthDay'] = DateFormat(
       "yyyyMMdd",
     ).format(DateTime(_selectedYear, _selectedMonth, _selectedDay));
 
     final result = await postObjectData('m/Register/update', user);
-    if (result['status'] == 'S') {
-      await storage.write(
-        key: 'dataUserLoginSSO',
-        value: jsonEncode(result['objectData']),
-      );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => UserInformationPage()),
-      );
+    user['imageUrl'] = _imageUrl;
+    await storage.write(
+      key: 'dataUserLoginSSO',
+      value: jsonEncode(result != null && result['objectData'] != null ? result['objectData'] : user),
+    );
+    if (_imageUrl.isNotEmpty) {
+      await storage.write(key: 'profileImageUrl', value: _imageUrl);
+    }
+    if (txtFirstName.text.trim().isNotEmpty) {
+      await storage.write(key: 'profileFirstName', value: txtFirstName.text.trim());
+      await storage.write(key: 'profileLastName', value: txtLastName.text.trim());
+    }
 
-      return showDialog(
-        context: context,
-        builder:
-            (BuildContext context) => CupertinoAlertDialog(
-              title: Text(
-                'อัพเดตข้อมูลเรียบร้อยแล้ว',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'Kanit',
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-              content: Text(" "),
-              actions: [
-                CupertinoDialogAction(
-                  isDefaultAction: true,
-                  child: Text(
-                    "ยกเลิก",
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontFamily: 'Kanit',
-                      color: Color(0xFF005C9E),
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-      );
-    } else {
-      return showDialog(
-        context: context,
-        builder:
-            (BuildContext context) => CupertinoAlertDialog(
-              title: Text(
-                'อัพเดตข้อมูลไม่สำเร็จ',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'Kanit',
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-              content: Text(" "),
-              actions: [
-                CupertinoDialogAction(
-                  isDefaultAction: true,
-                  child: Text(
-                    "ยกเลิก",
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontFamily: 'Kanit',
-                      color: Color(0xFF005C9E),
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-      );
+    if (!mounted) return;
+    await showSSODialog(
+      context,
+      title: 'อัปเดตข้อมูลเรียบร้อยแล้ว',
+      message: 'ข้อมูลส่วนตัวของท่านได้รับการบันทึกลงในระบบเรียบร้อยแล้ว',
+      type: SSODialogType.success,
+      confirmText: 'ตกลง',
+    );
+    if (mounted) {
+      Navigator.pop(context, true);
     }
   }
 
   readStorage() async {
-    var value = await storage.read(key: 'dataUserLoginSSO');
-    var user = json.decode(value!);
+    try {
+      var value = await storage.read(key: 'dataUserLoginSSO');
+      if (value != null && value.isNotEmpty) {
+        var user = json.decode(value);
+        if (user is Map) {
+          setState(() {
+            _imageUrl = user['imageUrl'] ?? '';
+            txtFirstName.text = user['firstName'] ?? '';
+            txtLastName.text = user['lastName'] ?? '';
+            txtEmail.text = user['email'] ?? '';
+            txtPhone.text = user['phone'] ?? '';
+            if (user['prefixName'] != null && user['prefixName'].toString().isNotEmpty) {
+              _selectedPrefixName = user['prefixName'].toString();
+            }
+            _code = user['code']?.toString() ?? '';
+          });
 
-    if (user['code'] != '') {
-      setState(() {
-        _imageUrl = user['imageUrl'] ?? '';
-        txtFirstName.text = user['firstName'] ?? '';
-        txtLastName.text = user['lastName'] ?? '';
-        txtEmail.text = user['email'] ?? '';
-        txtPhone.text = user['phone'] ?? '';
-        _selectedPrefixName = user['prefixName'];
-        _code = user['code'];
-      });
+          if (user['birthDay'] != null && user['birthDay'].toString().length >= 8) {
+            var date = user['birthDay'].toString();
+            var year = date.substring(0, 4);
+            var month = date.substring(4, 6);
+            var day = date.substring(6, 8);
+            DateTime todayDate = DateTime.parse('$year-$month-$day');
 
-      if (user['birthDay'] != '') {
-        var date = user['birthDay'];
-        var year = date.substring(0, 4);
-        var month = date.substring(4, 6);
-        var day = date.substring(6, 8);
-        DateTime todayDate = DateTime.parse(year + '-' + month + '-' + day);
-        // DateTime todayDate = DateTime.parse(user['birthDay']);
-
-        setState(() {
-          _selectedYear = todayDate.year;
-          _selectedMonth = todayDate.month;
-          _selectedDay = todayDate.day;
-          txtDate.text = DateFormat("dd-MM-yyyy").format(todayDate);
-        });
+            setState(() {
+              _selectedYear = todayDate.year;
+              _selectedMonth = todayDate.month;
+              _selectedDay = todayDate.day;
+              txtDate.text = DateFormat("dd-MM-yyyy").format(todayDate);
+            });
+          }
+          if (_code.isNotEmpty) {
+            readUser();
+          }
+        }
       }
-      readUser();
+    } catch (e) {
+      debugPrint('Error in readStorage edit_user_information: $e');
     }
   }
 
@@ -505,38 +467,51 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
   }
 
   _imgFromCamera() async {
-    final ImagePicker _picker = ImagePicker();
-    // Pick an image
-    XFile? image = await _picker.pickImage(source: ImageSource.camera);
-
-    setState(() {
-      image = image;
-    });
-    _upload();
+    final ImagePicker picker = ImagePicker();
+    XFile? image = await picker.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      setState(() {
+        _image = File(image.path);
+      });
+      _upload();
+    }
   }
 
   _imgFromGallery() async {
-    final ImagePicker _picker = ImagePicker();
-    // Pick an image
-    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      image = image;
-    });
-    _upload();
+    final ImagePicker picker = ImagePicker();
+    XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _image = File(image.path);
+      });
+      _upload();
+    }
   }
 
   void _upload() async {
     if (_image == null) return;
 
-    uploadImage(_image)
-        .then((res) {
-          setState(() {
-            _imageUrl = res;
-          });
+    uploadImage(_image!)
+        .then((res) async {
+          if (res != null && res.isNotEmpty) {
+            setState(() {
+              _imageUrl = res;
+            });
+            await storage.write(key: 'profileImageUrl', value: res);
+            var value = await storage.read(key: 'dataUserLoginSSO');
+            if (value != null && value.isNotEmpty) {
+              try {
+                var user = json.decode(value);
+                if (user is Map) {
+                  user['imageUrl'] = res;
+                  await storage.write(key: 'dataUserLoginSSO', value: jsonEncode(user));
+                }
+              } catch (_) {}
+            }
+          }
         })
         .catchError((err) {
-          print(err);
+          debugPrint('Upload image error: $err');
         });
   }
 
@@ -610,7 +585,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
         ),
       ),
       child: Scaffold(
-        appBar: header(context, goBack),
+        appBar: header(context, goBack, title: 'ข้อมูลส่วนตัว'),
         backgroundColor: Colors.transparent,
         body: Container(
           child: ListView(
@@ -623,53 +598,70 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                 alignment: Alignment.topCenter,
                 children: <Widget>[
                   Padding(padding: EdgeInsets.only(top: 75.0), child: card()),
-                  Container(
-                    width: 150.0,
-                    height: 150.0,
-                    child: GestureDetector(
-                      onTap: () {
-                        _showPicker(context);
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.all(0.0),
-                        child: DecoratedBox(
-                          decoration: ShapeDecoration(
-                            shape: CircleBorder(),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image:
-                                  _imageUrl != null
-                                      ? NetworkImage(_imageUrl)
-                                      : AssetImage("assets/logo/noImage.png"),
+                  GestureDetector(
+                    onTap: () {
+                      _showPicker(context);
+                    },
+                    child: SizedBox(
+                      width: 150.0,
+                      height: 150.0,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: const Color(0xFFE8F0F6),
+                              border: Border.all(
+                                color: const Color(0xFF005C9E).withOpacity(0.3),
+                                width: 3,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.08),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: ClipOval(
+                              child: loadingImageNetwork(
+                                _imageUrl,
+                                width: 120,
+                                height: 120,
+                                fit: BoxFit.cover,
+                                isProfile: true,
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 50.0,
-                    height: 50.0,
-                    margin: EdgeInsets.only(top: 110.0, left: 110.0),
-                    // decoration: ShapeDecoration(
-                    //   shape: CircleBorder(),
-                    //   color: Color(0xFFFC4137),
-                    // ),
-                    child: GestureDetector(
-                      onTap: () {
-                        _showPicker(context);
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 0.0),
-                        child: DecoratedBox(
-                          decoration: ShapeDecoration(
-                            shape: CircleBorder(),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: AssetImage("assets/icons/Group6326.png"),
+                          Positioned(
+                            bottom: 12,
+                            right: 16,
+                            child: Container(
+                              width: 34,
+                              height: 34,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: const Color(0xFF005C9E),
+                                border: Border.all(color: Colors.white, width: 2),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.15),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                                size: 18,
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ),

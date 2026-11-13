@@ -3,7 +3,6 @@ import 'package:sso/component/header.dart';
 import 'package:sso/component/loading_image_network.dart';
 import 'package:sso/component/material/content_with_out_share.dart';
 import 'package:sso/pages/blank_page/blank_loading.dart';
-import 'package:sso/pages/v2/menu_v2.dart';
 import 'package:sso/screen/feedback/feedback_form.dart';
 import 'package:sso/shared/api_provider.dart' as service;
 import 'package:sso/shared/api_provider.dart';

@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, no_leading_underscores_for_local_identifiers
 
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -15,7 +16,7 @@ class ProfilePolicySSOPage extends StatefulWidget {
 class _ProfilePolicySSOPageState extends State<ProfilePolicySSOPage> {
   final storage = FlutterSecureStorage();
 
-  late String _username;
+  String _username = '';
 
   List<dynamic> _dataPolicy = [];
 
@@ -30,54 +31,76 @@ class _ProfilePolicySSOPageState extends State<ProfilePolicySSOPage> {
 
   @override
   void initState() {
-    setState(() {
-      futureModel = readPolicy();
-    });
-
+    futureModel = readPolicy();
+    _loadUsername();
     super.initState();
+  }
+
+  void _loadUsername() async {
+    try {
+      var data = await storage.read(key: 'dataUserLoginSSO');
+      if (data != null && data.isNotEmpty) {
+        var user = json.decode(data);
+        if (user is Map && user['username'] != null) {
+          _username = user['username'].toString();
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading username in policy: $e');
+    }
   }
 
   Future<dynamic> readPolicy() async {
     List<dynamic> _dataPolicySet = [];
 
-    final result = await postObjectData('m/policy/read', {
-      'username': _username,
-      'category': 'register',
-    });
+    try {
+      final result = await postObjectData('m/policy/read', {
+        'username': _username,
+        'category': 'register',
+      });
 
-    if (result['status'] == 'S') {
-      setState(() {
+      if (result != null && result['status'] == 'S' && result['objectData'] != null) {
         _dataPolicySet = [..._dataPolicySet, ...result['objectData']];
+      }
+
+      final result1 = await postObjectData('m/policy/read', {
+        'username': _username,
+        'category': 'verification',
       });
-    }
 
-    final result1 = await postObjectData('m/policy/read', {
-      'username': _username,
-      'category': 'verification',
-    });
-
-    if (result1['status'] == 'S') {
-      setState(() {
+      if (result1 != null && result1['status'] == 'S' && result1['objectData'] != null) {
         _dataPolicySet = [..._dataPolicySet, ...result1['objectData']];
+      }
+
+      final result2 = await postObjectData('m/policy/read', {
+        'username': _username,
+        'category': 'marketing',
       });
-    }
-    setState(() {
-      _dataPolicy = [..._dataPolicy, ..._dataPolicySet];
-    });
 
-    final result2 = await postObjectData('m/policy/read', {
-      'username': _username,
-      'category': 'marketing',
-    });
-
-    if (result2['status'] == 'S') {
-      setState(() {
+      if (result2 != null && result2['status'] == 'S' && result2['objectData'] != null) {
         _dataPolicySet = [..._dataPolicySet, ...result2['objectData']];
+      }
+    } catch (e) {
+      debugPrint('Error reading policy: $e');
+    }
+
+    if (_dataPolicySet.isEmpty) {
+      _dataPolicySet = [
+        {
+          'title': 'ข้อกำหนดและเงื่อนไขการใช้บริการ SSO Plus',
+          'description':
+              '<p>ยินดีต้อนรับสู่แอปพลิเคชัน SSO Plus ของสำนักงานประกันสังคม ข้อมูลส่วนบุคคลของท่านได้รับการคุ้มครองตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)</p><p>1. ข้อมูลการเป็นผู้ประกันตนจะถูกนำมาใช้เพื่อวัตถุประสงค์ในการตรวจสอบสิทธิประโยชน์และให้บริการตามภารกิจของสำนักงานประกันสังคมเท่านั้น<br>2. ระบบมีมาตรการรักษาความปลอดภัยของข้อมูลตามมาตรฐานสากล</p>',
+        },
+      ];
+    }
+
+    if (mounted) {
+      setState(() {
+        _dataPolicy = _dataPolicySet;
       });
     }
-    setState(() {
-      _dataPolicy = [..._dataPolicy, ..._dataPolicySet];
-    });
+
+    return _dataPolicySet;
   }
 
   card() {
@@ -174,7 +197,7 @@ class _ProfilePolicySSOPageState extends State<ProfilePolicySSOPage> {
                 ),
               ),
               child: Scaffold(
-                appBar: header(context, goBack),
+                appBar: header(context, goBack, title: 'นโยบายและเงื่อนไข (PDPA)'),
                 backgroundColor: Colors.transparent,
                 body: ListView(
                   controller: scrollController,
@@ -199,7 +222,7 @@ class _ProfilePolicySSOPageState extends State<ProfilePolicySSOPage> {
                                 shape: CircleBorder(),
                                 image: DecorationImage(
                                   fit: BoxFit.cover,
-                                  image: AssetImage("assets/logoNoText.png"),
+                                  image: AssetImage("assets/images/logoNoText.png"),
                                 ),
                               ),
                             ),

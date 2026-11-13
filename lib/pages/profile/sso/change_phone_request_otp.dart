@@ -24,23 +24,23 @@ class ChangePhoneRequestOTPPage extends StatefulWidget {
 class _ChangePhoneRequestOTPPageState extends State<ChangePhoneRequestOTPPage> {
   final storage = new FlutterSecureStorage();
 
-  late String _username;
-  late String _password;
-  late String _facebookID;
-  late String _appleID;
-  late String _googleID;
-  late String _lineID;
-  late String _email;
+  String _username = '';
+  String _password = '';
+  String _facebookID = '';
+  String _appleID = '';
+  String _googleID = '';
+  String _lineID = '';
+  String _email = '';
   String _imageUrl = '';
-  late String _category;
-  late String _prefixName;
-  late String _firstName;
-  late String _lastName;
+  String _category = '';
+  String _prefixName = '';
+  String _firstName = '';
+  String _lastName = '';
 
-  late Map userProfile;
+  Map userProfile = {};
   bool _isOnlyWebLogin = false;
 
-  late DataUser dataUser;
+  DataUser? dataUser;
 
   final txtIdCard = TextEditingController();
   final txtPhone = TextEditingController();

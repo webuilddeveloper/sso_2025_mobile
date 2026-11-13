@@ -53,18 +53,18 @@ class RegisterConnectionSSOPage extends StatefulWidget {
 class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
   final storage = new FlutterSecureStorage();
 
-  late String _username;
-  late String _password;
-  late String _facebookID;
-  late String _appleID;
-  late String _googleID;
-  late String _lineID;
-  late String _email;
-  late String _imageUrl;
-  late String _category;
-  late String _prefixName;
-  late String _firstName;
-  late String _lastName;
+  String _username = '';
+  String _password = '';
+  String _facebookID = '';
+  String _appleID = '';
+  String _googleID = '';
+  String _lineID = '';
+  String _email = '';
+  String _imageUrl = '';
+  String _category = '';
+  String _prefixName = '';
+  String _firstName = '';
+  String _lastName = '';
 
   bool _isLoginSocial = false;
   bool _isLoginSocialHaveEmail = false;
@@ -72,13 +72,13 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
   bool _isShowStep2 = false;
   bool _isShowStep3 = false;
   bool _checkedValue = false;
-  late Register _register;
+  Register? _register;
   List<dynamic> _dataPolicy = [];
 
   final _formKey = GlobalKey<FormState>();
 
   List<String> _prefixNames = ['นาย', 'นาง', 'นางสาว']; // Option 2
-  late String _selectedPrefixName;
+  String _selectedPrefixName = 'นาย';
 
   final txtUsername = TextEditingController();
   final txtPassword = TextEditingController();
@@ -150,19 +150,31 @@ class _RegisterConnectionSSOPageState extends State<RegisterConnectionSSOPage> {
   }
 
   Future<dynamic> readPolicy() async {
-    final result = await postObjectData('m/policy/read', {
-      'username': this._username,
-      'category': 'verification',
-    });
+    try {
+      final result = await postObjectData('m/policy/read', {
+        'username': _username,
+        'category': 'verification',
+      });
 
-    print(result['status'].toString());
-    if (result['status'] == 'S') {
-      if (result['objectData'].length > 0) {
+      if (result != null && result['status'] == 'S' && result['objectData'] != null) {
         setState(() {
           _dataPolicy = [..._dataPolicy, ...result['objectData']];
         });
       }
+    } catch (e) {
+      debugPrint('Error in readPolicy register_connect_sso: $e');
     }
+
+    if (_dataPolicy.isEmpty) {
+      _dataPolicy = [
+        {
+          'title': 'นโยบายการลงทะเบียนเชื่อมต่อระบบสมาชิกผู้ประกันตน',
+          'description':
+              '<p>การเชื่อมต่อข้อมูลผู้ประกันตนเพื่อการตรวจสอบสิทธิประโยชน์และการรับบริการทางอิเล็กทรอนิกส์</p>',
+        },
+      ];
+    }
+    return _dataPolicy;
   }
 
   Future<Null> checkValueStep1() async {

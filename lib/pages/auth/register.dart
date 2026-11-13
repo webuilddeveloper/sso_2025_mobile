@@ -66,7 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
   final List<String> _prefixNames = ['นาย', 'นาง', 'นางสาว']; // Option 2
-  late String _selectedPrefixName;
+  String _selectedPrefixName = 'นาย';
 
   final txtUsername = TextEditingController();
   final txtPassword = TextEditingController();
@@ -217,16 +217,12 @@ class _RegisterPageState extends State<RegisterPage> {
       });
 
       if (result.status == 'S') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage(title: '')),
-        );
-
         return showDialog(
           context: context,
+          barrierDismissible: false,
           builder:
-              (BuildContext context) => CupertinoAlertDialog(
-                title: Text(
+              (BuildContext dialogContext) => CupertinoAlertDialog(
+                title: const Text(
                   'ลงทะเบียนเรียบร้อยแล้ว',
                   style: TextStyle(
                     fontSize: 16,
@@ -235,46 +231,53 @@ class _RegisterPageState extends State<RegisterPage> {
                     fontWeight: FontWeight.normal,
                   ),
                 ),
-                content: Text(" "),
+                content: const Text("กรุณาเข้าสู่ระบบด้วยชื่อผู้ใช้และรหัสผ่านใหม่ของคุณ"),
                 actions: [
                   CupertinoDialogAction(
                     isDefaultAction: true,
-                    child: Text(
-                      "ยกเลิก",
+                    child: const Text(
+                      "เข้าสู่ระบบ",
                       style: TextStyle(
                         fontSize: 13,
                         fontFamily: 'Kanit',
                         color: Color(0xFF005C9E),
-                        fontWeight: FontWeight.normal,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(dialogContext).pop();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage(title: '')),
+                      );
                     },
                   ),
                 ],
               ),
         );
       } else {
+        String errMsg = (result != null && result.message != null && result.message.isNotEmpty)
+            ? result.message
+            : 'การลงทะเบียนไม่สำเร็จ กรุณาตรวจสอบข้อมูลและลองใหม่อีกครั้ง';
         return showDialog(
           context: context,
           builder:
-              (BuildContext context) => CupertinoAlertDialog(
-                title: Text(
-                  result.message,
+              (BuildContext dialogContext) => CupertinoAlertDialog(
+                title: const Text(
+                  'แจ้งเตือน',
                   style: TextStyle(
                     fontSize: 16,
                     fontFamily: 'Kanit',
                     color: Colors.black,
-                    fontWeight: FontWeight.normal,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                content: Text(" "),
+                content: Text(errMsg),
                 actions: [
                   CupertinoDialogAction(
                     isDefaultAction: true,
-                    child: Text(
-                      "ยกเลิก",
+                    child: const Text(
+                      "ปิด",
                       style: TextStyle(
                         fontSize: 13,
                         fontFamily: 'Kanit',
@@ -283,7 +286,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(dialogContext).pop();
                     },
                   ),
                 ],

@@ -19,8 +19,8 @@ class _KnowledgeList extends State<KnowledgeList> {
   late grid.KnowledgeListVertical gridView;
   final txtDescription = TextEditingController();
   bool hideSearch = true;
-  late String keySearch;
-  late String category;
+  String keySearch = '';
+  String category = '';
 
   // Future<dynamic> _futureKnowledge;
 

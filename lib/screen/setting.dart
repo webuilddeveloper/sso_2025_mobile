@@ -4,6 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sso/component/loading_image_network.dart';
+import 'package:sso/pages/profile/my_address.dart';
+import 'package:sso/pages/profile/profile_policy_sso.dart';
+import 'package:sso/pages/profile/profile_sso.dart';
+import 'package:sso/pages/profile/user_information.dart';
+import 'package:sso/shared/api_provider.dart';
 import 'package:sso/screen/dental.dart';
 import 'package:sso/screen/hospital.dart';
 import 'package:sso/screen/login.dart';
@@ -33,10 +38,38 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   _callRead() async {
-    var data = await storage.read(key: 'dataUserLoginSSO');
-    setState(() {
-      userData = json.decode(data!);
-    });
+    try {
+      var data = await storage.read(key: 'dataUserLoginSSO');
+      if (data != null && data.isNotEmpty) {
+        setState(() {
+          userData = json.decode(data);
+        });
+      }
+      String? pFirst = await storage.read(key: 'profileFirstName');
+      String? pLast = await storage.read(key: 'profileLastName');
+      String? pCat = await storage.read(key: 'profileCategory');
+      String? pCode = await storage.read(key: 'profileCode1');
+      if (pCode != null && pCode.isNotEmpty && (userData == null || userData['firstName'] == null)) {
+        var res = await postDio(profileReadApi, {'code': pCode});
+        if (res != null && res is Map) {
+          setState(() {
+            userData = res;
+          });
+        }
+      }
+      String? localImg = await storage.read(key: 'profileImageUrl');
+      if (localImg != null && localImg.isNotEmpty) {
+        setState(() {
+          if (userData == null) {
+            userData = {'imageUrl': localImg};
+          } else if (userData is Map) {
+            userData['imageUrl'] = localImg;
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint('Error in _callRead setting: $e');
+    }
   }
 
   @override
@@ -66,7 +99,7 @@ class _SettingPageState extends State<SettingPage> {
                     children: [
                       Icon(Icons.arrow_back_ios),
                       Text(
-                        'โปรไฟล์',
+                        'การตั้งค่าและบัญชี',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 20,
@@ -106,53 +139,16 @@ class _SettingPageState extends State<SettingPage> {
                           GestureDetector(
                             onTap: () {
                               _buildQrCode();
-                              print(
-                                '---------------------->> ${userData['imageUrl']}',
-                              );
                             },
-
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(50),
-                              child:
-                                  (userData != null &&
-                                          userData['imageUrl'] != null &&
-                                          userData['imageUrl']
-                                              .toString()
-                                              .trim()
-                                              .isNotEmpty)
-                                      ? () {
-                                        print(
-                                          '🟢 ใช้รูปจาก imageUrl: ${userData['imageUrl']}',
-                                        );
-                                        return loadingImageNetwork(
-                                          userData['imageUrl'],
-                                          height: 100,
-                                          width: 100,
-                                          fit: BoxFit.cover,
-                                        );
-                                      }()
-                                      : () {
-                                        print(
-                                          '🟡 ไม่มี imageUrl หรือค่าว่าง ใช้รูป default',
-                                        );
-                                        return SizedBox(
-                                          height: 100,
-                                          width: 100,
-                                          child: Stack(
-                                            fit: StackFit.expand,
-                                            children: [
-                                              Center(
-                                                child: Image.network(
-                                                  'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png',
-                                                  height: 40,
-                                                  width: 40,
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      }(),
+                              child: loadingImageNetwork(
+                                userData?['imageUrl']?.toString() ?? '',
+                                height: 100,
+                                width: 100,
+                                fit: BoxFit.cover,
+                                isProfile: true,
+                              ),
                             ),
                           ),
                           Positioned(
@@ -172,61 +168,75 @@ class _SettingPageState extends State<SettingPage> {
                         ],
                       ),
                       SizedBox(width: 15),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${userData?['firstName'] ?? 'ไม่ทราบชื่อ'} ${userData?['lastName'] ?? 'ไม่ทราบนามสกุล'}',
-                            style: TextStyle(fontSize: 13),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const UserInformationPage(),
+                            ),
                           ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${userData?['firstName'] ?? 'ไม่ทราบชื่อ'} ${userData?['lastName'] ?? 'ไม่ทราบนามสกุล'}',
+                                style: TextStyle(fontSize: 13),
+                              ),
 
-                          Text(
-                            'ผู้ประกันตนมาตรา 33',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Color(0xFF005C9E),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 15,
-                              vertical: 7,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Color(0xFFE8F0F6),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFF005C9E),
-                                    borderRadius: BorderRadius.circular(7.5),
-                                  ),
-                                  height: 15,
-                                  width: 15,
-                                  child: Icon(
-                                    Icons.check_rounded,
-                                    size: 12,
-                                    color: Colors.white,
-                                  ),
+                              Text(
+                                userData?['category'] == '39'
+                                    ? 'ผู้ประกันตนมาตรา 39'
+                                    : userData?['category'] == '40'
+                                        ? 'ผู้ประกันตนมาตรา 40'
+                                        : 'ผู้ประกันตนมาตรา 33',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Color(0xFF005C9E),
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                SizedBox(width: 5),
-                                Text(
-                                  'ยืนยันตัวตนแล้ว',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Color(0xFF005C9E),
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: 7,
                                 ),
-                              ],
-                            ),
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFE8F0F6),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFF005C9E),
+                                        borderRadius: BorderRadius.circular(7.5),
+                                      ),
+                                      height: 15,
+                                      width: 15,
+                                      child: Icon(
+                                        Icons.check_rounded,
+                                        size: 12,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(width: 5),
+                                    Text(
+                                      'ยืนยันตัวตนแล้ว',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Color(0xFF005C9E),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
@@ -467,9 +477,33 @@ class _SettingPageState extends State<SettingPage> {
                   ),
                   child: Column(
                     children: [
-                      _buildItem('หน้าโปรไฟล์', onTap: () {}),
-                      _buildItem('ที่อยู่ของฉัน', onTap: () {}),
-                      _buildItem('ยืนยันตัวตนเพิ่มเติม', onTap: () {}),
+                      _buildItem(
+                        'หน้าโปรไฟล์',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const UserInformationPage(),
+                          ),
+                        ),
+                      ),
+                      _buildItem(
+                        'ที่อยู่ของฉัน',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MyAddressPage(),
+                          ),
+                        ),
+                      ),
+                      _buildItem(
+                        'ยืนยันตัวตนเพิ่มเติม',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const RegisterMemberPage(),
+                          ),
+                        ),
+                      ),
                       _buildItem(
                         'ประวัติการใช้สิทธิ์ประโยชน์',
                         onTap:
@@ -501,9 +535,47 @@ class _SettingPageState extends State<SettingPage> {
                   ),
                   child: Column(
                     children: [
-                      _buildItem('ตั้งค่าการแจ้งเตือน', onTap: () {}),
-                      _buildItem('ตั้งค่าความเป็นส่วนตัว', onTap: () {}),
-                      _buildItem('ข้อตกลงและการให้ความยินยอม', onTap: () {}),
+                      _buildItem(
+                        'ตั้งค่าการแจ้งเตือน',
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              title: const Text('ตั้งค่าการแจ้งเตือน'),
+                              content: const Text(
+                                'ระบบเปิดรับการแจ้งเตือนสิทธิประโยชน์ ข่าวสาร และสถานะการเบิกจ่ายเรียบร้อยแล้ว',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx),
+                                  child: const Text('ตกลง'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      _buildItem(
+                        'ตั้งค่าความเป็นส่วนตัว',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ProfilePolicySSOPage(),
+                          ),
+                        ),
+                      ),
+                      _buildItem(
+                        'ข้อตกลงและการให้ความยินยอม',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ProfilePolicySSOPage(),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -526,13 +598,53 @@ class _SettingPageState extends State<SettingPage> {
                                 builder:
                                     (context) => faqListPage(
                                       username:
-                                          '${userData['firstName']} ${userData['lastName']}',
+                                          '${userData?['firstName'] ?? 'We Build'} ${userData?['lastName'] ?? 'Operate'}',
                                     ),
                               ),
                             ),
                       ),
-                      _buildItem('ศูนย์ช่วยเหลือ', onTap: () {}),
-                      _buildItem('เกี่ยวกับเรา', onTap: () {}),
+                      _buildItem(
+                        'ศูนย์ช่วยเหลือ',
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              title: const Text('ศูนย์ช่วยเหลือสำนักงานประกันสังคม'),
+                              content: const Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('• สายด่วน สปส.: โทร 1506 (ตลอด 24 ชั่วโมง)'),
+                                  SizedBox(height: 8),
+                                  Text('• เว็บไซต์: www.sso.go.th'),
+                                  SizedBox(height: 8),
+                                  Text('• ให้บริการข้อมูลสิทธิประโยชน์และการยื่นคำขอทุกกรณี'),
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx),
+                                  child: const Text('ปิด'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      _buildItem(
+                        'เกี่ยวกับเรา',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ProfileSSOPage(
+                              model: postDio(aboutUsReadApi, {}),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -658,7 +770,7 @@ class _SettingPageState extends State<SettingPage> {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  '${userData['firstName']} ${userData['lastName']}',
+                  '${userData?['firstName'] ?? 'We Build Operate'} ${userData?['lastName'] ?? 'Co.,Ltd'}',
                   style: TextStyle(fontSize: 20, color: Colors.black),
                 ),
                 Text(

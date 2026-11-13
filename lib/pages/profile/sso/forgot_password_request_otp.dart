@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sso/component/header.dart';
 import 'package:sso/models/user.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:sso/pages/v2/menu_v2.dart';
 import '../../home.dart';
 import 'login_connect_sso.dart';
 import 'forgot_password_form_otp.dart';
@@ -27,25 +26,25 @@ class _ForgotPasswordRequestOTPPageState
     extends State<ForgotPasswordRequestOTPPage> {
   final storage = new FlutterSecureStorage();
 
-  late String _username;
-  late String _password;
-  late String _facebookID;
-  late String _appleID;
-  late String _googleID;
-  late String _lineID;
-  late String _email;
-  late String _imageUrl;
-  late String _category;
-  late String _prefixName;
-  late String _firstName;
-  late String _lastName;
-  late String _phone;
-  late String _idcard;
+  String _username = '';
+  String _password = '';
+  String _facebookID = '';
+  String _appleID = '';
+  String _googleID = '';
+  String _lineID = '';
+  String _email = '';
+  String _imageUrl = '';
+  String _category = '';
+  String _prefixName = '';
+  String _firstName = '';
+  String _lastName = '';
+  String _phone = '';
+  String _idcard = '';
 
-  late Map userProfile;
+  Map userProfile = {};
   bool _isOnlyWebLogin = false;
 
-  late DataUser dataUser;
+  DataUser? dataUser;
 
   final txtIdCard = TextEditingController();
   final txtPhone = TextEditingController();

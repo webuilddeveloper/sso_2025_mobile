@@ -13,21 +13,26 @@ import 'package:sso/component/carousel_banner.dart';
 import 'package:sso/component/loading_image_network.dart';
 import 'package:sso/component/sso/profile.dart';
 import 'package:sso/models/user.dart';
+import 'package:sso/pages/profile/user_information.dart';
 import 'package:sso/pages/blank_page/toast_fail.dart';
 import 'package:sso/pages/main_popup/dialog_main_popup.dart';
 import 'package:sso/pages/v2/policy_v2.dart';
 import 'package:sso/screen/contact/emergency_number.dart';
 import 'package:sso/screen/dental.dart';
+import 'package:sso/screen/digital_card.dart';
+import 'package:sso/screen/e_claim.dart';
 import 'package:sso/screen/feedback/feedback_main.dart';
 import 'package:sso/screen/login.dart';
 import 'package:sso/screen/news.dart';
 import 'package:sso/screen/notification.dart';
+import 'package:sso/screen/pension_simulator.dart';
 import 'package:sso/screen/poll.dart';
 import 'package:sso/screen/setting.dart';
 import 'package:sso/screen/subsidy.dart';
 import 'package:sso/shared/api_provider.dart';
 
 import '../component/button_model.dart';
+import '../component/smart_reminder_banner.dart';
 import '../screen/about_us/about_us_form.dart';
 import '../screen/contact/contact_category_list.dart';
 import '../screen/knowledge/knowledge_list.dart';
@@ -79,6 +84,12 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _callRead();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
   }
 
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -213,74 +224,166 @@ class _HomePageState extends State<HomePage> {
       child: ListView(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
         children: [
-          GestureDetector(
-            onTap:
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => SettingPage()),
-                ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
               children: [
-                if (userData.imageUrl != '')
-                  ClipRRect(
-                    child: loadingImageNetwork(
-                      userData.imageUrl,
-                      height: 80,
-                      width: 80,
-                    ),
-                  ),
-                if (userData.imageUrl == '')
-                  Container(
-                    height: 80,
-                    width: 80,
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(color: Colors.white),
-                    child: ClipRRect(
-                      child: Image.asset(
-                        'assets/images/user_not_found.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                SizedBox(width: 20),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${userData.firstName} ${userData.lastName}',
-                        style: TextStyle(fontSize: 13),
-                      ),
-                      Text(
-                        'ผู้ประกันตนมาตรา 33',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF005C9E),
+                  child: GestureDetector(
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const UserInformationPage(),
                         ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 7,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color(0xFFE8F0F6),
-                        ),
-                        child: Text(
-                          'โรงพยาบาลกรุงเทพ',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Color(0xFF005C9E),
+                      );
+                      _callRead();
+                    },
+                    child: Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xFF005C9E).withOpacity(0.2),
+                              width: 2.5,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.08),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(40),
+                            child: loadingImageNetwork(
+                              userData.imageUrl,
+                              height: 74,
+                              width: 74,
+                              fit: BoxFit.cover,
+                              isProfile: true,
+                            ),
                           ),
                         ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${userData.firstName} ${userData.lastName}',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Kanit',
+                                  color: Color(0xFF555555),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                userData.category == '39'
+                                    ? 'ผู้ประกันตนมาตรา 39'
+                                    : userData.category == '40'
+                                        ? 'ผู้ประกันตนมาตรา 40'
+                                        : 'ผู้ประกันตนมาตรา 33',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF005C9E),
+                                  fontFamily: 'Kanit',
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: const Color(0xFFE8F0F6),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.local_hospital,
+                                      size: 13,
+                                      color: Color(0xFF005C9E),
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'โรงพยาบาลกรุงเทพ',
+                                      style: TextStyle(
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF005C9E),
+                                        fontFamily: 'Kanit',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                InkWell(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DigitalCardPage(user: userData),
+                    ),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF005C9E), Color(0xFF1E88E5)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                    ],
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF005C9E).withOpacity(0.3),
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: const Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.qr_code_2, color: Colors.white, size: 26),
+                        SizedBox(height: 3),
+                        Text(
+                          'บัตรดิจิทัล',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Kanit',
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
+          ),
+          SizedBox(height: 12),
+          SmartReminderBanner(
+            user: userData,
           ),
           SizedBox(height: 10),
           Carousel3(model: _futureRotation, url: ''),
@@ -346,6 +449,37 @@ class _HomePageState extends State<HomePage> {
                             'assets/images/old_person.png',
                             height: 50,
                             width: 47,
+                          ),
+                        ),
+                        Positioned(
+                          left: 15,
+                          bottom: 10,
+                          child: InkWell(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => PensionSimulatorPage(user: userData),
+                              ),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.white.withOpacity(0.4)),
+                              ),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.calculate_outlined, color: Colors.white, size: 12),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    'จำลองบำนาญ >',
+                                    style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -467,36 +601,11 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      buttonModel(
+                      Navigator.push(
                         context,
-                        Future.value([
-                          {
-                            'title': 'เปลี่ยนโรงพยาบาล',
-                            'description':
-                                'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor',
-                            'imageUrl': 'assets/images/change_hospital.png',
-                          },
-                          {
-                            'title': 'เบิกสิทธิประโยชน์',
-                            'description':
-                                'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor',
-                            'imageUrl': 'assets/images/withdraw_benefits.png',
-                          },
-                          {
-                            'title': 'ลงทะเบียนขอรับเงินทดแทน',
-                            'description':
-                                'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor',
-                            'imageUrl':
-                                'assets/images/request_compensation.png',
-                          },
-                          {
-                            'title': 'สมัครเป็นผู้ประกันตน ม.40',
-                            'description':
-                                'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor',
-                            'imageUrl': 'assets/images/insurer.png',
-                          },
-                        ]),
-                        'บริการออนไลน์',
+                        MaterialPageRoute(
+                          builder: (_) => EClaimPage(user: userData),
+                        ),
                       );
                     },
                     child: Stack(
@@ -506,7 +615,7 @@ class _HomePageState extends State<HomePage> {
                           top: 16,
                           left: 15,
                           child: Text(
-                            'ลงทะเบียนขอรับเงินทดแทน',
+                            'ยื่นเบิกสิทธิประโยชน์',
                             style: TextStyle(
                               fontSize: 15,
                               color: Colors.white,
@@ -518,7 +627,7 @@ class _HomePageState extends State<HomePage> {
                           top: 37,
                           left: 15,
                           child: Text(
-                            'ว่างงาน หรือ ชราภาพ',
+                            'e-Claim / คลอดบุตร / ทันตกรรม',
                             style: TextStyle(fontSize: 11, color: Colors.white),
                           ),
                         ),
@@ -1012,43 +1121,63 @@ class _HomePageState extends State<HomePage> {
       userCode = ''; // หรือค่าตั้งต้นอื่น ๆ
     }
 
+    String finalImageUrl = '';
+    if (data != null && data['imageUrl'] != null && data['imageUrl'].toString().isNotEmpty) {
+      finalImageUrl = data['imageUrl'];
+    }
+    String finalFirstName = (data != null && data['firstName'] != null && data['firstName'].toString().isNotEmpty)
+        ? data['firstName']
+        : 'We Build Operate';
+    String finalLastName = (data != null && data['lastName'] != null && data['lastName'].toString().isNotEmpty)
+        ? data['lastName']
+        : 'Co.,Ltd';
+    String finalCategory = (data != null && data['category'] != null && data['category'].toString().isNotEmpty && data['category'].toString() != 'guest')
+        ? data['category']
+        : '33';
+    String finalIdCard = (data != null && data['idcard'] != null) ? data['idcard'].toString() : '';
+
+    if (value != null && value.isNotEmpty) {
+      try {
+        var u = json.decode(value);
+        if (u is Map) {
+          if (u['imageUrl'] != null && u['imageUrl'].toString().isNotEmpty) {
+            finalImageUrl = u['imageUrl'];
+          }
+          if (u['firstName'] != null && u['firstName'].toString().isNotEmpty) {
+            finalFirstName = u['firstName'];
+            finalLastName = u['lastName'] ?? '';
+          }
+          if (u['category'] != null && u['category'].toString().isNotEmpty && u['category'].toString() != 'guest') {
+            finalCategory = u['category'].toString();
+          }
+          if (u['idCard'] != null && u['idCard'].toString().isNotEmpty) {
+            finalIdCard = u['idCard'].toString();
+          } else if (u['idcard'] != null && u['idcard'].toString().isNotEmpty) {
+            finalIdCard = u['idcard'].toString();
+          }
+        }
+      } catch (_) {}
+    }
+
+    if (imageUrlSocial != null && imageUrlSocial.isNotEmpty) {
+      finalImageUrl = imageUrlSocial;
+    }
+
     setState(() {
       userData = User(
-        idcard:
-            (data != null &&
-                    data.containsKey('idcard') &&
-                    data['idcard'] != null)
-                ? data['idcard']
-                : '',
-        username:
-            (data != null && data['username'] != null) ? data['username'] : '',
-        password:
-            (data != null && data['password'] != null)
-                ? data['password'].toString()
-                : '',
-        firstName:
-            (data != null && data['firstName'] != null)
-                ? data['firstName']
-                : '',
-        lastName:
-            (data != null && data['lastName'] != null) ? data['lastName'] : '',
-        imageUrl:
-            (data != null && data['imageUrl'] != null && data['imageUrl'] != '')
-                ? data['imageUrl']
-                : '',
-        category:
-            (data != null && data['category'] != null) ? data['category'] : '',
-        countUnit:
-            (data != null && data['countUnit'] != null)
-                ? data['countUnit']
-                : '',
-        address:
-            (data != null && data['address'] != null) ? data['address'] : '',
+        idcard: finalIdCard,
+        username: (data != null && data['username'] != null) ? data['username'] : '',
+        password: '',
+        firstName: finalFirstName,
+        lastName: finalLastName,
+        imageUrl: finalImageUrl,
+        category: finalCategory,
+        countUnit: (data != null && data['countUnit'] != null) ? data['countUnit'] : '',
+        address: (data != null && data['address'] != null) ? data['address'] : '',
         status: (data != null && data['status'] != null) ? data['status'] : '',
-        checkOrganization:
-            (data != null && data.containsKey('checkOrganization'))
-                ? data['checkOrganization']
-                : false,
+        checkOrganization: (data != null && data.containsKey('checkOrganization'))
+            ? data['checkOrganization']
+            : false,
       );
     });
 

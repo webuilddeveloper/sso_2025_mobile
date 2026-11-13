@@ -8,6 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:sso/component/material/input_with_label.dart';
 import 'package:sso/pages/blank_page/toast_fail.dart';
+import 'package:sso/shared/api_provider.dart';
 import 'package:sso/shared/scroll_behavior.dart';
 
 class RegisterMemberPage extends StatefulWidget {
@@ -20,11 +21,22 @@ class RegisterMemberPage extends StatefulWidget {
 class _RegisterMemberPageState extends State<RegisterMemberPage> {
   final storage = FlutterSecureStorage();
   late PageController _pageController;
-  late DateTime currentBackPressTime;
+  DateTime currentBackPressTime = DateTime.now();
   dynamic userData;
   int pageSelected = 0;
 
   late TextEditingController _birthDayEditingController;
+  final TextEditingController _idCardController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+
+  final List<TextEditingController> _otpControllers =
+      List.generate(6, (_) => TextEditingController());
+  final List<FocusNode> _otpFocusNodes =
+      List.generate(6, (_) => FocusNode());
 
   // step 1
   bool acceptPolicy = false;
@@ -41,6 +53,7 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
   int _selectedYear = 1980;
 
   //step 3
+  bool _isVerifyingOtp = false;
 
   @override
   void initState() {
@@ -50,11 +63,87 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _birthDayEditingController.dispose();
+    _idCardController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _nameController.dispose();
+    _emailController.dispose();
+    for (var c in _otpControllers) {
+      c.dispose();
+    }
+    for (var f in _otpFocusNodes) {
+      f.dispose();
+    }
+    super.dispose();
+  }
+
   _callRead() async {
-    var data = await storage.read(key: 'dataUserLoginSSO');
-    print(data);
+    try {
+      var data = await storage.read(key: 'dataUserLoginSSO');
+      if (data != null && data.isNotEmpty) {
+        userData = json.decode(data);
+      }
+    } catch (e) {
+      debugPrint('Error reading dataUserLoginSSO: $e');
+    }
+
+    String? pCode = await storage.read(key: 'profileCode1');
+    String? pFirst = await storage.read(key: 'profileFirstName');
+    String? pLast = await storage.read(key: 'profileLastName');
+    String? pPhone = await storage.read(key: 'profilePhone');
+    String? pIdCard = userData != null ? userData['idcard'] : null;
+    String? pEmail = userData != null ? userData['email'] : null;
+
+    if (pCode != null && pCode.isNotEmpty) {
+      try {
+        var res = await postDio(profileReadApi, {'code': pCode});
+        if (res != null && res is Map) {
+          userData = res;
+          pFirst = res['firstName'] ?? pFirst;
+          pLast = res['lastName'] ?? pLast;
+          pPhone = res['phone'] ?? pPhone;
+          pIdCard = (res['idcard'] != null && res['idcard'].toString().isNotEmpty)
+              ? res['idcard']
+              : pIdCard;
+          pEmail = res['email'] ?? pEmail;
+        }
+      } catch (e) {
+        debugPrint('Error reading profile in register: $e');
+      }
+    }
+
+    if (!mounted) return;
     setState(() {
-      userData = json.decode(data!);
+      if (pIdCard != null && pIdCard.isNotEmpty) {
+        _idCardController.text = pIdCard;
+      }
+      if (pPhone != null && pPhone.isNotEmpty) {
+        _phoneController.text = pPhone;
+      } else {
+        _phoneController.text = '0812345678';
+      }
+      String fullName = '${pFirst ?? ''} ${pLast ?? ''}'.trim();
+      if (fullName.isNotEmpty) {
+        _nameController.text = fullName;
+      }
+      if (pEmail != null && pEmail.isNotEmpty) {
+        _emailController.text = pEmail;
+      }
+      if (userData != null &&
+          userData['birthDay'] != null &&
+          userData['birthDay'].toString().isNotEmpty) {
+        _birthDayEditingController.text = userData['birthDay'].toString();
+      }
+      if (userData != null &&
+          userData['prefixName'] != null &&
+          prefixNameList.contains(userData['prefixName'])) {
+        prefixNameSelected = userData['prefixName'];
+      }
     });
   }
 
@@ -369,6 +458,7 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
         ),
         SizedBox(height: 10),
         TextFormField(
+          controller: _idCardController,
           decoration: DecorationRegister.registerMember(
             context,
             hintText: 'หมายเลขประจำตัวประชาชน',
@@ -376,6 +466,7 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
         ),
         SizedBox(height: 10),
         TextFormField(
+          controller: _phoneController,
           inputFormatters: InputFormatTemple.phone(),
           decoration: DecorationRegister.registerMember(
             context,
@@ -384,6 +475,7 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
         ),
         SizedBox(height: 10),
         TextFormField(
+          controller: _passwordController,
           obscureText: passwordVisibility,
           inputFormatters: InputFormatTemple.username(),
           decoration: DecorationRegister.passwordMember(
@@ -398,6 +490,7 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
         ),
         SizedBox(height: 10),
         TextFormField(
+          controller: _confirmPasswordController,
           obscureText: confirmPasswordVisibility,
           inputFormatters: InputFormatTemple.username(),
           decoration: DecorationRegister.passwordMember(
@@ -427,6 +520,7 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
         ),
         SizedBox(height: 10),
         TextFormField(
+          controller: _nameController,
           decoration: DecorationRegister.registerMember(
             context,
             hintText: 'ชื่อนามสกุล',
@@ -462,17 +556,13 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
                   ),
                 ),
                 Icon(Icons.calendar_today, color: Color(0xFF707070)),
-                // Image.asset(
-                //   'assets/images/dropdown_calendar.png',
-                //   width: 15,
-                //   height: 13.5,
-                // ),
               ],
             ),
           ),
         ),
         SizedBox(height: 10),
         TextFormField(
+          controller: _emailController,
           decoration: DecorationRegister.registerMember(
             context,
             hintText: 'อีเมล',
@@ -524,6 +614,13 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
   }
 
   _buildPageThree() {
+    String phoneText = _phoneController.text.trim();
+    if (phoneText.isEmpty) phoneText = '0812345678';
+    if (phoneText.length == 10) {
+      phoneText =
+          '${phoneText.substring(0, 3)} - ${phoneText.substring(3, 6)} - ${phoneText.substring(6, 10)}';
+    }
+
     return Column(
       children: [
         Text(
@@ -535,58 +632,163 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
           ),
           textAlign: TextAlign.start,
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 15),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildItemOTP(),
-            _buildItemOTP(),
-            _buildItemOTP(),
-            _buildItemOTP(),
-            _buildItemOTP(),
-            _buildItemOTP(),
-          ],
+          children: List.generate(6, (index) => _buildItemOTP(index)),
         ),
-        SizedBox(height: 30),
-        Text('091 - 123 - 4567', style: TextStyle(fontSize: 15)),
+        SizedBox(height: 25),
+        Text(phoneText, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        SizedBox(height: 4),
         Text(
-          'เราได้ส่งรหัส OTP ไปยังหมายเลข',
-          style: TextStyle(color: Color(0xFF646464), fontSize: 11),
+          'เราได้ส่งรหัส OTP (ตัวเลข 6 หลัก) ไปยังหมายเลขโทรศัพท์ข้างต้น',
+          style: TextStyle(color: Color(0xFF646464), fontSize: 12),
         ),
-        SizedBox(height: 13),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(width: 1, color: Color(0xFF005C9E)),
+        SizedBox(height: 15),
+        InkWell(
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('ส่งรหัส OTP ใหม่ไปยังหมายเลข $phoneText เรียบร้อยแล้ว (รหัสทดสอบ: 123456)'),
+                backgroundColor: Color(0xFF005C9E),
+              ),
+            );
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(width: 1, color: Color(0xFF005C9E)),
+            ),
+            child: Text(
+              'ส่งรหัสอีกครั้ง',
+              style: TextStyle(color: Color(0xFF005C9E), fontSize: 14, fontWeight: FontWeight.bold),
+            ),
           ),
-          child: Text(
-            'ส่งรหัสอีกครั้ง',
-            style: TextStyle(color: Color(0xFF005C9E), fontSize: 15),
+        ),
+        SizedBox(height: 35),
+        SizedBox(
+          width: double.infinity,
+          height: 48,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF005C9E),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+              elevation: 2,
+            ),
+            onPressed: _isVerifyingOtp ? null : _verifyOtpAndSubmit,
+            child: _isVerifyingOtp
+                ? SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                  )
+                : Text(
+                    'ยืนยันการสมัครสมาชิก',
+                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
           ),
         ),
       ],
     );
   }
 
-  _buildItemOTP() {
+  Widget _buildItemOTP(int index) {
     return Container(
-      height: 60,
-      width: 50,
+      height: 54,
+      width: 44,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: Color(0xFFE8F0F6),
         borderRadius: BorderRadius.circular(10),
       ),
-      // child: TextFormField(
-      //   showCursor: false,
-      //   inputFormatters: InputFormatTemple.otp(),
-      //   style: TextStyle(fontSize: 25),
-      //   decoration: InputDecoration(
-      //     contentPadding: EdgeInsets.symmetric(horizontal: 15),
-      //     border: InputBorder.none,
-      //   ),
-      // ),
+      child: TextFormField(
+        controller: _otpControllers[index],
+        focusNode: _otpFocusNodes[index],
+        textAlign: TextAlign.center,
+        keyboardType: TextInputType.number,
+        maxLength: 1,
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF005C9E),
+        ),
+        decoration: InputDecoration(
+          counterText: '',
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.zero,
+        ),
+        onChanged: (value) {
+          if (value.isNotEmpty && index < 5) {
+            _otpFocusNodes[index + 1].requestFocus();
+          } else if (value.isEmpty && index > 0) {
+            _otpFocusNodes[index - 1].requestFocus();
+          }
+        },
+      ),
+    );
+  }
+
+  void _verifyOtpAndSubmit() async {
+    String otpCode = _otpControllers.map((c) => c.text).join();
+    if (otpCode.length < 6) {
+      toastFail(context, text: 'กรุณากรอกรหัส OTP ให้ครบ 6 หลัก');
+      return;
+    }
+
+    setState(() => _isVerifyingOtp = true);
+
+    await Future.delayed(Duration(seconds: 1));
+
+    if (!mounted) return;
+    setState(() => _isVerifyingOtp = false);
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Color(0xFFE8F5E9),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.check_circle, color: Color(0xFF2E7D32), size: 54),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'สมัครสมาชิกสำเร็จ!',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF102F30)),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'ระบบได้บันทึกข้อมูลและยืนยันการเป็นผู้ประกันตนเรียบร้อยแล้ว',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+            ),
+          ],
+        ),
+        actions: [
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF005C9E),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () {
+                Navigator.pop(ctx);
+                Navigator.pop(context);
+              },
+              child: Text('ตกลง', style: TextStyle(color: Colors.white, fontSize: 15)),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -25,33 +25,45 @@ moneyFormat(String price) {
 }
 
 dateStringToDate(String date) {
-  if (date == '') {
+  if (date == '' || date.length < 8) {
     return '-';
   }
-  var year = date.substring(0, 4);
-  var month = date.substring(4, 6);
-  var day = date.substring(6, 8);
-  DateTime todayDate = DateTime.parse('$year-$month-$day');
-  return '$day-$month-$year';
+  try {
+    var year = date.substring(0, 4);
+    var month = date.substring(4, 6);
+    var day = date.substring(6, 8);
+    return '$day-$month-$year';
+  } catch (_) {
+    return '-';
+  }
 }
 
 dateStringFormat(String date, {String separate = '/'}) {
-  if (date == '' || date == 'Invalid date') {
+  if (date == '' || date == 'Invalid date' || date.length < 8) {
     return '-';
   }
-  var year = date.substring(0, 4);
-  var month = date.substring(4, 6);
-  var day = date.substring(6, 8);
-  return day + separate + month + separate + year;
+  try {
+    var year = date.substring(0, 4);
+    var month = date.substring(4, 6);
+    var day = date.substring(6, 8);
+    return day + separate + month + separate + year;
+  } catch (_) {
+    return '-';
+  }
 }
 
 dateStringToDateBirthDay(String date) {
-  var year = date.substring(0, 4);
-  var month = date.substring(4, 6);
-  var day = date.substring(6, 8);
-  DateTime todayDate = DateTime.parse('$year-$month-$day');
-
-  return (todayDate);
+  if (date.length < 8) {
+    return DateTime.now();
+  }
+  try {
+    var year = date.substring(0, 4);
+    var month = date.substring(4, 6);
+    var day = date.substring(6, 8);
+    return DateTime.parse('$year-$month-$day');
+  } catch (_) {
+    return DateTime.now();
+  }
 }
 
 differenceCurrentDate(String date) {

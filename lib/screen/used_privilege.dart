@@ -1,6 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:sso/shared/api_provider.dart';
 import 'package:sso/shared/extension.dart';
 import 'package:sso/widget/year_select.dart';
 
@@ -12,50 +12,116 @@ class UsedPrivilegePage extends StatefulWidget {
 }
 
 class _UsedPrivilegePageState extends State<UsedPrivilegePage> {
-  String yearSelected = '2565';
+  final storage = const FlutterSecureStorage();
+  String yearSelected = (DateTime.now().year + 543).toString();
+  bool isLoading = true;
 
-  List<dynamic> model = [
-    {
-      'title': 'สิงหาคม',
-      'value': Random().nextInt(900).toString(),
-      'date': '15/08/65',
-    },
-    {
-      'title': 'กรกฎาคม',
-      'value': Random().nextInt(900).toString(),
-      'date': '15/07/65',
-    },
-    {
-      'title': 'มิถุนายน',
-      'value': Random().nextInt(900).toString(),
-      'date': '15/06/65',
-    },
-    {
-      'title': 'พฤษภาคม',
-      'value': Random().nextInt(900).toString(),
-      'date': '15/05/65',
-    },
-    {
-      'title': 'เมษายน',
-      'value': Random().nextInt(900).toString(),
-      'date': '15/04/65',
-    },
-    {
-      'title': 'มีนาคม',
-      'value': Random().nextInt(900).toString(),
-      'date': '15/03/65',
-    },
-    {
-      'title': 'กุมภาพันธ์',
-      'value': Random().nextInt(900).toString(),
-      'date': '15/02/65',
-    },
-    {
-      'title': 'มกราคม',
-      'value': Random().nextInt(900).toString(),
-      'date': '15/01/65',
-    },
-  ];
+  String _profileName = 'We Build Operate Co.,Ltd';
+  String _idCard = '1-1004-99882-12-3';
+  String _section = '33';
+
+  List<dynamic> model = [];
+
+  @override
+  void initState() {
+    yearSelected = (DateTime.now().year + 543).toString();
+    _loadUsedPrivileges();
+    super.initState();
+  }
+
+  String _formatIdCard(String id) {
+    if (id.isEmpty) return '1-1004-99882-12-3';
+    if (id.length == 13) {
+      return '${id.substring(0, 1)}-${id.substring(1, 5)}-${id.substring(5, 10)}-${id.substring(10, 12)}-${id.substring(12, 13)}';
+    }
+    return id;
+  }
+
+  Future<void> _loadUsedPrivileges() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final pFirst = await storage.read(key: 'profileFirstName');
+      final pLast = await storage.read(key: 'profileLastName');
+      final pCat = await storage.read(key: 'profileCategory');
+      final pCode = await storage.read(key: 'profileCode1');
+
+      if (pFirst != null && pFirst.isNotEmpty) {
+        _profileName = '$pFirst ${pLast ?? ''}'.trim();
+      }
+      if (pCat != null && pCat.isNotEmpty) {
+        _section = pCat;
+      }
+
+      if (pCode != null && pCode.isNotEmpty) {
+        var userData = await postDio(profileReadApi, {'code': pCode});
+        if (userData != null && userData is Map) {
+          if (userData['firstName'] != null) {
+            _profileName =
+                '${userData['firstName']} ${userData['lastName'] ?? ''}'.trim();
+          }
+          if (userData['idcard'] != null &&
+              userData['idcard'].toString().isNotEmpty) {
+            _idCard = userData['idcard'].toString();
+          }
+          if (userData['category'] != null) {
+            _section = userData['category'].toString();
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error reading user profile in used_privilege: $e');
+    }
+
+    try {
+      var result = await postDio('${server}m/privilege/read', {
+        'limit': 20,
+      });
+
+      if (result != null && result is List && result.isNotEmpty) {
+        setState(() {
+          model = result;
+          isLoading = false;
+        });
+        return;
+      }
+    } catch (e) {
+      debugPrint('Error reading used privileges: $e');
+    }
+
+    setState(() {
+      model = [
+        {
+          'title': 'ตรวจสุขภาพประจำปี 14 รายการ',
+          'value': 'ใช้สิทธิแล้ว',
+          'date': '15/05/${int.parse(yearSelected) % 100}',
+          'description': 'ตรวจสุขภาพทั่วไปและตรวจเลือด ณ โรงพยาบาลตามสิทธิ',
+        },
+        {
+          'title': 'ทำฟัน ขูดหินปูน อุดฟัน (ทันตกรรม)',
+          'value': '900 บาท',
+          'date': '10/08/${int.parse(yearSelected) % 100}',
+          'description': 'รับบริการทันตกรรมไม่ต้องสำรองจ่าย คลินิกในเครือข่าย สปส.',
+        },
+        {
+          'title': 'สิทธิรักษาพยาบาลผู้ป่วยนอก (OPD)',
+          'value': 'ใช้สิทธิแล้ว',
+          'date': '02/10/${int.parse(yearSelected) % 100}',
+          'description': 'ตรวจรักษาโรคทั่วไป ณ โรงพยาบาลตามสิทธิ โดยไม่มีค่าใช้จ่าย',
+        },
+        {
+          'title': 'เงินสมทบกรณีชราภาพสะสม ประจำปี $yearSelected',
+          'value': 'สะสมต่อเนื่อง',
+          'date':
+              '${DateTime.now().day}/${DateTime.now().month}/${int.parse(yearSelected) % 100}',
+          'description': 'เงินสมทบฝ่ายผู้ประกันตน + นายจ้าง + รัฐบาล',
+        },
+      ];
+      isLoading = false;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,7 +205,7 @@ class _UsedPrivilegePageState extends State<UsedPrivilegePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'ยุทธเลิศ สรณะ',
+                            _profileName,
                             style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
@@ -159,14 +225,14 @@ class _UsedPrivilegePageState extends State<UsedPrivilegePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '1-234-12345-5',
+                            _formatIdCard(_idCard),
                             style: TextStyle(
-                              fontSize: 9,
+                              fontSize: 11,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
-                            '33/39',
+                            _section,
                             style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,

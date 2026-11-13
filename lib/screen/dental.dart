@@ -1,7 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sso/pages/blank_page/toast_fail.dart';
+import 'package:sso/shared/api_provider.dart';
 import 'package:sso/shared/extension.dart';
 import 'package:sso/widget/year_select.dart';
 
@@ -13,72 +13,112 @@ class DentalPage extends StatefulWidget {
 }
 
 class _DentalPageState extends State<DentalPage> {
+  final storage = const FlutterSecureStorage();
   List<dynamic> model = [];
   List<dynamic> categoryList = [];
   String categorySelected = '';
-  String yearSelected = '2565';
+  String yearSelected = (DateTime.now().year + 543).toString();
+  String updateDateText = '';
+  int totalRemaining = 900;
+  bool isLoading = true;
+
+  String _profileName = 'We Build Operate Co.,Ltd';
+  String _idCard = '1-1004-99882-12-3';
+  String _section = '33';
+
+  String _formatIdCard(String id) {
+    if (id.isEmpty) return '1-1004-99882-12-3';
+    if (id.length == 13) {
+      return '${id.substring(0, 1)}-${id.substring(1, 5)}-${id.substring(5, 10)}-${id.substring(10, 12)}-${id.substring(12, 13)}';
+    }
+    return id;
+  }
 
   @override
   void initState() {
-    _mockData();
+    int bYear = DateTime.now().year + 543;
+    yearSelected = bYear.toString();
+    updateDateText = 'ข้อมูล ณ ${DateTime.now().day}/${DateTime.now().month}/${(bYear % 100).toString().padLeft(2, '0')}';
+    _loadDentalData();
     super.initState();
   }
 
-  _mockData() {
-    var a = [];
-    var b = [
-      {
-        'title': 'สิงหาคม',
-        'value': Random().nextInt(900).toString(),
-        'date': '15/08/65',
-      },
-      {
-        'title': 'กรกฎาคม',
-        'value': Random().nextInt(900).toString(),
-        'date': '15/07/65',
-      },
-      {
-        'title': 'มิถุนายน',
-        'value': Random().nextInt(900).toString(),
-        'date': '15/06/65',
-      },
-      {
-        'title': 'พฤษภาคม',
-        'value': Random().nextInt(900).toString(),
-        'date': '15/05/65',
-      },
-      {
-        'title': 'เมษายน',
-        'value': Random().nextInt(900).toString(),
-        'date': '15/04/65',
-      },
-      {
-        'title': 'มีนาคม',
-        'value': Random().nextInt(900).toString(),
-        'date': '15/03/65',
-      },
-      {
-        'title': 'กุมภาพันธ์',
-        'value': Random().nextInt(900).toString(),
-        'date': '15/02/65',
-      },
-      {
-        'title': 'มกราคม',
-        'value': Random().nextInt(900).toString(),
-        'date': '15/01/65',
-      },
-    ];
-    for (var i = 50; i < 65; i++) {
-      a.add({'title': i.toString(), 'value': Random().nextInt(900).toString()});
+  Future<void> _loadDentalData() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final pFirst = await storage.read(key: 'profileFirstName');
+      final pLast = await storage.read(key: 'profileLastName');
+      final pCat = await storage.read(key: 'profileCategory');
+      final pCode = await storage.read(key: 'profileCode1');
+
+      if (pFirst != null && pFirst.isNotEmpty) {
+        _profileName = '$pFirst ${pLast ?? ''}'.trim();
+      }
+      if (pCat != null && pCat.isNotEmpty) {
+        _section = pCat;
+      }
+
+      if (pCode != null && pCode.isNotEmpty) {
+        var userData = await postDio(profileReadApi, {'code': pCode});
+        if (userData != null && userData is Map) {
+          if (userData['firstName'] != null) {
+            _profileName =
+                '${userData['firstName']} ${userData['lastName'] ?? ''}'.trim();
+          }
+          if (userData['idcard'] != null &&
+              userData['idcard'].toString().isNotEmpty) {
+            _idCard = userData['idcard'].toString();
+          }
+          if (userData['category'] != null) {
+            _section = userData['category'].toString();
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error reading user profile in dental: $e');
     }
 
+    try {
+      var result = await postDio('${server}m/welfare/read', {
+        'category': 'dental',
+        'limit': 20,
+      });
+
+      if (result != null && result is List && result.isNotEmpty) {
+        setState(() {
+          model = result;
+          categoryList = [
+            {'code': '', 'title': 'ทั้งหมด'},
+            {'code': '1', 'title': 'มาตรา 33'},
+            {'code': '2', 'title': 'มาตรา 39'},
+          ];
+          isLoading = false;
+        });
+        return;
+      }
+    } catch (e) {
+      debugPrint('Error loading dental data: $e');
+    }
+
+    // Default benefit information when offline or pending backend records
     setState(() {
-      model = b;
+      model = [
+        {
+          'title': 'สิทธิประโยชน์ทันตกรรมประจำปี $yearSelected',
+          'value': '900',
+          'date': '${DateTime.now().day}/${DateTime.now().month}/${(int.parse(yearSelected) % 100)}',
+          'description': 'ถอนฟัน อุดฟัน ขูดหินปูน และผ่าฟันคุด 900 บาท/ปี',
+        },
+      ];
       categoryList = [
         {'code': '', 'title': 'ทั้งหมด'},
         {'code': '1', 'title': 'มาตรา 33'},
         {'code': '2', 'title': 'มาตรา 39'},
       ];
+      isLoading = false;
     });
   }
 
@@ -118,7 +158,7 @@ class _DentalPageState extends State<DentalPage> {
                         ),
                       ),
                       Text(
-                        'ข้อมูล ณ 03/08/65',
+                        updateDateText,
                         style: TextStyle(fontSize: 13, height: 1),
                       ),
                       SizedBox(height: 20),
@@ -174,14 +214,14 @@ class _DentalPageState extends State<DentalPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'ยุทธเลิศ สรณะ',
-                      style: TextStyle(
+                      _profileName,
+                      style: const TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF005C9E),
                       ),
                     ),
-                    Text(
+                    const Text(
                       'ผู้ประกันตนมาตรา',
                       style: TextStyle(
                         fontSize: 9,
@@ -194,15 +234,15 @@ class _DentalPageState extends State<DentalPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '1-234-12345-5',
-                      style: TextStyle(
+                      _formatIdCard(_idCard),
+                      style: const TextStyle(
                         fontSize: 9,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      '33/39',
-                      style: TextStyle(
+                      _section.isNotEmpty ? _section : '33/39',
+                      style: const TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF005C9E),

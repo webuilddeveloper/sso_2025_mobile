@@ -22,17 +22,17 @@ class _ConnectSocialPageState extends State<ConnectSocialPage> {
   final storage = FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
 
-  late String _facebookID;
-  late String _appleID;
-  late String _googleID;
-  late String _lineID;
-  late String _email;
-  late String _imageUrl;
-  late String _category;
-  late String _code;
-  late String _username;
-  late String _password;
-  late Map userProfile;
+  String _facebookID = '';
+  String _appleID = '';
+  String _googleID = '';
+  String _lineID = '';
+  String _email = '';
+  String _imageUrl = '';
+  String _category = '';
+  String _code = '';
+  String _username = '';
+  String _password = '';
+  Map userProfile = {};
 
   String categorySelected = "";
 
@@ -66,6 +66,7 @@ class _ConnectSocialPageState extends State<ConnectSocialPage> {
 
   @override
   void initState() {
+    futureModel = Future.value({});
     readStorage();
     super.initState();
   }
@@ -306,24 +307,31 @@ class _ConnectSocialPageState extends State<ConnectSocialPage> {
   }
 
   readStorage() async {
-    var value = await storage.read(key: 'dataUserLoginSSO');
-    var user = json.decode(value!);
-
-    if (user['code'] != '') {
-      setState(() {
-        linkAccount = user['linkAccount'];
-        _imageUrl = user['imageUrl'] ?? '';
-        _facebookID = user['facebookID'] ?? '';
-        _appleID = user['appleID'] ?? '';
-        _googleID = user['googleID'] ?? '';
-        _lineID = user['lineID'] ?? '';
-        _code = user['code'] ?? '';
-        _username = user['username'] ?? '';
-        _password = user['password'] ?? '';
-        txtUsername.text = user['username'] ?? '';
-        txtPassword.text = user['password'] ?? '';
-        futureModel = readUser();
-      });
+    try {
+      var value = await storage.read(key: 'dataUserLoginSSO');
+      if (value != null && value.isNotEmpty) {
+        var user = json.decode(value);
+        if (user is Map) {
+          setState(() {
+            linkAccount = user['linkAccount']?.toString() ?? '';
+            _imageUrl = user['imageUrl'] ?? '';
+            _facebookID = user['facebookID'] ?? '';
+            _appleID = user['appleID'] ?? '';
+            _googleID = user['googleID'] ?? '';
+            _lineID = user['lineID'] ?? '';
+            _code = user['code'] ?? '';
+            _username = user['username'] ?? '';
+            _password = user['password'] ?? '';
+            txtUsername.text = user['username'] ?? '';
+            txtPassword.text = user['password'] ?? '';
+            if (_code.isNotEmpty) {
+              futureModel = readUser();
+            }
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error in readStorage connect_social: $e');
     }
   }
 

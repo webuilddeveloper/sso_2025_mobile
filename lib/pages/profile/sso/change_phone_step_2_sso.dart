@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sso/component/header.dart';
 import 'package:sso/models/user.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:sso/pages/v2/menu_v2.dart';
 import 'package:sso/widget/text_field.dart';
 import 'package:sso/widget/text_form_field.dart';
 import '../../home.dart';
@@ -25,23 +24,23 @@ class ChangePhoneStep2SSOPage extends StatefulWidget {
 class _ChangePhoneStep2SSOPageState extends State<ChangePhoneStep2SSOPage> {
   final storage = new FlutterSecureStorage();
 
-  late String _username;
-  late String _password;
-  late String _facebookID;
-  late String _appleID;
-  late String _googleID;
-  late String _lineID;
-  late String _email;
+  String _username = '';
+  String _password = '';
+  String _facebookID = '';
+  String _appleID = '';
+  String _googleID = '';
+  String _lineID = '';
+  String _email = '';
   String _imageUrl = '';
-  late String _category;
-  late String _prefixName;
-  late String _firstName;
-  late String _lastName;
+  String _category = '';
+  String _prefixName = '';
+  String _firstName = '';
+  String _lastName = '';
 
-  late Map userProfile;
+  Map userProfile = {};
   bool _isOnlyWebLogin = false;
 
-  late DataUser dataUser;
+  DataUser? dataUser;
   final _formKey = GlobalKey<FormState>();
   final txtIdCard = TextEditingController();
   final txtPhone = TextEditingController();

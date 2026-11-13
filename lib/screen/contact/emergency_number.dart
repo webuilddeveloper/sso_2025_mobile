@@ -21,11 +21,11 @@ class EmergencyNumber extends StatefulWidget {
 }
 
 class _EmergencyNumberState extends State<EmergencyNumber> {
-  late ContactListVertical contact;
+  ContactListVertical? contact;
   bool hideSearch = true;
   final txtDescription = TextEditingController();
-  late String keySearch;
-  late String category;
+  String keySearch = '';
+  String category = '';
 
   late Future<dynamic> futureModelSearch;
   late Future<dynamic> _futureContact;

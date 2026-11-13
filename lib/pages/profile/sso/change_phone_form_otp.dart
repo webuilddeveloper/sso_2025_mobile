@@ -7,7 +7,6 @@ import 'package:numeric_keyboard/numeric_keyboard.dart';
 import 'package:sso/pages/home.dart';
 import 'package:sso/pages/profile/connect_sso.dart';
 import 'package:sso/pages/profile/sso/login_connect_sso.dart';
-import 'package:sso/pages/v2/menu_v2.dart';
 import 'package:sso/screen/login.dart';
 
 class ChangePhoneFormOTPPage extends StatefulWidget {

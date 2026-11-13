@@ -25,6 +25,12 @@ class _PollPageState extends State<PollPage> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
+
   _callRead() {
     _future = postDio('${server}m/poll/read', {'limit': _limit});
     _futureHighLight =

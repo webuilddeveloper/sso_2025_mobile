@@ -9,7 +9,6 @@ import 'package:sso/models/register.dart';
 import 'package:sso/pages/profile/sso/change_phone_step_1_sso.dart';
 import 'package:sso/pages/profile/sso/register_connect_sso.dart';
 import 'package:sso/pages/profile/connect_sso.dart';
-// import 'package:sso/pages/v2/menu_v2.dart';
 import 'package:sso/shared/api_provider.dart';
 import 'package:sso/widget/text_field.dart';
 
@@ -56,33 +55,33 @@ class LoginConnectionSSOPage extends StatefulWidget {
 
 class _LoginConnectionSSOPageState extends State<LoginConnectionSSOPage> {
   final storage = FlutterSecureStorage();
-  late int _step;
-  late String _username;
-  late String _password;
-  late String _facebookID;
-  late String _appleID;
-  late String _googleID;
-  late String _lineID;
-  late String _email;
-  late String _imageUrl;
-  late String _category;
-  late String _prefixName;
-  late String _firstName;
-  late String _lastName;
+  int _step = 0;
+  String _username = '';
+  String _password = '';
+  String _facebookID = '';
+  String _appleID = '';
+  String _googleID = '';
+  String _lineID = '';
+  String _email = '';
+  String _imageUrl = '';
+  String _category = '';
+  String _prefixName = '';
+  String _firstName = '';
+  String _lastName = '';
 
   final bool _isLoginSocial = false;
   final bool _isLoginSocialHaveEmail = false;
   bool _isShowStep1 = true;
   bool _isShowStep2 = false;
   bool _checkedValue = false;
-  late Register _register;
+  Register? _register;
   List<dynamic> _dataPolicy = [];
 
   final _formKey = GlobalKey<FormState>();
 
   // Option 2
   // ignore: unused_field
-  late String _selectedPrefixName;
+  String _selectedPrefixName = 'นาย';
 
   final txtUsername = TextEditingController();
   final txtPassword = TextEditingController();
@@ -146,19 +145,31 @@ class _LoginConnectionSSOPageState extends State<LoginConnectionSSOPage> {
   }
 
   Future<dynamic> readPolicy() async {
-    final result = await postObjectData('m/policy/read', {
-      'username': _username,
-      'category': 'verification',
-    });
-
-    print(result['status'].toString());
-    if (result['status'] == 'S') {
-      // if (result['objectData'].length > 0) {
-      setState(() {
-        _dataPolicy = [..._dataPolicy, ...result['objectData']];
+    try {
+      final result = await postObjectData('m/policy/read', {
+        'username': _username,
+        'category': 'verification',
       });
-      // }
+
+      if (result != null && result['status'] == 'S' && result['objectData'] != null) {
+        setState(() {
+          _dataPolicy = [..._dataPolicy, ...result['objectData']];
+        });
+      }
+    } catch (e) {
+      debugPrint('Error in readPolicy login_connect_sso: $e');
     }
+
+    if (_dataPolicy.isEmpty) {
+      _dataPolicy = [
+        {
+          'title': 'นโยบายการเชื่อมต่อระบบสมาชิกผู้ประกันตน',
+          'description':
+              '<p>การเชื่อมต่อข้อมูลผู้ประกันตนเพื่อการตรวจสอบสิทธิประโยชน์และการรับบริการทางอิเล็กทรอนิกส์ตามมาตรฐานสำนักงานประกันสังคม</p>',
+        },
+      ];
+    }
+    return _dataPolicy;
   }
 
   Future<Null> checkValueStep1() async {

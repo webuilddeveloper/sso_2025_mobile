@@ -4,7 +4,9 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:sso/component/custom_dialog.dart';
 import 'package:sso/component/header.dart';
+import 'package:sso/component/loading_image_network.dart';
 // import 'package:sso/pages/auth/login.dart';
 import 'package:sso/pages/profile/user_information.dart';
 import 'package:sso/screen/login.dart';
@@ -47,6 +49,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   @override
   void initState() {
+    futureModel = Future.value({});
     readStorage();
     super.initState();
   }
@@ -66,94 +69,51 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     user['newPassword'] = txtPasswordNew.text;
 
     final result = await postObjectData('m/Register/change', user);
-    if (result['status'] == 'S') {
-      await storage.write(
-        key: 'dataUserLoginSSO',
-        value: jsonEncode(result['objectData']),
-      );
-      Navigator.pushReplacement(
+    if (result != null && result['status'] == 'S') {
+      if (result['objectData'] != null) {
+        await storage.write(
+          key: 'dataUserLoginSSO',
+          value: jsonEncode(result['objectData']),
+        );
+      }
+      if (!mounted) return;
+      await showSSODialog(
         context,
-        MaterialPageRoute(builder: (context) => UserInformationPage()),
+        title: 'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว',
+        message: 'รหัสผ่านใหม่ของท่านได้รับการบันทึกลงในระบบเรียบร้อยแล้ว',
+        type: SSODialogType.success,
+        confirmText: 'ตกลง',
       );
-
-      return showDialog(
-        context: context,
-        builder:
-            (BuildContext context) => CupertinoAlertDialog(
-              title: Text(
-                'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'Kanit',
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-              content: Text(" "),
-              actions: [
-                CupertinoDialogAction(
-                  isDefaultAction: true,
-                  child: Text(
-                    "ยกเลิก",
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontFamily: 'Kanit',
-                      color: Color(0xFF005C9E),
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-      );
+      if (mounted) {
+        Navigator.pop(context);
+      }
     } else {
-      return showDialog(
-        context: context,
-        builder:
-            (BuildContext context) => CupertinoAlertDialog(
-              title: Text(
-                result['message'],
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'Kanit',
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-              content: Text(" "),
-              actions: [
-                CupertinoDialogAction(
-                  isDefaultAction: true,
-                  child: Text(
-                    "ยกเลิก",
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontFamily: 'Kanit',
-                      color: Color(0xFF005C9E),
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
+      if (!mounted) return;
+      await showSSODialog(
+        context,
+        title: 'เปลี่ยนรหัสผ่านไม่สำเร็จ',
+        message: result != null && result['message'] != null
+            ? result['message'].toString()
+            : 'รหัสผ่านเดิมไม่ถูกต้อง หรือเกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
+        type: SSODialogType.error,
+        confirmText: 'ตกลง',
       );
     }
   }
 
   readStorage() async {
-    var value = await storage.read(key: 'dataUserLoginSSO');
-    var user = json.decode(value!);
-
-    if (user['code'] != '') {
-      setState(() {
-        _imageUrl = user['imageUrl'] ?? '';
-      });
+    try {
+      var value = await storage.read(key: 'dataUserLoginSSO');
+      if (value != null && value.isNotEmpty) {
+        var user = json.decode(value);
+        if (user is Map) {
+          setState(() {
+            _imageUrl = user['imageUrl'] ?? '';
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error in readStorage change_password: $e');
     }
   }
 
@@ -449,7 +409,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         ),
       ),
       child: Scaffold(
-        appBar: header(context, goBack),
+        appBar: header(context, goBack, title: 'เปลี่ยนรหัสผ่าน'),
         backgroundColor: Colors.transparent,
         body: ListView(
           controller: scrollController,
@@ -476,9 +436,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         image: DecorationImage(
                           fit: BoxFit.cover,
                           image:
-                              _imageUrl != null
-                                  ? NetworkImage(_imageUrl)
-                                  : AssetImage("assets/logo/noImage.png"),
+                              _imageUrl.isNotEmpty && !_imageUrl.contains('122.155.223.63')
+                                  ? NetworkImage(sanitizeImageUrl(_imageUrl)) as ImageProvider
+                                  : const AssetImage("assets/images/user_not_found.png"),
                         ),
                       ),
                     ),

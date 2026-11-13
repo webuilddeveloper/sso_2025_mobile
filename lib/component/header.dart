@@ -18,42 +18,38 @@ header(
   String menu = '',
 }) {
   return AppBar(
-    backgroundColor: Color(0xFF005C9E),
-    elevation: 0.0,
-    titleSpacing: 5,
+    backgroundColor: Colors.white,
+    elevation: 0.5,
+    titleSpacing: 0,
+    centerTitle: true,
     automaticallyImplyLeading: false,
-    title: Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        SizedBox(
-          height: 80, // Your Height
-          width: 80, // Your width
-          child: Image.asset("assets/logo.png"),
-        ),
-        // Your widgets here
-      ],
+    leading: IconButton(
+      icon: const Icon(
+        Icons.arrow_back_ios_new_rounded,
+        color: Color(0xFF005C9E),
+        size: 20,
+      ),
+      onPressed: () => functionGoBack(),
     ),
-    // title: Column(
-    //   crossAxisAlignment: CrossAxisAlignment.stretch,
-    //   children: [applicationTitle, applicationSubTitle],
-    // ),
-    actions: <Widget>[
-      context != null
-          ? Container(
-            width: 45,
-            height: 45,
-            margin: EdgeInsets.only(top: 6.0, right: 10.0, bottom: 6.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
-              color: Color(0xFFFFC324),
-            ),
-            child: IconButton(
-              icon: Icon(Icons.close, color: Colors.white),
-              onPressed: () => {functionGoBack()},
+    title: title.isNotEmpty
+        ? Text(
+            title,
+            style: const TextStyle(
+              fontFamily: 'Kanit',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF102F30),
             ),
           )
-          : Container(),
+        : Image.asset("assets/logo.png", height: 35),
+    actions: <Widget>[
+      if (isButtonRight && rightButton != null)
+        IconButton(
+          icon: const Icon(Icons.more_vert, color: Color(0xFF005C9E)),
+          onPressed: () => rightButton(),
+        )
+      else
+        const SizedBox(width: 48),
     ],
   );
 }

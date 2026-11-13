@@ -27,6 +27,12 @@ class _NewsPageState extends State<NewsPage> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
+
   _callRead() {
     _future = postDio('${server}m/news/read', {'limit': _limit});
     _futureHighLight =
@@ -160,6 +166,20 @@ class _NewsPageState extends State<NewsPage> {
   }
 
   _buildList(model) {
+    if (model == null || !(model is List) || model.isEmpty) {
+      return Expanded(
+        child: Center(
+          child: Text(
+            'ไม่พบข้อมูลข่าวประกาศ',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+              fontFamily: 'Kanit',
+            ),
+          ),
+        ),
+      );
+    }
     return Expanded(
       child: SmartRefresher(
         enablePullDown: true,

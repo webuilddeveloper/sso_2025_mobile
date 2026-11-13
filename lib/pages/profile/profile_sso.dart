@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sso/component/header.dart';
+import 'package:sso/component/loading_image_network.dart';
 import 'package:sso/pages/profile/user_information.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -31,6 +32,7 @@ class _ProfileSSOPageState extends State<ProfileSSOPage> {
 
   @override
   void initState() {
+    futureModel = widget.model;
     readStorage();
     super.initState();
   }
@@ -45,14 +47,18 @@ class _ProfileSSOPageState extends State<ProfileSSOPage> {
   }
 
   readStorage() async {
-    var value = await storage.read(key: 'dataUserLoginSSO');
-    if (value != null) {
-      var user = json.decode(value);
-      if (user['code'] != '') {
-        setState(() {
-          _imageUrl = user['imageUrl'] ?? '';
-        });
+    try {
+      var value = await storage.read(key: 'dataUserLoginSSO');
+      if (value != null && value.isNotEmpty) {
+        var user = json.decode(value);
+        if (user is Map) {
+          setState(() {
+            _imageUrl = user['imageUrl'] ?? '';
+          });
+        }
       }
+    } catch (e) {
+      debugPrint('Error in readStorage profile_sso: $e');
     }
   }
 
@@ -219,7 +225,7 @@ class _ProfileSSOPageState extends State<ProfileSSOPage> {
                 ),
               ),
               child: Scaffold(
-                appBar: header(context, goBack),
+                appBar: header(context, goBack, title: 'ติดต่อสำนักงานประกันสังคม'),
                 backgroundColor: Colors.transparent,
                 body: Container(
                   child: ListView(
@@ -246,12 +252,17 @@ class _ProfileSSOPageState extends State<ProfileSSOPage> {
                                   image: DecorationImage(
                                     fit: BoxFit.cover,
                                     image:
-                                        snapshot.data['imageLogoUrl'] != null
+                                        (snapshot.data['imageLogoUrl'] != null &&
+                                                snapshot.data['imageLogoUrl']
+                                                    .toString()
+                                                    .isNotEmpty)
                                             ? NetworkImage(
-                                              snapshot.data['imageLogoUrl'],
-                                            )
-                                            : AssetImage(
-                                              "assets/logo/noImage.png",
+                                              sanitizeImageUrl(
+                                                snapshot.data['imageLogoUrl'],
+                                              ),
+                                            ) as ImageProvider
+                                            : const AssetImage(
+                                              "assets/logo/sso.png",
                                             ),
                                   ),
                                 ),

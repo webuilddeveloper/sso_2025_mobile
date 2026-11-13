@@ -1,7 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sso/pages/blank_page/toast_fail.dart';
+import 'package:sso/screen/pension_simulator.dart';
+import 'package:sso/shared/api_provider.dart';
 import 'package:sso/shared/extension.dart';
 import 'package:sso/widget/year_select.dart';
 
@@ -13,81 +14,129 @@ class SubsidyPage extends StatefulWidget {
 }
 
 class _SubsidyPageState extends State<SubsidyPage> {
+  final storage = const FlutterSecureStorage();
   late PageController _pageController;
   late int pageSelected;
   List<dynamic> data1 = [];
   List<dynamic> data2 = [];
   List<dynamic> categoryList = [];
   String categorySelected = '';
-  String yearSelected = '2565';
+  String yearSelected = (DateTime.now().year + 543).toString();
+  String updateDateText = '';
+  bool isLoading = true;
+
+  String _profileName = 'We Build Operate Co.,Ltd';
+  String _idCard = '1-1004-99882-12-3';
+  String _section = '33';
+
+  String _formatIdCard(String id) {
+    if (id.isEmpty) return '1-1004-99882-12-3';
+    if (id.length == 13) {
+      return '${id.substring(0, 1)}-${id.substring(1, 5)}-${id.substring(5, 10)}-${id.substring(10, 12)}-${id.substring(12, 13)}';
+    }
+    return id;
+  }
 
   @override
   void initState() {
     pageSelected = 0;
     _pageController = PageController(initialPage: 0);
-    _mockData();
+    int bYear = DateTime.now().year + 543;
+    yearSelected = bYear.toString();
+    updateDateText = 'ข้อมูล ณ ${DateTime.now().day}/${DateTime.now().month}/${(bYear % 100).toString().padLeft(2, '0')}';
+    _loadSubsidyData();
     super.initState();
   }
 
-  _mockData() {
-    var a = [];
-    var b = [
-      {
-        'title': 'สิงหาคม',
-        'value': Random().nextInt(10005).toString(),
-        'date': '15/08/65',
-      },
-      {
-        'title': 'กรกฎาคม',
-        'value': Random().nextInt(10005).toString(),
-        'date': '15/07/65',
-      },
-      {
-        'title': 'มิถุนายน',
-        'value': Random().nextInt(10005).toString(),
-        'date': '15/06/65',
-      },
-      {
-        'title': 'พฤษภาคม',
-        'value': Random().nextInt(10005).toString(),
-        'date': '15/05/65',
-      },
-      {
-        'title': 'เมษายน',
-        'value': Random().nextInt(10005).toString(),
-        'date': '15/04/65',
-      },
-      {
-        'title': 'มีนาคม',
-        'value': Random().nextInt(10005).toString(),
-        'date': '15/03/65',
-      },
-      {
-        'title': 'กุมภาพันธ์',
-        'value': Random().nextInt(10005).toString(),
-        'date': '15/02/65',
-      },
-      {
-        'title': 'มกราคม',
-        'value': Random().nextInt(10005).toString(),
-        'date': '15/01/65',
-      },
-    ];
-    for (var i = 50; i < 65; i++) {
-      a.add({
-        'title': i.toString(),
-        'value': Random().nextInt(10005).toString(),
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadSubsidyData() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final pFirst = await storage.read(key: 'profileFirstName');
+      final pLast = await storage.read(key: 'profileLastName');
+      final pCat = await storage.read(key: 'profileCategory');
+      final pCode = await storage.read(key: 'profileCode1');
+
+      if (pFirst != null && pFirst.isNotEmpty) {
+        _profileName = '$pFirst ${pLast ?? ''}'.trim();
+      }
+      if (pCat != null && pCat.isNotEmpty) {
+        _section = pCat;
+      }
+
+      if (pCode != null && pCode.isNotEmpty) {
+        var userData = await postDio(profileReadApi, {'code': pCode});
+        if (userData != null && userData is Map) {
+          if (userData['firstName'] != null) {
+            _profileName =
+                '${userData['firstName']} ${userData['lastName'] ?? ''}'.trim();
+          }
+          if (userData['idcard'] != null &&
+              userData['idcard'].toString().isNotEmpty) {
+            _idCard = userData['idcard'].toString();
+          }
+          if (userData['category'] != null) {
+            _section = userData['category'].toString();
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error reading user profile in subsidy: $e');
+    }
+
+    try {
+      var result = await postDio('${server}m/fund/read', {
+        'limit': 20,
       });
+
+      if (result != null && result is List && result.isNotEmpty) {
+        setState(() {
+          data1 = result;
+          data2 = result;
+          categoryList = [
+            {'code': '', 'title': 'ทั้งหมด'},
+            {'code': '1', 'title': 'มาตรา 33'},
+            {'code': '2', 'title': 'มาตรา 39'},
+          ];
+          isLoading = false;
+        });
+        return;
+      }
+    } catch (e) {
+      debugPrint('Error loading subsidy data: $e');
     }
 
     setState(() {
-      data1 = a.reversed.toList();
-      data2 = b;
+      data1 = [
+        {
+          'title': 'ยอดเงินสะสมกรณีชราภาพ ประจำปี $yearSelected',
+          'value': '3,600',
+          'date': updateDateText,
+          'description': 'เงินสมทบผู้ประกันตน + นายจ้าง + รัฐบาล',
+        },
+      ];
+      data2 = [
+        {
+          'title': 'เงินสงเคราะห์บุตร ประจำปี $yearSelected',
+          'value': '800',
+          'date': updateDateText,
+          'description': 'เงินสงเคราะห์บุตร 800 บาท/เดือน ต่อบุตร 1 คน',
+        },
+      ];
       categoryList = [
         {'code': '', 'title': 'ทั้งหมด'},
         {'code': '1', 'title': 'มาตรา 33'},
         {'code': '2', 'title': 'มาตรา 39'},
       ];
+      isLoading = false;
     });
   }
 
@@ -224,14 +273,14 @@ class _SubsidyPageState extends State<SubsidyPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'ยุทธเลิศ สรณะ',
-                      style: TextStyle(
+                      _profileName,
+                      style: const TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF005C9E),
                       ),
                     ),
-                    Text(
+                    const Text(
                       'ผู้ประกันตนมาตรา',
                       style: TextStyle(
                         fontSize: 9,
@@ -244,15 +293,15 @@ class _SubsidyPageState extends State<SubsidyPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '1-234-12345-5',
-                      style: TextStyle(
+                      _formatIdCard(_idCard),
+                      style: const TextStyle(
                         fontSize: 9,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      '33/39',
-                      style: TextStyle(
+                      _section.isNotEmpty ? _section : '33/39',
+                      style: const TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF005C9E),
@@ -299,6 +348,52 @@ class _SubsidyPageState extends State<SubsidyPage> {
               ],
             ),
           ),
+          if (pageSelected == 0)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+              child: InkWell(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PensionSimulatorPage()),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF005C9E), Color(0xFF1E88E5)],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF005C9E).withOpacity(0.25),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.calculate_outlined, color: Colors.white, size: 22),
+                          SizedBox(width: 10),
+                          Text(
+                            'จำลองคำนวณเงินบำนาญชราภาพ',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Icon(Icons.arrow_forward_ios, color: Colors.white, size: 14),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           Expanded(
             child: PageView(
               controller: _pageController,

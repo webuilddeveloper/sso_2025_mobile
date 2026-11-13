@@ -206,13 +206,13 @@ Future<LoginRegister> postLoginRegister(String url, dynamic criteria) async {
     var user = LoginRegister.fromJson(userMap);
     return Future.value(user);
   } else {
-    return Future.value();
+    return Future.value(LoginRegister(status: 'F', message: 'Request failed'));
   }
 }
 
 //upload with dio
 Future<String> uploadImage(File file) async {
-  Dio dio = Dio();
+  Dio dio = createDio();
 
   String fileName = file.path.split('/').last;
   FormData formData = FormData.fromMap({
@@ -220,17 +220,15 @@ Future<String> uploadImage(File file) async {
     "Image": await MultipartFile.fromFile(file.path, filename: fileName),
   });
 
-  // print('----- Ready -----');
   var response = await dio.post(
-    "http://122.155.223.147/document/upload",
+    serverUpload,
     data: formData,
   );
-  // print('----- Response ----- ${response}');
-  return response.data['imageUrl'];
+  return response.data['imageUrl'] ?? '';
 }
 
 Future<String> uploadImageList(XFile file) async {
-  Dio dio = Dio();
+  Dio dio = createDio();
 
   String fileName = file.path.split('/').last;
   FormData formData = FormData.fromMap({
@@ -240,12 +238,12 @@ Future<String> uploadImageList(XFile file) async {
 
   var response = await dio.post(serverUpload, data: formData);
 
-  return response.data['imageUrl'];
+  return response.data['imageUrl'] ?? '';
 }
 
 //upload with http
 upload(File file) async {
-  var uri = Uri.parse('http://122.155.223.147/document/upload');
+  var uri = Uri.parse(serverUpload);
   var request =
       http.MultipartRequest('POST', uri)
         ..fields['ImageCaption'] = 'flutter2'
@@ -284,46 +282,70 @@ Future<dynamic> postConfigShare() async {
   }
 }
 
-Future<dynamic> postDio(String url, dynamic criteria) async {
-  // print('-------------------------->>>>>> ${url}');
-  // print('-------------------------->>>>>> ${criteria}');
+Dio createDio() {
+  return Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
+      sendTimeout: const Duration(seconds: 15),
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+    ),
+  );
+}
 
+Future<dynamic> postDio(String url, dynamic criteria) async {
   final storage = FlutterSecureStorage();
-  // var platform = Platform.operatingSystem.toString();
   final profileCode = await storage.read(key: 'profileCode1');
 
   if (profileCode != '' && profileCode != null) {
     criteria = {'profileCode': profileCode, ...criteria};
   }
 
-  Dio dio = Dio();
-  var response = await dio.post(url, data: criteria);
-  // print('---------------------------------------');
-  // print(response.data['objectData'].toString());
-  // print('---------------------------------------');
-  return Future.value(response.data['objectData']);
+  try {
+    Dio dio = createDio();
+    var response = await dio.post(url, data: criteria);
+    if (response.data is Map && response.data['objectData'] != null) {
+      return Future.value(response.data['objectData']);
+    }
+    return Future.value(response.data);
+  } on DioException catch (e) {
+    debugPrint('DioException in postDio ($url): ${e.message}');
+    return null;
+  } catch (e) {
+    debugPrint('Exception in postDio ($url): $e');
+    return null;
+  }
 }
 
 Future<dynamic> postDioCategory(String url, dynamic criteria) async {
-  print(url);
-  print(criteria);
   final storage = FlutterSecureStorage();
-  var platform = Platform.operatingSystem.toString();
   final profileCode = await storage.read(key: 'profileCode1');
 
   if (profileCode != '' && profileCode != null) {
     criteria = {'profileCode': profileCode, ...criteria};
   }
-
-  Dio dio = Dio();
-  var response = await dio.post(url, data: criteria);
 
   List<dynamic> list = [
     {'code': "", 'title': 'ทั้งหมด'},
   ];
-  list = [...list, ...response.data['objectData']];
 
-  return Future.value(list);
+  try {
+    Dio dio = createDio();
+    var response = await dio.post(url, data: criteria);
+    if (response.data is Map && response.data['objectData'] != null) {
+      list = [...list, ...response.data['objectData']];
+    }
+    return Future.value(list);
+  } on DioException catch (e) {
+    debugPrint('DioException in postDioCategory ($url): ${e.message}');
+    return Future.value(list);
+  } catch (e) {
+    debugPrint('Exception in postDioCategory ($url): $e');
+    return Future.value(list);
+  }
 }
 
 Future<dynamic> postDioMessage(String url, dynamic criteria) async {
@@ -332,29 +354,41 @@ Future<dynamic> postDioMessage(String url, dynamic criteria) async {
   if (profileCode != '' && profileCode != null) {
     criteria = {'profileCode': profileCode, ...criteria};
   }
-  Dio dio = Dio();
-  print('-----dio criteria-----' + criteria.toString());
-  print('-----dio criteria-----' + url);
-  var response = await dio.post(url, data: criteria);
-  print('-----dio message-----' + response.data.toString());
-  return Future.value(response.data['objectData']);
+  try {
+    Dio dio = createDio();
+    var response = await dio.post(url, data: criteria);
+    if (response.data is Map && response.data['objectData'] != null) {
+      return Future.value(response.data['objectData']);
+    }
+    return Future.value(response.data);
+  } on DioException catch (e) {
+    debugPrint('DioException in postDioMessage ($url): ${e.message}');
+    return null;
+  } catch (e) {
+    debugPrint('Exception in postDioMessage ($url): $e');
+    return null;
+  }
 }
 
 Future<dynamic> postDioFull(String url, dynamic criteria) async {
-  print(url);
-  print(criteria);
   final storage = FlutterSecureStorage();
-  var platform = Platform.operatingSystem.toString();
   final profileCode = await storage.read(key: 'profileCode1');
 
   if (profileCode != '' && profileCode != null) {
     criteria = {'profileCode': profileCode, ...criteria};
   }
 
-  Dio dio = Dio();
-  var response = await dio.post(url, data: criteria);
-  // print(response.data['objectData'].toString());
-  return Future.value(response.data);
+  try {
+    Dio dio = createDio();
+    var response = await dio.post(url, data: criteria);
+    return Future.value(response.data);
+  } on DioException catch (e) {
+    debugPrint('DioException in postDioFull ($url): ${e.message}');
+    return {'status': 'E', 'message': 'การเชื่อมต่อขัดข้อง กรุณาลองใหม่อีกครั้ง'};
+  } catch (e) {
+    debugPrint('Exception in postDioFull ($url): $e');
+    return {'status': 'E', 'message': 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง'};
+  }
 }
 
 logout(BuildContext context) async {

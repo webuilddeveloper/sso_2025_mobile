@@ -24,12 +24,15 @@ class _PolicyV2Page extends State<PolicyV2Page> {
 
   @override
   void initState() {
-    setState(() {});
     scrollController = ScrollController();
-
     _read();
-
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   late Future<dynamic> _futureModel;

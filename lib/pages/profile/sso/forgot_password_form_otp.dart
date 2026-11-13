@@ -29,7 +29,7 @@ class _ForgotPasswordFormOTPPageState extends State<ForgotPasswordFormOTPPage> {
   final txtPasswordOld = TextEditingController();
   final txtPasswordNew = TextEditingController();
   final txtConPasswordNew = TextEditingController();
-  late String _imageUrl;
+  String _imageUrl = '';
   bool showTxtPasswordOld = true;
   bool showTxtPasswordNew = true;
   bool showTxtConPasswordNew = true;
@@ -144,13 +144,18 @@ class _ForgotPasswordFormOTPPageState extends State<ForgotPasswordFormOTPPage> {
   }
 
   readStorage() async {
-    var value = await storage.read(key: 'dataUserLoginSSO');
-    var user = json.decode(value!);
-
-    if (user['code'] != '') {
-      setState(() {
-        _imageUrl = user['imageUrl'] ?? '';
-      });
+    try {
+      var value = await storage.read(key: 'dataUserLoginSSO');
+      if (value != null && value.isNotEmpty) {
+        var user = json.decode(value);
+        if (user is Map && user['code'] != '') {
+          setState(() {
+            _imageUrl = user['imageUrl'] ?? '';
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('readStorage error: $e');
     }
   }
 

@@ -53,6 +53,12 @@ class _SplashPageState extends State<SplashPage> {
                       fit: BoxFit.cover,
                       height: double.infinity,
                       width: double.infinity,
+                      errorBuilder: (context, error, stackTrace) => Image.asset(
+                        'assets/splash.png',
+                        fit: BoxFit.fill,
+                        height: double.infinity,
+                        width: double.infinity,
+                      ),
                     ),
                   ),
                 );

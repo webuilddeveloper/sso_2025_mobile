@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sso/component/header.dart';
+import 'package:sso/component/loading_image_network.dart';
 // import 'package:sso/pages/auth/login.dart';
 import 'package:sso/pages/home.dart';
 import 'package:sso/pages/profile/user_information.dart';
-import 'package:sso/pages/v2/menu_v2.dart';
 import 'package:sso/screen/login.dart';
 import 'sso/login_connect_sso.dart';
 
@@ -21,19 +21,19 @@ class ConnectSSOPage extends StatefulWidget {
 class _ConnectSSOPageState extends State<ConnectSSOPage> {
   final storage = new FlutterSecureStorage();
 
-  late String _username;
-  late String _password;
-  late String _facebookID;
-  late String _appleID;
-  late String _googleID;
-  late String _lineID;
-  late String _email;
+  String _username = '';
+  String _password = '';
+  String _facebookID = '';
+  String _appleID = '';
+  String _googleID = '';
+  String _lineID = '';
+  String _email = '';
   String _imageUrl = '';
-  late String _category;
-  late String _prefixName;
-  late String _firstName;
-  late String _lastName;
-  late String _idCard;
+  String _category = '';
+  String _prefixName = '';
+  String _firstName = '';
+  String _lastName = '';
+  String _idCard = '';
 
   bool _isLoginSocial = false;
   bool _isLoginSocialHaveEmail = false;
@@ -44,7 +44,7 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
   final _formKey = GlobalKey<FormState>();
 
   List<String> _prefixNames = ['นาย', 'นาง', 'นางสาว']; // Option 2
-  late String _selectedPrefixName;
+  String _selectedPrefixName = 'นาย';
 
   final txtUsername = TextEditingController();
   final txtPassword = TextEditingController();
@@ -69,7 +69,7 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
 
   @override
   void initState() {
-    setState(() {});
+    futureModel = Future.value({});
     readStorage();
     super.initState();
   }
@@ -83,15 +83,21 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
   }
 
   readStorage() async {
-    var value = await storage.read(key: 'dataUserLoginSSO');
-    var user = json.decode(value!);
-    if (user['code'] != '') {
-      setState(() {
-        _imageUrl = user['imageUrl'] ?? '';
-        _firstName = user['firstName'] ?? '';
-        _lastName = user['lastName'] ?? '';
-        _idCard = user['idCard'] ?? '';
-      });
+    try {
+      var value = await storage.read(key: 'dataUserLoginSSO');
+      if (value != null && value.isNotEmpty) {
+        var user = json.decode(value);
+        if (user is Map) {
+          setState(() {
+            _imageUrl = user['imageUrl'] ?? '';
+            _firstName = user['firstName'] ?? '';
+            _lastName = user['lastName'] ?? '';
+            _idCard = user['idCard'] ?? user['idcard'] ?? '';
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error in readStorage connect_sso: $e');
     }
   }
 
@@ -153,9 +159,9 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image:
-                      _imageUrl.isNotEmpty
-                          ? NetworkImage(_imageUrl)
-                          : AssetImage("assets/logo/noImage.png"),
+                      _imageUrl.isNotEmpty && !_imageUrl.contains('122.155.223.63')
+                          ? NetworkImage(sanitizeImageUrl(_imageUrl)) as ImageProvider
+                          : const AssetImage("assets/images/user_not_found.png"),
                 ),
               ),
             ),
@@ -315,9 +321,9 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image:
-                      _imageUrl.isNotEmpty
-                          ? NetworkImage(_imageUrl)
-                          : AssetImage("assets/logo/noImage.png"),
+                      _imageUrl.isNotEmpty && !_imageUrl.contains('122.155.223.63')
+                          ? NetworkImage(sanitizeImageUrl(_imageUrl)) as ImageProvider
+                          : const AssetImage("assets/images/user_not_found.png"),
                 ),
               ),
             ),
@@ -446,7 +452,7 @@ class _ConnectSSOPageState extends State<ConnectSSOPage> {
         ),
       ),
       child: Scaffold(
-        appBar: header(context, goBack),
+        appBar: header(context, goBack, title: 'เชื่อมต่อประกันสังคม'),
         backgroundColor: Colors.transparent,
         body: Container(
           child: ListView(

@@ -9,7 +9,6 @@ import 'package:sso/component/header.dart';
 import 'package:sso/component/loading_image_network.dart';
 import 'package:sso/component/material/content_with_out_share.dart';
 import 'package:sso/pages/blank_page/blank_loading.dart';
-import 'package:sso/pages/v2/menu_v2.dart';
 import 'package:sso/shared/api_provider.dart';
 
 class FeedbackForm extends StatefulWidget {
@@ -42,7 +41,7 @@ class _FeedbackForm extends State<FeedbackForm> {
   String selectCategoryValue = '';
   String selectProvinceValue = '';
   List<dynamic> _itemImage = [];
-  late String imageUrl;
+  String imageUrl = '';
   ScrollController scrollController = ScrollController();
 
   @override
@@ -62,6 +61,13 @@ class _FeedbackForm extends State<FeedbackForm> {
   }
 
   @override
+  void dispose() {
+    scrollController.dispose();
+    txtDescription.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -74,13 +80,15 @@ class _FeedbackForm extends State<FeedbackForm> {
         child: FutureBuilder<dynamic>(
           future: _futureModel,
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            return Container(
-              padding: EdgeInsets.only(left: 15.0, right: 15.0),
-              child: Column(
-                // crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Column(
+            return SingleChildScrollView(
+              controller: scrollController,
+              physics: const BouncingScrollPhysics(),
+              child: Container(
+                padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Column(
                     children: [
                       DropdownButtonFormField<dynamic>(
                         value: selectCategoryValue,
@@ -356,8 +364,9 @@ class _FeedbackForm extends State<FeedbackForm> {
                   ),
                 ],
               ),
-            );
-          },
+            ),
+          );
+        },
         ),
       ),
     );

@@ -78,6 +78,8 @@ class User {
   String postno;
   String job;
   String idcard;
+  String get idCard => idcard;
+  set idCard(String val) => idcard = val;
   String countUnit;
   String lv0;
   String lv1;

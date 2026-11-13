@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sso/component/custom_dialog.dart';
 import 'package:sso/pages/blank_page/toast_fail.dart';
 import 'package:sso/screen/hospital_success.dart';
+import 'package:sso/shared/api_provider.dart';
 
 class HospitalFormPage extends StatefulWidget {
   const HospitalFormPage({super.key, this.model});
@@ -119,16 +121,43 @@ class _HospitalFormPageState extends State<HospitalFormPage> {
               SizedBox(width: 15),
               Expanded(
                 child: GestureDetector(
-                  onTap: () {
-                    if (acceptPolicy) {
-                      Navigator.push(
+                  onTap: () async {
+                    if (!acceptPolicy) {
+                      showSSODialog(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => HospitalSuccessPage(),
-                        ),
+                        title: 'กรุณายอมรับข้อตกลง',
+                        message: 'โปรดเลือกยอมรับข้อตกลงและหลักเกณฑ์การเลือกสถานพยาบาลก่อนดำเนินการบันทึก',
+                        type: SSODialogType.warning,
+                        confirmText: 'เข้าใจแล้ว',
                       );
-                    } else {
-                      toastFail(context, text: 'กรุณายอมรับข้อตกลง');
+                      return;
+                    }
+                    try {
+                      await postDio('${server}m/suggestion/create', {
+                        'category': 'hospital_change',
+                        'title': 'คำขอเปลี่ยนสถานพยาบาล',
+                        'description': model != null ? model['title'] ?? '' : '',
+                      });
+                    } catch (e) {
+                      debugPrint('Hospital change submit error: $e');
+                    }
+
+                    if (mounted) {
+                      await showSSODialog(
+                        context,
+                        title: 'ยื่นคำขอสำเร็จ',
+                        message: 'ระบบได้บันทึกคำขอเปลี่ยนสถานพยาบาลของท่านเป็น "${model != null ? model['title'] ?? '' : ''}" เรียบร้อยแล้ว',
+                        type: SSODialogType.success,
+                        confirmText: 'ตกลง',
+                      );
+                      if (mounted) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const HospitalSuccessPage(),
+                          ),
+                        );
+                      }
                     }
                   },
                   child: Container(

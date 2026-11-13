@@ -4,7 +4,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 // import 'package:sso/pages/auth/login.dart';
 import 'package:sso/pages/home.dart';
-import 'package:sso/pages/v2/menu_v2.dart';
 import 'package:sso/screen/login.dart';
 import 'package:sso/shared/api_provider.dart';
 
@@ -31,15 +30,25 @@ class _faqListPageState extends State<faqListPage> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
+
   _callRead() {
-    // futureModel = postDio('${server}m/faq/read', {});
-    futureModel = Future.value([
-      {'code': '1', 'title': 'วิธีการสมัครเป็นผู้ประกันตน'},
-      {'code': '2', 'title': 'การขอรับเงินเยียวยากรณีว่างงาน'},
-      {'code': '3', 'title': 'การส่งเงินสมทบ'},
-      {'code': '4', 'title': 'วิธีการสมัครเป็นผู้ประกันตน'},
-      {'code': '5', 'title': 'การขอรับเงินเยียวยากรณีว่างงาน'},
-    ]);
+    futureModel = postDio('${server}m/faq/read', {'limit': 50}).then((val) {
+      if (val != null && val is List && val.isNotEmpty) {
+        return val;
+      }
+      return [
+        {'code': '1', 'title': 'วิธีการสมัครเป็นผู้ประกันตน'},
+        {'code': '2', 'title': 'การขอรับเงินเยียวยากรณีว่างงาน'},
+        {'code': '3', 'title': 'การส่งเงินสมทบ'},
+        {'code': '4', 'title': 'สิทธิประโยชน์ทันตกรรม'},
+        {'code': '5', 'title': 'การเปลี่ยนสถานพยาบาลประจำปี'},
+      ];
+    });
   }
 
   void _onRefresh() async {

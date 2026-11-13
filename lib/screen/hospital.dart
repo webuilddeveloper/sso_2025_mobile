@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sso/component/loading_image_network.dart';
 import 'package:sso/component/material/input_with_label.dart';
 import 'package:sso/screen/hospital_form.dart';
+import 'package:sso/shared/api_provider.dart';
 import 'package:sso/shared/scroll_behavior.dart';
 
 class HospitalPage extends StatefulWidget {
@@ -16,31 +17,38 @@ class HospitalPage extends StatefulWidget {
 
 class _HospitalPageState extends State<HospitalPage> {
   final storage = FlutterSecureStorage();
-  String yearSelected = '2565';
+  String yearSelected = (DateTime.now().year + 543).toString();
   String remarkSelected = '';
   dynamic userData;
+  String _profileName = 'We Build Operate Co.,Ltd';
+  String _imageUrl = '';
+  String _section = '33';
+  String _hospitalName = 'โรงพยาบาลกรุงเทพ';
   dynamic currentHospital = {
     'title': 'โรงพยาบาลกรุงเทพ',
-    'imageUrl':
-        'https://vetweb.we-builds.com/vet-document/images/news/31cb4390-49bf-4d94-9865-e4af67461a32/ss.png',
-    'description': 'แขวงสายไหม เขตสายไหม กรุงเทพมหานคร',
-    'date': '15/08/65',
+    'imageUrl': '',
+    'description': 'กรุงเทพมหานครและปริมณฑล',
+    'date': '${DateTime.now().day}/${DateTime.now().month}/${(DateTime.now().year + 543) % 100}',
   };
 
   List<dynamic> temp = [
     {
-      'title': 'โรงพยาบาลบีแคร์ เมดิคอลเซ็นเตอร์',
-      'imageUrl':
-          'https://vetweb.we-builds.com/vet-document/images/news/b8a362a8-af7a-4686-910a-3a3c6e5b84ee/download.jpeg',
-      'description': 'แขวงสายไหม เขตสายไหม กรุงเทพมหานคร',
-      'date': '15/08/65',
+      'title': 'โรงพยาบาลจุฬาลงกรณ์ สภากาชาดไทย',
+      'imageUrl': '',
+      'description': 'เขตปทุมวัน กรุงเทพมหานคร',
+      'date': '${DateTime.now().day}/${DateTime.now().month}/${(DateTime.now().year + 543) % 100}',
     },
     {
-      'title': 'โรงพยาบาลเปาโลโชคชัย 4',
-      'imageUrl':
-          'https://vetweb.we-builds.com/vet-document/images/news/6c67c189-9466-4b69-a7e9-d99e3f1652e8/download.png',
-      'description': 'แขวงลาดพร้าว เขตลาดพร้าว กรุงเทพ',
-      'date': '15/08/65',
+      'title': 'โรงพยาบาลศิริราช',
+      'imageUrl': '',
+      'description': 'เขตบางกอกน้อย กรุงเทพมหานคร',
+      'date': '${DateTime.now().day}/${DateTime.now().month}/${(DateTime.now().year + 543) % 100}',
+    },
+    {
+      'title': 'โรงพยาบาลรามาธิบดี',
+      'imageUrl': '',
+      'description': 'เขตราชเทวี กรุงเทพมหานคร',
+      'date': '${DateTime.now().day}/${DateTime.now().month}/${(DateTime.now().year + 543) % 100}',
     },
   ];
 
@@ -51,10 +59,72 @@ class _HospitalPageState extends State<HospitalPage> {
   }
 
   _callRead() async {
-    var data = await storage.read(key: 'dataUserLoginSSO');
-    setState(() {
-      userData = json.decode(data!);
-    });
+    try {
+      var data = await storage.read(key: 'dataUserLoginSSO');
+      if (data != null && data.isNotEmpty) {
+        var user = json.decode(data);
+        if (user is Map) {
+          setState(() {
+            userData = user;
+            if (user['firstName'] != null) {
+              _profileName = '${user['firstName']} ${user['lastName'] ?? ''}'.trim();
+            }
+            if (user['imageUrl'] != null) {
+              _imageUrl = user['imageUrl'].toString();
+            }
+            if (user['category'] != null) {
+              _section = user['category'].toString();
+            }
+          });
+        }
+      }
+
+      String? pFirst = await storage.read(key: 'profileFirstName');
+      String? pLast = await storage.read(key: 'profileLastName');
+      String? pCat = await storage.read(key: 'profileCategory');
+      String? pCode = await storage.read(key: 'profileCode1');
+
+      if (pFirst != null && pFirst.isNotEmpty) {
+        setState(() {
+          _profileName = '$pFirst ${pLast ?? ''}'.trim();
+        });
+      }
+      if (pCat != null && pCat.isNotEmpty) {
+        setState(() {
+          _section = pCat;
+        });
+      }
+
+      if (pCode != null && pCode.isNotEmpty) {
+        var pData = await postDio(profileReadApi, {'code': pCode});
+        if (pData != null && pData is Map) {
+          setState(() {
+            if (pData['firstName'] != null) {
+              _profileName = '${pData['firstName']} ${pData['lastName'] ?? ''}'.trim();
+            }
+            if (pData['imageUrl'] != null) {
+              _imageUrl = pData['imageUrl'].toString();
+            }
+            if (pData['category'] != null) {
+              _section = pData['category'].toString();
+            }
+          });
+        }
+      }
+
+      var poiHospitals = await postDio('${server}m/poi/read', {
+        'category': 'hospital',
+        'limit': 20,
+      });
+
+      if (poiHospitals != null && poiHospitals is List && poiHospitals.isNotEmpty) {
+        setState(() {
+          temp = poiHospitals;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error reading hospital data: $e');
+    }
   }
 
   @override
@@ -132,23 +202,13 @@ class _HospitalPageState extends State<HospitalPage> {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(50),
-                            child:
-                                userData['imageUrl'] != '' &&
-                                        userData['imageUrl'] != null
-                                    ? loadingImageNetwork(
-                                      userData['imageUrl'],
-                                      height: 100,
-                                      width: 100,
-                                      fit: BoxFit.cover,
-                                    )
-                                    : SizedBox(
-                                      height: 100,
-                                      width: 100,
-                                      child: Image.asset(
-                                        'assets/images/user_not_found.png',
-                                        height: 40,
-                                      ),
-                                    ),
+                            child: loadingImageNetwork(
+                              _imageUrl,
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                              isProfile: true,
+                            ),
                           ),
                           Positioned(
                             bottom: 0,
@@ -172,15 +232,16 @@ class _HospitalPageState extends State<HospitalPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${userData['firstName']} ${userData['lastName']}',
+                            _profileName,
                             style: TextStyle(fontSize: 13),
                           ),
                           Text(
-                            'ผู้ประกันตนมาตรา 33',
-                            style: TextStyle(
+                            'ผู้ประกันตนมาตรา ${_section == 'guest' || _section.isEmpty ? '33' : _section}',
+                            style: const TextStyle(
                               fontSize: 20,
                               color: Color(0xFF005C9E),
                               fontWeight: FontWeight.bold,
+                              fontFamily: 'Kanit',
                             ),
                           ),
                           Container(
@@ -193,7 +254,7 @@ class _HospitalPageState extends State<HospitalPage> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              'โรงพยาบาลกรุงเทพ',
+                              _hospitalName,
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Color(0xFF005C9E),
@@ -315,48 +376,59 @@ class _HospitalPageState extends State<HospitalPage> {
       onTap: () => _buildModal(temp),
       child: Container(
         height: 144,
-        padding: EdgeInsets.all(15),
+        padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          color: Color(0xFFE8F0F6),
+          color: const Color(0xFFE8F0F6),
         ),
         child: Row(
           children: [
-            loadingImageNetwork(
-              currentHospital['imageUrl'],
-              width: 50,
-              height: 50,
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF005C9E).withOpacity(0.2)),
+              ),
+              child: const Icon(
+                Icons.local_hospital_rounded,
+                color: Color(0xFF005C9E),
+                size: 30,
+              ),
             ),
-            SizedBox(width: 13),
+            const SizedBox(width: 13),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('สถานพยาบาลปัจจุบัน', style: TextStyle(fontSize: 13)),
+                  const Text('สถานพยาบาลปัจจุบัน', style: TextStyle(fontSize: 13, fontFamily: 'Kanit')),
                   Expanded(
                     child: Text(
-                      currentHospital['title'],
-                      style: TextStyle(
-                        fontSize: 20,
+                      currentHospital['title'] ?? 'โรงพยาบาลกรุงเทพ',
+                      style: const TextStyle(
+                        fontSize: 19,
                         color: Color(0xFF005C9E),
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'Kanit',
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Color(0xFFE4A025),
+                      color: const Color(0xFFE4A025),
                       borderRadius: BorderRadius.circular(17),
                     ),
-                    child: Text(
+                    child: const Text(
                       'เลือกสถานพยาบาล',
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 14,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'Kanit',
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -456,8 +528,21 @@ class _HospitalPageState extends State<HospitalPage> {
         ),
         child: Row(
           children: [
-            loadingImageNetwork(model['imageUrl'], width: 56, height: 56),
-            SizedBox(width: 13),
+            Container(
+              width: 54,
+              height: 54,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF005C9E).withOpacity(0.15)),
+              ),
+              child: const Icon(
+                Icons.local_hospital_outlined,
+                color: Color(0xFF005C9E),
+                size: 28,
+              ),
+            ),
+            const SizedBox(width: 13),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

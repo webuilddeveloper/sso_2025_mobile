@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:sso/screen/hospital.dart';
+import 'package:sso/screen/e_claim.dart';
 
 buttonModel(BuildContext context, Future<dynamic> model, String title) {
   return showCupertinoModalBottomSheet(
@@ -97,7 +98,13 @@ _buildRowMenuModal(BuildContext context, dynamic model) {
       if (model['title'] == 'เปลี่ยนโรงพยาบาล') {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => HospitalPage()),
+          MaterialPageRoute(builder: (_) => const HospitalPage()),
+        );
+      } else if (model['title'] == 'เบิกสิทธิประโยชน์' ||
+          model['title'] == 'ลงทะเบียนขอรับเงินทดแทน') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const EClaimPage()),
         );
       }
     },

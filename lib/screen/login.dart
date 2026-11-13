@@ -17,13 +17,6 @@ import 'package:sso/shared/facebook_firebase.dart';
 import 'package:sso/shared/google_firebase.dart';
 import 'package:sso/shared/line.dart';
 
-DateTime now = DateTime.now();
-void main() {
-  // Intl.defaultLocale = 'th';
-
-  runApp(LoginPage(title: ''));
-}
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.title});
   final String title;
@@ -34,20 +27,20 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final storage = FlutterSecureStorage();
 
-  late String _username;
-  late String _password;
-  late String _facebookID;
-  late String _appleID;
-  late String _googleID;
-  late String _lineID;
-  late String _email;
+  String _username = '';
+  String _password = '';
+  String _facebookID = '';
+  String _appleID = '';
+  String _googleID = '';
+  String _lineID = '';
+  String _email = '';
   String _imageUrl = '';
-  late String _category;
-  late String _prefixName;
-  late String _firstName;
-  late String _lastName;
+  String _category = '';
+  String _prefixName = '';
+  String _firstName = '';
+  String _lastName = '';
 
-  late Map userProfile;
+  Map userProfile = {};
 
   // DataUser dataUser;
 
@@ -65,21 +58,18 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    setState(() {
-      _username = "";
-      _password = "";
-      _facebookID = "";
-      _appleID = "";
-      _googleID = "";
-      _lineID = "";
-      _email = "";
-      _imageUrl = "";
-      _category = "";
-      _prefixName = "";
-      _firstName = "";
-      _lastName = "";
-    });
-    // checkStatus();
+    _username = "";
+    _password = "";
+    _facebookID = "";
+    _appleID = "";
+    _googleID = "";
+    _lineID = "";
+    _email = "";
+    _imageUrl = "";
+    _category = "";
+    _prefixName = "";
+    _firstName = "";
+    _lastName = "";
     super.initState();
   }
 
@@ -177,33 +167,31 @@ class _LoginPageState extends State<LoginPage> {
           return Future.value(false);
         },
         child: Scaffold(
-          resizeToAvoidBottomInset: false,
+          resizeToAvoidBottomInset: true,
           backgroundColor: Colors.transparent,
-          body: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).padding.top,
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(
-                      child: Container(
-                        height: 80.0,
-                        child: Image.asset(
-                          "assets/images/logo_1.png",
-                          fit: BoxFit.contain,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Container(
+                            height: 80.0,
+                            child: Image.asset(
+                              "assets/images/logo_1.png",
+                              fit: BoxFit.contain,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
                 SizedBox(height: 20.0),
                 Card(
                   shape: RoundedRectangleBorder(
@@ -403,8 +391,10 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 
   Widget _buildButtonLogin() {
     return Material(

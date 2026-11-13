@@ -7,7 +7,6 @@ import 'package:numeric_keyboard/numeric_keyboard.dart';
 import 'package:sso/pages/home.dart';
 import 'package:sso/pages/profile/connect_sso.dart';
 import 'package:sso/pages/profile/sso/login_connect_sso.dart';
-import 'package:sso/pages/v2/menu_v2.dart';
 import 'package:sso/screen/login.dart';
 
 class RegisterConnectFormOTPPage extends StatefulWidget {
@@ -27,7 +26,7 @@ class _RegisterConnectFormOTPPageState
   final txtPasswordOld = TextEditingController();
   final txtPasswordNew = TextEditingController();
   final txtConPasswordNew = TextEditingController();
-  late String _imageUrl;
+  String _imageUrl = '';
   bool showTxtPasswordOld = true;
   bool showTxtPasswordNew = true;
   bool showTxtConPasswordNew = true;
@@ -139,13 +138,18 @@ class _RegisterConnectFormOTPPageState
   }
 
   readStorage() async {
-    var value = await storage.read(key: 'dataUserLoginSSO');
-    var user = json.decode(value!);
-
-    if (user['code'] != '') {
-      setState(() {
-        _imageUrl = user['imageUrl'] ?? '';
-      });
+    try {
+      var value = await storage.read(key: 'dataUserLoginSSO');
+      if (value != null && value.isNotEmpty) {
+        var user = json.decode(value);
+        if (user is Map && user['code'] != '') {
+          setState(() {
+            _imageUrl = user['imageUrl'] ?? '';
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('readStorage error: $e');
     }
   }
 
